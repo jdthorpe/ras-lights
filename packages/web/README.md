@@ -10,6 +10,7 @@ sudo apt-get update
 sudo apt-get install vim -y
 # web server
 sudo apt-get install nginx -y
+sudo apt-get install supervisor -y
 # python lib
 sudo pip install rpi_ws281x
 ```
