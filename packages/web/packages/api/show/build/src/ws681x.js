@@ -8,12 +8,17 @@ const rpi_ws281x_1 = __importDefault(require("rpi-ws281x"));
 const settings_1 = __importDefault(require("./settings"));
 rpi_ws281x_1.default.configure(settings_1.default.ws281x);
 function set_colors(colors) {
+    console.log("settings.LEDS: ", settings_1.default.LEDS);
     const pixels = new Uint32Array(settings_1.default.LEDS);
-    for (let i = 0; i < settings_1.default.LEDS; i++)
+    console.log("pixels.length: ", pixels.length);
+    for (let i = 0; i < settings_1.default.LEDS; i++) {
+        pixels[i] = 0;
         pixels[i] =
             (colors[i % colors.length][0] << 16) |
                 (colors[i % colors.length][1] << 8) |
                 colors[i % colors.length][2];
+    }
+    console.log("pixels: ", pixels);
     rpi_ws281x_1.default.render(pixels);
 }
 exports.set_colors = set_colors;
