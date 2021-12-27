@@ -9,7 +9,7 @@ import yaml from "js-yaml";
 import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
 
 const schema: any = yaml.load(
-    readFileSync(join(__dirname, "..", "..", "..", "config.ini"), "utf-8")
+    readFileSync(join(__dirname, "..", "..", "..", "..", "config.ini"), "utf-8")
 );
 const ajv = new Ajv();
 
