@@ -11,6 +11,7 @@ interface Isettings {
         controller_host: string;
         port: number;
     };
+    ws281x: any;
 }
 
 const settings: Isettings = ini.parse(
