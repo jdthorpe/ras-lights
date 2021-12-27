@@ -9,7 +9,10 @@ import yaml from "js-yaml";
 import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
 
 const schema: any = yaml.load(
-    readFileSync(join(__dirname, "..", "..", "..", "..", "config.ini"), "utf-8")
+    readFileSync(
+        join(__dirname, "..", "..", "..", "..", "schema.yaml"),
+        "utf-8"
+    )
 );
 const ajv = new Ajv();
 
@@ -36,7 +39,13 @@ router.post("/set-colors", (req: Request, res: Response) => {
     const body = req.body;
     if (!ajv.validate(schema, body)) {
         res.status(400);
-        res.send(`Body does not match the schema:\n${ajv.errors}`);
+        res.send(
+            `Body does not match the schema:\n${JSON.stringify(
+                ajv.errors,
+                null,
+                2
+            )}`
+        );
         return;
     }
 
