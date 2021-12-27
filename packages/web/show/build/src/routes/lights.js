@@ -10,7 +10,7 @@ const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
 const js_yaml_1 = __importDefault(require("js-yaml"));
 const ws681x_1 = require("../ws681x");
-const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "config.ini"), "utf-8"));
+const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "schema.yaml"), "utf-8"));
 const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
 router.get("/off", (req, res) => {
@@ -32,7 +32,7 @@ router.post("/set-colors", (req, res) => {
     const body = req.body;
     if (!ajv.validate(schema, body)) {
         res.status(400);
-        res.send(`Body does not match the schema:\n${ajv.errors}`);
+        res.send(`Body does not match the schema:\n${JSON.stringify(ajv.errors, null, 2)}`);
         return;
     }
     const start = perf_hooks_1.performance.now();
