@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 import os.path
+from timeit import default_timer as timer
 
 from ws2812 import start, set_color_s, random_colors, turn_off
 
@@ -38,22 +39,27 @@ def main():
         """
         set random colors
         """
-        print("turn off")
+        # print("turn off")
+        start = timer()
         turn_off()
-        return web.Response(text="OK")
+        end = timer()
+        return web.Response(text="OK {0:.6f}".format(end - start))
 
     async def get_random(request):
         """
         set random colors
         """
         print("random colors")
+        start = timer()
         random_colors()
-        return web.Response(text="OK")
+        end = timer()
+        return web.Response(text="OK {0:.6f}".format(end - start))
 
     async def post_color(request):
         """
         set colors via json payload
         """
+        start = timer()
         try:
             data = await request.json()
         except JSONDecodeError:
@@ -64,9 +70,10 @@ def main():
         except ValidationError:
             raise web.HTTPBadRequest(reason="Payload does not meet the schema")
 
-        print("set colors: {}".format(data))
+        # print("set colors: {}".format(data))
         set_color_s(data)
-        return web.Response(text="OK")
+        end = timer()
+        return web.Response(text="OK {0:.6f}".format(end - start))
 
     app = web.Application()
     app.middlewares.append(debug_middleware)
