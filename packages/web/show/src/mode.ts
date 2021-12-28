@@ -10,7 +10,7 @@ const schema = {
     type: "array",
     items: {
         type: "array",
-        items: "number",
+        items: { type: "number" },
         minItems: 3,
         maxItems: 3,
     },
