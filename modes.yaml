@@ -32,7 +32,7 @@ Seahawks:
                     value: "0000ff"
                 b:
                     type: hex
-                    value: "ff0000"
+                    value: "00ff00"
                 fade:
                     type: number
                     value: 2000
