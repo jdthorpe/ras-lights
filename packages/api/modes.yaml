@@ -1,3 +1,24 @@
+red:
+    type: func
+    name: Solid
+    params:
+        a:
+            type: hex
+            value: "ff0000"
+green:
+    type: func
+    name: Solid
+    params:
+        a:
+            type: hex
+            value: "00ff00"
+blue:
+    type: func
+    name: Solid
+    params:
+        a:
+            type: hex
+            value: "0000ff"
 Seahawks:
     type: func
     name: Solid
@@ -28,7 +49,7 @@ flag:
             value: false
         period:
             type: number
-            value: 2
+            value: 1
         in:
             type: func
             name: Gradient
