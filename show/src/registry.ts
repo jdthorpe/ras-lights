@@ -14,7 +14,7 @@ export function register(
     input: input[],
     output: value | values
 ): void {
-    if (RESERVED_NAMES.indexOf(name) === -1)
+    if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
 
     if (name in registry)
