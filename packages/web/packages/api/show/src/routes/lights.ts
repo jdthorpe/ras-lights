@@ -7,6 +7,7 @@ import Ajv from "ajv";
 import yaml from "js-yaml";
 
 import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
+import { setMode } from "../mode";
 
 const schema: any = yaml.load(
     readFileSync(
@@ -21,6 +22,14 @@ const router = Router();
 router.get("/off", (req: Request, res: Response) => {
     const start = performance.now();
     turn_off();
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+
+router.get("/mode/set/:mode", (req: Request, res: Response) => {
+    const start = performance.now();
+    setMode(req.params.mode);
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

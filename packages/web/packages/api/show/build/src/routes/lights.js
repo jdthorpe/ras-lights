@@ -10,12 +10,20 @@ const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
 const js_yaml_1 = __importDefault(require("js-yaml"));
 const ws681x_1 = require("../ws681x");
+const mode_1 = require("../mode");
 const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "schema.yaml"), "utf-8"));
 const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
 router.get("/off", (req, res) => {
     const start = perf_hooks_1.performance.now();
     (0, ws681x_1.turn_off)();
+    const end = perf_hooks_1.performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+router.get("/mode/set/:mode", (req, res) => {
+    const start = perf_hooks_1.performance.now();
+    (0, mode_1.setMode)(req.params.mode);
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
