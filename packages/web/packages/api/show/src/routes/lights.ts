@@ -27,14 +27,6 @@ router.get("/off", (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-router.get("/mode/:mode", (req: Request, res: Response) => {
-    const start = performance.now();
-    setMode(req.params.mode);
-    const end = performance.now();
-    res.status(200);
-    res.send(`OK ${end - start}`);
-});
-
 router.get("/random", (req: Request, res: Response) => {
     const start = performance.now();
     random_colors();
