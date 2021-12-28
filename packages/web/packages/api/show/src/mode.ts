@@ -1,4 +1,4 @@
-import { set_colors } from "./ws681x";
+import { turn_off, set_colors } from "./ws681x";
 import Ajv from "ajv";
 
 import { registry } from "./registry";
@@ -33,8 +33,13 @@ let loop: ReturnType<typeof setTimeout>;
 let current_mode: string = "off";
 
 export function setMode(name: string) {
+    if (name == "none") {
+        loop && clearTimeout(loop);
+        return;
+    }
     if (name == "off") {
         loop && clearTimeout(loop);
+        turn_off();
         return;
     }
     if (current_mode === name) return;
