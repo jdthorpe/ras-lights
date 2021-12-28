@@ -9,8 +9,12 @@ const settings_1 = __importDefault(require("../settings"));
 function rainbow_stripes(inputs) {
     const { n } = inputs;
     const out = [];
-    for (let i = 0; i < settings_1.default.LEDS; i++)
-        out.push(color_convert_1.hsv.rgb([(360 * Math.floor((i * n) / settings_1.default.LEDS)) / n, 100, 100]));
+    for (let i = 0; i < settings_1.default.ws281x.leds; i++)
+        out.push(color_convert_1.hsv.rgb([
+            (360 * Math.floor((i * n) / settings_1.default.ws281x.leds)) / n,
+            100,
+            100,
+        ]));
     return out;
 }
 (0, registry_1.register)("Rainbow Stripes", rainbow_stripes, [

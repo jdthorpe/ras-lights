@@ -1,0 +1,56 @@
+Seahawks:
+    type: func
+    name: Solid
+    params:
+        a:
+            type: func
+            name: "Alternate"
+            params:
+                a:
+                    type: hex
+                    value: "0000ff"
+                b:
+                    type: hex
+                    value: "ff0000"
+                fade:
+                    type: number
+                    value: 2000
+                hold:
+                    type: number
+                    value: 1000
+Christmas:
+    type: func
+    name: Gradient
+    params:
+        a:
+            type: func
+            name: "Alternate"
+            params:
+                a:
+                    type: hex
+                    value: "0000ff"
+                b:
+                    type: hex
+                    value: "ff0000"
+                fade:
+                    type: number
+                    value: 2000
+                hold:
+                    type: number
+                    value: 1000
+        b:
+            type: func
+            name: "Alternate"
+            params:
+                a:
+                    type: hex
+                    value: "ff0000"
+                b:
+                    type: hex
+                    value: "0000ff"
+                fade:
+                    type: number
+                    value: 2000
+                hold:
+                    type: number
+                    value: 1000
