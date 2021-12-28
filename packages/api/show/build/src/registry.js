@@ -4,7 +4,7 @@ exports.get_descriptors = exports.register = exports.registry = void 0;
 const RESERVED_NAMES = ["manual", "none"];
 exports.registry = {};
 function register(name, func, input, output) {
-    if (RESERVED_NAMES.indexOf(name) === -1)
+    if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
     if (name in exports.registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);
