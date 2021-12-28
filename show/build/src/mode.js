@@ -32,8 +32,13 @@ exports.create_node = create_node;
 let loop;
 let current_mode = "off";
 function setMode(name) {
+    if (name == "none") {
+        loop && clearTimeout(loop);
+        return;
+    }
     if (name == "off") {
         loop && clearTimeout(loop);
+        (0, ws681x_1.turn_off)();
         return;
     }
     if (current_mode === name)

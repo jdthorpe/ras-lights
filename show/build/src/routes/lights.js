@@ -21,7 +21,7 @@ router.get("/off", (req, res) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-router.get("/mode/set/:mode", (req, res) => {
+router.get("/mode/:mode", (req, res) => {
     const start = perf_hooks_1.performance.now();
     (0, mode_1.setMode)(req.params.mode);
     const end = perf_hooks_1.performance.now();
