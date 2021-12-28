@@ -1,9 +1,69 @@
-import { registry } from "./registry";
-import cc, { hex } from "color-convert";
-import { input, value, values } from "./data-types";
-export const modes: { [key: string]: () => rgb[] } = {};
+import { set_colors } from "./ws681x";
+import Ajv from "ajv";
 
-export function create_mode(x: func_config, returnType: value): { (): any } {
+import { registry } from "./registry";
+import { hex } from "color-convert";
+import { value } from "./data-types";
+
+const ajv = new Ajv();
+const schema = {
+    type: "array",
+    items: {
+        type: "array",
+        items: "number",
+        minItems: 3,
+        maxItems: 3,
+    },
+};
+
+// ----------------------------------------
+// registry
+// ----------------------------------------
+const modes: { [key: string]: { (): any } } = {};
+
+export function create_node(name: string, x: func_config) {
+    modes[name] = build_node(x, "rgb[]");
+}
+
+// ----------------------------------------
+// loop
+// ----------------------------------------
+
+let loop: ReturnType<typeof setTimeout>;
+let current_mode: string = "off";
+
+export function setMode(name: string) {
+    if (name == "off") {
+        loop && clearTimeout(loop);
+        return;
+    }
+    if (current_mode === name) return;
+
+    const mode = modes[name];
+    if (typeof mode === "undefined") throw new Error(`No sucn mode "${name}"`);
+
+    loop && clearTimeout(loop);
+    loop = setTimeout(create_loop(mode), 0);
+}
+
+function create_loop(mode: { (): any }): { (): void } {
+    const fun = () => {
+        const colors = mode();
+        if (ajv.validate(schema, colors)) {
+            set_colors(colors);
+        } else {
+            return;
+        }
+        loop = setTimeout(fun, 50);
+    };
+    return fun;
+}
+
+// ----------------------------------------
+// mode builder
+// ----------------------------------------
+
+function build_node(x: func_config, returnType: value): { (): any } {
     const f = registry[x.name];
     if (typeof f === "undefined") {
         throw new Error(
@@ -32,7 +92,7 @@ export function create_mode(x: func_config, returnType: value): { (): any } {
 
         switch (input_value.type) {
             case "func": {
-                let func = create_mode(input_value, param.type);
+                let func = build_node(input_value, param.type);
                 Object.defineProperty(args, param.key, { get: func });
                 break;
             }
@@ -96,7 +156,7 @@ export function create_mode(x: func_config, returnType: value): { (): any } {
             case "hex": {
                 switch (param.type) {
                     case "rgb": {
-                        args[param.key] = cc.hex.rgb(input_value.value);
+                        args[param.key] = hex.rgb(input_value.value);
                         break;
                     }
                     default: {

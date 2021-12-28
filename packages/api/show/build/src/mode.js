@@ -3,11 +3,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create_mode = exports.modes = void 0;
+exports.setMode = exports.create_node = void 0;
+const ws681x_1 = require("./ws681x");
+const ajv_1 = __importDefault(require("ajv"));
 const registry_1 = require("./registry");
-const color_convert_1 = __importDefault(require("color-convert"));
-exports.modes = {};
-function create_mode(x, returnType) {
+const color_convert_1 = require("color-convert");
+const ajv = new ajv_1.default();
+const schema = {
+    type: "array",
+    items: {
+        type: "array",
+        items: "number",
+        minItems: 3,
+        maxItems: 3,
+    },
+};
+// ----------------------------------------
+// registry
+// ----------------------------------------
+const modes = {};
+function create_node(name, x) {
+    modes[name] = build_node(x, "rgb[]");
+}
+exports.create_node = create_node;
+// ----------------------------------------
+// loop
+// ----------------------------------------
+let loop;
+let current_mode = "off";
+function setMode(name) {
+    if (name == "off") {
+        loop && clearTimeout(loop);
+        return;
+    }
+    if (current_mode === name)
+        return;
+    const mode = modes[name];
+    if (typeof mode === "undefined")
+        throw new Error(`No sucn mode "${name}"`);
+    loop && clearTimeout(loop);
+    loop = setTimeout(create_loop(mode), 0);
+}
+exports.setMode = setMode;
+function create_loop(mode) {
+    const fun = () => {
+        const colors = mode();
+        if (ajv.validate(schema, colors)) {
+            (0, ws681x_1.set_colors)(colors);
+        }
+        else {
+            return;
+        }
+        loop = setTimeout(fun, 50);
+    };
+    return fun;
+}
+// ----------------------------------------
+// mode builder
+// ----------------------------------------
+function build_node(x, returnType) {
     const f = registry_1.registry[x.name];
     if (typeof f === "undefined") {
         throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => `${a}, ${b}`)}`);
@@ -25,7 +79,7 @@ function create_mode(x, returnType) {
             throw new Error("missing input parameter ${param.key}");
         switch (input_value.type) {
             case "func": {
-                let func = create_mode(input_value, param.type);
+                let func = build_node(input_value, param.type);
                 Object.defineProperty(args, param.key, { get: func });
                 break;
             }
@@ -81,7 +135,7 @@ function create_mode(x, returnType) {
             case "hex": {
                 switch (param.type) {
                     case "rgb": {
-                        args[param.key] = color_convert_1.default.hex.rgb(input_value.value);
+                        args[param.key] = color_convert_1.hex.rgb(input_value.value);
                         break;
                     }
                     default: {
@@ -110,4 +164,3 @@ function create_mode(x, returnType) {
     }
     return func.bind({}, args);
 }
-exports.create_mode = create_mode;
