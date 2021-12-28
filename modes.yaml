@@ -87,10 +87,10 @@ Christmas:
             params:
                 a:
                     type: hex
-                    value: "ff0000"
+                    value: "00ff00"
                 b:
                     type: hex
-                    value: "00ff00"
+                    value: "ff0000"
                 fade:
                     type: number
                     value: 2000
