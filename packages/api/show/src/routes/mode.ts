@@ -7,7 +7,7 @@ import { mode_config } from "../../index";
 
 const router = Router();
 
-router.get("/mode/:mode", (req: Request, res: Response) => {
+router.get("/:mode", (req: Request, res: Response) => {
     const start = performance.now();
     setMode(req.params.mode);
     const end = performance.now();
@@ -15,7 +15,7 @@ router.get("/mode/:mode", (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-router.get("/mode/", (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
     res.json(mode_config);
 });
 
