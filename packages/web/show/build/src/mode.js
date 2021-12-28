@@ -53,7 +53,7 @@ exports.setMode = setMode;
 function create_loop(mode) {
     const fun = () => {
         const colors = mode();
-        console.log("colors", JSON.stringify(colors));
+        // console.log("colors", JSON.stringify(colors));
         if (ajv.validate(schema, colors)) {
             (0, ws681x_1.set_colors)(colors);
         }
