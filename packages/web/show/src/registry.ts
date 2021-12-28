@@ -2,6 +2,8 @@ import { input, value, values } from "./data-types";
 
 type func = { (): any } | { (inputs: any): any };
 
+const RESERVED_NAMES = ["manual", "none"];
+
 export const registry: {
     [x: string]: [func, input[], value | values];
 } = {};
@@ -12,9 +14,12 @@ export function register(
     input: input[],
     output: value | values
 ): void {
-    if (name in registry) {
+    if (RESERVED_NAMES.indexOf(name) === -1)
+        throw new Error(`Reserved name ${name}`);
+
+    if (name in registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);
-    }
+
     registry[name] = [func, input, output];
 }
 

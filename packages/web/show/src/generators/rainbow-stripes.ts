@@ -12,9 +12,13 @@ type rgb = [number, number, number];
 function rainbow_stripes(inputs: input): rgb[] {
     const { n } = inputs;
     const out: rgb[] = [];
-    for (let i = 0; i < settings.LEDS; i++)
+    for (let i = 0; i < settings.ws281x.leds; i++)
         out.push(
-            hsv.rgb([(360 * Math.floor((i * n) / settings.LEDS)) / n, 100, 100])
+            hsv.rgb([
+                (360 * Math.floor((i * n) / settings.ws281x.leds)) / n,
+                100,
+                100,
+            ])
         );
     return out;
 }

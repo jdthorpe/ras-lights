@@ -14,8 +14,8 @@ function average(a, b, w) {
 }
 function gradient(x) {
     const out = [];
-    for (let i = 0; i < settings_1.default.LEDS; i++) {
-        out.push(average(x.a, x.b, i / Math.max(settings_1.default.LEDS - 1, 1)));
+    for (let i = 0; i < settings_1.default.ws281x.leds; i++) {
+        out.push(average(x.a, x.b, i / Math.max(settings_1.default.ws281x.leds - 1, 1)));
     }
     return out;
 }

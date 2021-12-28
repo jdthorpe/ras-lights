@@ -18,8 +18,8 @@ interface input {
 
 function gradient(x: input): rgb[] {
     const out: rgb[] = [];
-    for (let i = 0; i < settings.LEDS; i++) {
-        out.push(average(x.a, x.b, i / Math.max(settings.LEDS - 1, 1)));
+    for (let i = 0; i < settings.ws281x.leds; i++) {
+        out.push(average(x.a, x.b, i / Math.max(settings.ws281x.leds - 1, 1)));
     }
     return out;
 }
