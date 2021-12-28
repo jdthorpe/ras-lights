@@ -54,6 +54,7 @@ export function setMode(name: string) {
 function create_loop(mode: { (): any }): { (): void } {
     const fun = () => {
         const colors = mode();
+        console.log("colors", JSON.stringify(colors));
         if (ajv.validate(schema, colors)) {
             set_colors(colors);
         } else {
