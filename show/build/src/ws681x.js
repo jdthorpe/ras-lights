@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.random_colors = exports.turn_off = exports.set_colors = void 0;
 const rpi_ws281x_1 = __importDefault(require("rpi-ws281x"));
 const settings_1 = __importDefault(require("./settings"));
-console.log("ws281x settings: ", settings_1.default.ws281x);
+// console.log("ws281x settings: ", settings.ws281x);
 rpi_ws281x_1.default.configure(settings_1.default.ws281x);
 function set_colors(colors) {
     const pixels = new Uint32Array(settings_1.default.ws281x.leds);
