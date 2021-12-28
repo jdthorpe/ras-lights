@@ -18,6 +18,28 @@ Seahawks:
                 hold:
                     type: number
                     value: 1000
+
+flag:
+    type: func
+    name: Rotate
+    params:
+        backwards:
+            type: boolean
+            value: false
+        period:
+            type: number
+            value: 2
+        in:
+            type: func
+            name: Gradient
+            params:
+                a:
+                    type: hex
+                    value: "ff0000"
+                b:
+                    type: hex
+                    value: "0000ff"
+
 Christmas:
     type: func
     name: Gradient
