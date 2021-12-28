@@ -1,14 +1,23 @@
-import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
+import React from "react"
+import { Pivot, PivotItem } from '@fluentui/react';
 import Manual from "./manual"
+import Modes from "./modes"
+
 
 function App() {
 
   return (
-    <div style={{ margin: "1.5rem" }}>
-      <Manual />
-    </div>
+    <Modes />
+    // <Pivot>
+    //   <div style={{ margin: "1.5rem" }}>
+    //     <PivotItem headerText="Manual">
+    //       <Manual />
+    //     </PivotItem>
+    //     <PivotItem headerText="Modes">
+    //       <Modes />
+    //     </PivotItem>
+    //   </div>
+    // </Pivot>
   );
 }
 
