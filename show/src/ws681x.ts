@@ -1,6 +1,7 @@
 import ws281x from "rpi-ws281x";
 import settings from "./settings";
 
+console.log("ws281x settings: ", settings.ws281x);
 ws281x.configure(settings.ws281x);
 
 export type rgb = [number, number, number];
