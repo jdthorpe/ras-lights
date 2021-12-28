@@ -10,12 +10,12 @@ interface mode_data {
     [key: string]: any;
 }
 
-const s_modes: mode_data = yaml.load(
+export const mode_config: mode_data = yaml.load(
     readFileSync(join(__dirname, "../../modes.yaml"), "utf-8")
 ) as mode_data;
 // console.log(JSON.stringify(s_modes, null, 4));
 
-for (let [key, value] of Object.entries(s_modes)) create_node(key, value);
+for (let [key, value] of Object.entries(mode_config)) create_node(key, value);
 
 // ----------------------------------------
 // start the web app
