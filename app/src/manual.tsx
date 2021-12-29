@@ -1,5 +1,6 @@
 import React from "react"
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
+// DefaultButton, 
+import { PrimaryButton } from '@fluentui/react/lib/Button';
 import debounce from "lodash.debounce"
 import {
     ColorPicker,
@@ -46,17 +47,16 @@ async function update_color(x: IColor) {
 }
 
 
-
 const Manual: React.FC = () => {
     const [color, setColor] = React.useState(white);
 
     const updateColor = React.useCallback(debounce((ev: any, colorObj: IColor) => {
         setColor(colorObj)
         update_color(colorObj)
-    }, 25), []);
+    }, 25), [setColor, update_color]);
 
     return (
-        <>
+        <div style={{ margin: "1.5rem" }}>
             <PrimaryButton onClick={setRandomColors} text="Random Colors" />
             <PrimaryButton onClick={turnOff} text="Off" />
             <h3>Click to pick a single color</h3>
@@ -75,7 +75,7 @@ const Manual: React.FC = () => {
                     hueAriaLabel: 'Hue',
                 }}
             />
-        </>
+        </div>
     )
 
 }
