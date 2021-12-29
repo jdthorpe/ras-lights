@@ -15,7 +15,9 @@ export const mode_config: mode_data = yaml.load(
 ) as mode_data;
 // console.log(JSON.stringify(s_modes, null, 4));
 
-for (let [key, value] of Object.entries(mode_config)) create_node(key, value);
+for (let [key, value] of Object.entries(mode_config)) {
+    create_node(key, value);
+}
 
 // ----------------------------------------
 // start the web app
