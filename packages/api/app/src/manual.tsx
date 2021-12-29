@@ -12,7 +12,7 @@ import {
 async function turnOff() {
     try {
         console.log(`/lights/off `)
-        const res = await fetch("/lights/off")
+        const res = await fetch("/api/lights/off")
         console.log("/lights/off SUCCESS", res)
     } catch (err) {
         console.log("/lights/off failed with error", err)
@@ -22,7 +22,7 @@ async function turnOff() {
 async function setRandomColors() {
     try {
         console.log(`/lights/random `)
-        const res = await fetch("/lights/random")
+        const res = await fetch("/api/lights/random")
         console.log("/lights/random SUCCESS", res)
     } catch (err) {
         console.log("/lights/random failed with error", err)
@@ -32,7 +32,7 @@ async function setRandomColors() {
 async function update_color(x: IColor) {
     try {
         console.log(`/lights/set-colors ${[[x.r, x.g, x.b]]}`)
-        const res = await fetch("/lights/set-colors", {
+        const res = await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
             headers: {
