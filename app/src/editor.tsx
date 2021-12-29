@@ -3,9 +3,8 @@ import styled from "styled-components"
 import { Label } from '@fluentui/react/lib/Label';
 import { Toggle } from '@fluentui/react/lib/Toggle';
 import { NumberInput } from './editor/inputs/number-input';
-import { input, color_input, integer_input, range_input } from "./data-types"
+import { input, color_input, integer_input, range_input, value, values } from "./data-types"
 import { rgb, ColorValue, ColorInput, ColorArrayValue, ColorArrayInput } from './editor/inputs/color-input';
-
 
 const Wrapper = styled.div`
     margin: 1rem;
@@ -38,21 +37,53 @@ const color_spec: color_input = {
     type: "rgb"
 }
 
-interface editorProps {
-    name: string;
 
+export interface descriptor {
+    in: input[];
+    out: value;
 }
 
+export interface descriptor_menu {
+    [key: string]: { name: string, in: input[] }[]
+}
+
+interface editorProps {
+    name?: string;
+}
 const Editor: React.FC<editorProps> = ({ name }) => {
 
     const [defn, set_defn] = useState()
+    const [descriptors, set_descriptors] = useState<descriptor_menu>()
 
     useEffect(() => {
+        if (typeof descriptors === "undefined")
+            (async () => {
+                try {
+                    console.log("fetching")
+                    const res = (await fetch("/api/registry/descriptors"));
+                    console.log("jsoning")
+                    const data: { [key: string]: descriptor } = await res.json()
+                    console.log("sorting")
+                    const temp: descriptor_menu = {}
+                    for (let [name, val] of Object.entries(data)) {
+                        let { in: input, out } = val
+                        if (!(out in temp))
+                            temp[out] = []
+                        temp[out].push({ name, in: input })
+                    }
+                    console.log("labeling")
+                    const descriptor_menu: descriptor_menu = {}
+                    for (let [name, val] of Object.entries(temp)) {
+                        descriptor_menu[name] = val.sort((a, b) => (a.name < b.name) ? 1 : -1)
+                    }
+                    console.log("setting")
+                    set_descriptors(descriptor_menu)
+                } catch (err) {
+                    console.log("erroring", err)
 
-
-
-
-    }, [name])
+                }
+            })()
+    }, [descriptors])
 
     const [num, set_num] = useState(0)
     const [int, set_int] = useState(0)
@@ -61,6 +92,7 @@ const Editor: React.FC<editorProps> = ({ name }) => {
 
     return (<Wrapper>
         <Label>hi</Label>
+        {descriptors && <pre>{JSON.stringify(descriptors, null, 2)}</pre>}
         <NumberInput
             spec={int_spec}
             value={int}
