@@ -134,6 +134,7 @@ export const ColorArrayValue: React.FC<color_array_value_props> = (props) => {
             <WrappedRow>
                 {colors.map((color: rgb, i) => (
                     <div
+                        key={i}
                         style={{
                             height: SIZE,
                             width: SIZE,
@@ -199,7 +200,9 @@ export const ColorArrayInput: React.FC<color_array_input_props> = (props) => {
             <WrappedRow>
                 {colors.map((color: rgb, i) => (
 
-                    <div style={{ position: "relative" }}>
+                    <div
+                        key={i}
+                        style={{ position: "relative" }}>
                         <div
                             style={{
                                 height: SIZE,
