@@ -15,7 +15,7 @@ const Modes: React.FC = () => {
     useEffect(() => {
         (async () => {
             if (typeof mode_config === "undefined") {
-                const response = await fetch("/mode/", {
+                const response = await fetch("/api/mode/", {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 });
@@ -29,7 +29,7 @@ const Modes: React.FC = () => {
                     set_item_list(il)
 
                 } catch (err) {
-                    console.log(`fetch("/mode/").json() failed with`, err)
+                    console.log(`fetch("/api/mode/").json() failed with`, err)
                     console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")
                 }
             }
@@ -40,7 +40,7 @@ const Modes: React.FC = () => {
         (async () => {
             try {
                 item?.key &&
-                    await fetch(`/mode/${item.key}`)
+                    await fetch(`/api/mode/${item.key}`)
             } catch (err) {
                 console.log("failed to set mode with error", err)
 
