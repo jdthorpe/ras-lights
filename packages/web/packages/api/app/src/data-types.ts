@@ -1,4 +1,4 @@
-// todo: sync this with the data-types.ts in the web app (via lerna or similar...)
+// todo: sync this with the data-types.ts in the API (via lerna or similar...)
 export type value = "boolean" | "integer" | "number" | "rgb" | "rgb[]";
 
 export interface values {

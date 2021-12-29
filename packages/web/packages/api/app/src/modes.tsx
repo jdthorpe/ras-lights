@@ -6,13 +6,6 @@ const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },
 };
 
-const options: IDropdownOption[] = [
-    { key: 'apple', text: 'Apple' },
-    { key: 'banana', text: 'Banana' },
-    { key: 'orange', text: 'Orange' },
-    { key: 'grape', text: 'Grape' },
-];
-
 const Modes: React.FC = () => {
 
     const [item, set_item] = useState<IDropdownOption>();
@@ -30,7 +23,7 @@ const Modes: React.FC = () => {
                     const config = await response.json();
                     set_mode_config(config)
                     const il: IDropdownOption[] = []
-                    for (let [mode, def] of Object.entries(config))
+                    for (let mode of Object.keys(config))
                         il.push({ key: mode, text: mode })
                     console.log("il: ", il)
                     set_item_list(il)
@@ -58,7 +51,7 @@ const Modes: React.FC = () => {
 
 
     return (
-        <>
+        <div style={{ margin: "1.5rem" }}>
             <Dropdown
                 placeholder="Select a Light Mode"
                 label="Light Mode"
@@ -74,7 +67,7 @@ const Modes: React.FC = () => {
                     src={mode_config[item.key]}
                 />
             </div>)}
-        </>
+        </div>
     );
 };
 
