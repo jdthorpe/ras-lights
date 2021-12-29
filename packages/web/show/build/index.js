@@ -10,8 +10,9 @@ const mode_1 = require("./src/mode");
 const path_1 = require("path");
 exports.mode_config = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "../../modes.yaml"), "utf-8"));
 // console.log(JSON.stringify(s_modes, null, 4));
-for (let [key, value] of Object.entries(exports.mode_config))
+for (let [key, value] of Object.entries(exports.mode_config)) {
     (0, mode_1.create_node)(key, value);
+}
 // ----------------------------------------
 // start the web app
 // ----------------------------------------
