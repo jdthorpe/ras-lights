@@ -1,8 +1,8 @@
 import Ajv from "ajv";
 import { hex } from "color-convert";
 
-import { value } from "common/types/parameters";
-import { func_config, mode_param } from "common/types/mode";
+import { value } from "@ras-lights/common/types/parameters";
+import { func_config, mode_param } from "@ras-lights/common/types/mode";
 
 import { registry } from "./registry";
 import { turn_off, set_colors } from "./ws681x";

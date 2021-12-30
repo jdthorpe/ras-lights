@@ -1,4 +1,9 @@
-import { input, value, values, signature } from "common/types/parameters";
+import {
+    input,
+    value,
+    values,
+    signature,
+} from "@ras-lights/common/types/parameters";
 
 type func = { (): any } | { (inputs: any): any };
 
