@@ -26,6 +26,14 @@ register(
             key: "in",
             type: "rgb[]",
             label: "Color Array",
+            default: [
+                [255, 0, 0],
+                [255, 255, 0],
+                [0, 255, 0],
+                [0, 255, 255],
+                [0, 0, 255],
+                [255, 0, 255],
+            ],
         },
         {
             key: "period",

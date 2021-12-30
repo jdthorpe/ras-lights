@@ -1,9 +1,11 @@
-import { turn_off, set_colors } from "./ws681x";
 import Ajv from "ajv";
+import { hex } from "color-convert";
+
+import { value } from "common/types/parameters";
+import { func_config, mode_param } from "common/types/mode";
 
 import { registry } from "./registry";
-import { hex } from "color-convert";
-import { value } from "./data-types";
+import { turn_off, set_colors } from "./ws681x";
 
 const ajv = new Ajv();
 const schema = {
@@ -70,6 +72,7 @@ function create_loop(mode: { (): any }): { (): void } {
 // ----------------------------------------
 
 function build_node(x: func_config, returnType: value): { (): any } {
+    // get the function and its types from the registry
     const f = registry[x.name];
     if (typeof f === "undefined") {
         throw new Error(
@@ -173,6 +176,22 @@ function build_node(x: func_config, returnType: value): { (): any } {
                 }
                 break;
             }
+            case "hex[]": {
+                switch (param.type) {
+                    case "rgb": {
+                        args[param.key] = input_value.value.map((val) =>
+                            hex.rgb(val)
+                        );
+                        break;
+                    }
+                    default: {
+                        throw new Error(
+                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
+                        );
+                    }
+                }
+                break;
+            }
             case "boolean": {
                 switch (param.type) {
                     case "boolean": {
@@ -195,52 +214,4 @@ function build_node(x: func_config, returnType: value): { (): any } {
     }
 
     return func.bind({}, args);
-}
-
-export type mode_param =
-    | func_config
-    | num_value
-    | int_value
-    | rgb_value
-    | hex_value
-    | rgb_array_value
-    | bool_value;
-
-export interface func_config {
-    type: "func";
-    name: string;
-    params: { [key: string]: mode_param };
-}
-
-export type rgb = [number, number, number];
-export type rgbw = [number, number, number, number];
-export type hsv = [number, number, number];
-
-export interface num_value {
-    type: "number";
-    value: number;
-}
-export interface int_value {
-    type: "integer";
-    value: number;
-}
-
-export interface hex_value {
-    type: "hex";
-    value: string;
-}
-
-export interface rgb_value {
-    type: "rgb";
-    value: rgb;
-}
-
-export interface rgb_array_value {
-    type: "rgb[]";
-    value: rgb[];
-}
-
-export interface bool_value {
-    type: "boolean";
-    value: boolean;
 }

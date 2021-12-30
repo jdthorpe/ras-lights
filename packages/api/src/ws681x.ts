@@ -1,3 +1,4 @@
+// @ts-ignore
 import ws281x from "rpi-ws281x";
 import settings from "./settings";
 

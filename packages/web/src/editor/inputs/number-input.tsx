@@ -1,6 +1,5 @@
-
 import React, { useState, useCallback } from 'react';
-import { integer_input, range_input } from "../../data-types"
+import { integer_input, range_input } from "common/types/parameters"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 
 
@@ -11,14 +10,15 @@ const is_number = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
 
 interface props {
     spec: integer_input | range_input;
-    set: { (x: any): void };
+    onChanged: { (x: any): void };
     value: number;
+    onClick?: () => void;
 }
 
-export const NumberInput: React.FC<props> = (props) => {
+export const NumberInput: React.FC<props> = ({ spec, value, onChanged, onClick }) => {
 
-    const { type, label, min, max } = props.spec;
-    const [value, setValue] = useState(props.value.toString())
+    const { type, label, min, max } = spec;
+    const [s_value, setValue] = useState(value.toString())
     const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
     const onChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -43,17 +43,20 @@ export const NumberInput: React.FC<props> = (props) => {
             setErrorMessage(`Value must be at most ${max}`)
 
         setValue(newValue);
+        onChanged(+newValue)
         setErrorMessage(undefined)
     }, [min, max, type])
 
     return (
-        <TextField
-            label={label}
-            value={value}
-            onChange={onChange}
-            styles={styles}
-            errorMessage={errorMessage}
-        />
+        <div onClick={onClick}>
+            <TextField
+                label={label}
+                value={s_value}
+                onChange={onChange}
+                styles={styles}
+                errorMessage={errorMessage}
+            />
+        </div >
     )
 }
 

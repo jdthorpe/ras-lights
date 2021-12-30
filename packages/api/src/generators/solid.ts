@@ -18,6 +18,7 @@ register(
             key: "a",
             type: "rgb",
             label: "Color",
+            default: [0, 255, 0],
         },
     ],
     "rgb[]"

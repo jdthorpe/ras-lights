@@ -31,11 +31,13 @@ function alternate(x) {
         key: "a",
         type: "rgb",
         label: "First Color",
+        default: [255, 0, 0],
     },
     {
         key: "b",
         type: "rgb",
         label: "Second Color",
+        default: [0, 0, 255],
     },
     {
         key: "fade",

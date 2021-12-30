@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMode = exports.create_node = void 0;
-const ws681x_1 = require("./ws681x");
 const ajv_1 = __importDefault(require("ajv"));
-const registry_1 = require("./registry");
 const color_convert_1 = require("color-convert");
+const registry_1 = require("./registry");
+const ws681x_1 = require("./ws681x");
 const ajv = new ajv_1.default();
 const schema = {
     type: "array",
@@ -68,6 +68,7 @@ function create_loop(mode) {
 // mode builder
 // ----------------------------------------
 function build_node(x, returnType) {
+    // get the function and its types from the registry
     const f = registry_1.registry[x.name];
     if (typeof f === "undefined") {
         throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => `${a}, ${b}`)}`);
@@ -142,6 +143,18 @@ function build_node(x, returnType) {
                 switch (param.type) {
                     case "rgb": {
                         args[param.key] = color_convert_1.hex.rgb(input_value.value);
+                        break;
+                    }
+                    default: {
+                        throw new Error(`Parameter type ${input_value.type} is not compatible with input type ${param.type}`);
+                    }
+                }
+                break;
+            }
+            case "hex[]": {
+                switch (param.type) {
+                    case "rgb": {
+                        args[param.key] = input_value.value.map((val) => color_convert_1.hex.rgb(val));
                         break;
                     }
                     default: {

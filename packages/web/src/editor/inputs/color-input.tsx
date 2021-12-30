@@ -3,20 +3,16 @@ import debounce from "lodash.debounce"
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import styled from "styled-components"
-
-// import styled from "styled-components"
 import cc from "color-convert"
-import { color_input } from "../../data-types"
 import {
     ColorPicker,
     // getColorFromString,
     IColor,
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
-
-
 import { Label } from '@fluentui/react/lib/Label';
-import { act } from 'react-dom/test-utils';
+
+import { color_input, color_array_input } from "common/types/parameters"
 
 const WrappedRow = styled.div`
     display: flex;
@@ -58,17 +54,18 @@ const colorPickerStyles: Partial<IColorPickerStyles> = {
 interface color_value_props {
     spec: color_input;
     value: rgb;
+    onClick: () => void;
 }
-export const ColorValue: React.FC<color_value_props> = (props) => {
+export const ColorValue: React.FC<color_value_props> = ({ spec, value, onClick }) => {
 
     return (
-        <div>
-            <Label>{props.spec.label}</Label>
+        <div onClick={onClick}>
+            <Label>{spec.label}</Label>
             <div
                 style={{
                     height: SIZE,
                     width: SIZE,
-                    backgroundColor: `#${cc.rgb.hex(props.value)}`,
+                    backgroundColor: `#${cc.rgb.hex(value)}`,
                     borderStyle: "solid",
                     borderWidth: "1px",
                     borderRadius: "2px",
@@ -83,22 +80,20 @@ export const ColorValue: React.FC<color_value_props> = (props) => {
 interface color_input_props {
     spec: color_input;
     value: rgb;
-    set: { (x: rgb): void };
+    onChanged: { (x: rgb): void };
 }
 
 // <FontIcon aria-label="Remove" iconName="Cancel" className={iconClass} onClick={() => setOpen(false)} />
 
-export const ColorInput: React.FC<color_input_props> = (props) => {
+export const ColorInput: React.FC<color_input_props> = ({ value, onChanged, spec }) => {
 
-    const { label } = props.spec;
-    const { value, set } = props;
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
-        set([color.r, color.g, color.b,],)
-    }, 25), [set]);
+        onChanged([color.r, color.g, color.b,],)
+    }, 25), [onChanged]);
 
     return (
         <div>
-            <Label>{label}</Label>
+            <Label>{spec.label}</Label>
             <ColorPicker
                 color={`#${cc.rgb.hex(value)}`}
                 onChange={updateColor}
@@ -118,85 +113,86 @@ export const ColorInput: React.FC<color_input_props> = (props) => {
     )
 }
 
-interface color_array_value_props {
-    spec: color_input;
-    value: rgb[];
+export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
+    return (
+        <WrappedRow >
+            {colors.map((color: rgb, i) => (
+                <div
+                    key={i}
+                    style={{
+                        height: SIZE,
+                        width: SIZE,
+                        backgroundColor: `#${cc.rgb.hex(color)}`,
+                        borderStyle: "solid",
+                        borderWidth: "1px",
+                        borderRadius: "2px",
+                        borderColor: "black",
+                    }}
+                />
+            ))}
+        </WrappedRow>
+    )
 }
 
-export const ColorArrayValue: React.FC<color_array_value_props> = (props) => {
 
-    const { value: colors } = props;
-    const { label } = props.spec;
 
+interface color_array_value_props {
+    spec: color_array_input;
+    value: rgb[];
+    onClick: () => void;
+}
+
+export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, onClick }) => {
     return (
-        <div>
-            <Label>{label}</Label>
-            <WrappedRow>
-                {colors.map((color: rgb, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            height: SIZE,
-                            width: SIZE,
-                            backgroundColor: `#${cc.rgb.hex(color)}`,
-                            borderStyle: "solid",
-                            borderWidth: "1px",
-                            borderRadius: "2px",
-                            borderColor: "black",
-                        }}
-                    />
-                ))}
-            </WrappedRow>
+        <div onClick={onClick}>
+            <Label>{spec.label}</Label>
+            <ColorArray colors={colors} />
         </div>
     )
 }
 
 interface color_array_input_props {
-    spec: color_input;
+    spec: color_array_input;
     value: rgb[];
-    set: { (x: rgb[]): void };
+    onChanged: { (x: rgb[]): void };
 }
 
+export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colors, spec, onChanged }) => {
 
-
-export const ColorArrayInput: React.FC<color_array_input_props> = (props) => {
-
-    const { value: colors, set } = props;
-    const { label } = props.spec;
     const [active_color, set_active_color] = useState(0)
 
     const addColor = React.useCallback(() => {
-        set([
+        onChanged([
             ...colors.slice(0, active_color),
             colors[active_color],
             ...colors.slice(active_color),
         ])
         set_active_color(active_color + 1)
-    }, [set, colors, active_color]);
+    }, [onChanged, colors, active_color]);
 
 
     const dropColor = React.useCallback((i: number) => {
-        set([
+        onChanged([
             ...colors.slice(0, i),
             ...colors.slice(i + 1),
         ])
         if (active_color > i) {
             set_active_color(active_color - 1)
         }
-    }, [set, colors, active_color]);
+    }, [onChanged, colors, active_color]);
 
 
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
-        set([
+        onChanged([
             ...colors.slice(0, active_color),
             [color.r, color.g, color.b,],
             ...colors.slice(active_color + 1),
         ])
-    }, 25), [set, colors, active_color]);
+    }, 25), [onChanged, colors, active_color]);
 
     return (
         <div>
-            <Label>{label}</Label>
+            <Label>{spec.label}</Label>
             <WrappedRow>
                 {colors.map((color: rgb, i) => (
 

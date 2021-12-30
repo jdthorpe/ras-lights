@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.random_colors = exports.turn_off = exports.set_colors = void 0;
+// @ts-ignore
 const rpi_ws281x_1 = __importDefault(require("rpi-ws281x"));
 const settings_1 = __importDefault(require("./settings"));
 // console.log("ws281x settings: ", settings.ws281x);

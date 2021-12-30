@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.get_descriptors = exports.register = exports.registry = void 0;
 const RESERVED_NAMES = ["manual", "none"];
 exports.registry = {};
-function register(name, func, input, output) {
+function register(name, func, input, output // | values
+) {
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
     if (name in exports.registry)
@@ -14,7 +15,7 @@ exports.register = register;
 function get_descriptors() {
     const out = {};
     for (const [key, value] of Object.entries(exports.registry))
-        out[key] = { in: value[1], out: value[2] };
+        out[key] = { input: value[1], output: value[2] };
     return out;
 }
 exports.get_descriptors = get_descriptors;

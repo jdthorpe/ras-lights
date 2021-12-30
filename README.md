@@ -2,6 +2,12 @@
 
 A rasperry pi based light show and web app
 
+## TODO
+
+-   Add a set of validators to common (including that defaults have been included in function signatures)
+-   Add validation for the signatures fetched from the backend (if the server is
+    not running or the proxy is not set, the text is an HTML rendering from NGINX with a 502 or 404 message)
+
 ## Set Up
 
 ```sh
