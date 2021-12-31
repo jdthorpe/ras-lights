@@ -27,7 +27,7 @@ router.post("/", (req, res) => {
     catch (error) {
         console.log(error);
         res.status(500);
-        res.send(`failed to create a mode function:\n${error?.message}`);
+        res.send(`failed to create a mode function:\n${error.message}`);
         return;
     }
     const start = perf_hooks_1.performance.now();

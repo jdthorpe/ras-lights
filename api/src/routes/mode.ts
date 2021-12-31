@@ -27,7 +27,7 @@ router.post("/", (req: Request, res: Response) => {
         console.log(error);
         res.status(500);
         res.send(
-            `failed to create a mode function:\n${(error as any)?.message}`
+            `failed to create a mode function:\n${(error as any).message}`
         );
         return;
     }
