@@ -1,8 +1,13 @@
-"use strict";
-/*
-import { input, value, signature } from "@ras-lights/common/types/parameters";
+import { input, value, signatures } from "../../types/parameters";
 
-type func = { (): any } | { (inputs: any): any };
+export interface globals {
+    leds: number;
+}
+
+type func =
+    | { (): any }
+    | { (inputs: any): any }
+    | { (inputs: any, globals: globals): any };
 
 const RESERVED_NAMES = ["manual", "none"];
 
@@ -25,22 +30,13 @@ export function register(
     registry[name] = [func, input, output];
 }
 
-// export interface descriptor {
-//     in: input[];
-//     out: value | values;
-// }
-interface d {
-    [key: string]: signature;
-}
-
-export function get_descriptors(): d {
-    const out: d = {};
+export function get_descriptors(): signatures {
+    const out: signatures = {};
     for (const [key, value] of Object.entries(registry))
         out[key] = { input: value[1], output: value[2] };
     return out;
 }
 
+// circular schmirkular
 import "./effects";
 import "./generators";
-
-*/

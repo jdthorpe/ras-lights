@@ -1,7 +1,0 @@
-{
-    "name": "ras-lights",
-    "private": true,
-    "devDependencies": {
-        "lerna": "^3.13.0"
-    }
-}

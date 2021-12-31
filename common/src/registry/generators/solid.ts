@@ -1,6 +1,5 @@
-import { register } from "../registry";
-
-type rgb = [number, number, number];
+import { register } from "../index";
+import { rgb } from "../../../types/mode";
 
 interface input {
     a: rgb;

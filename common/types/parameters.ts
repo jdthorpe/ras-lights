@@ -52,3 +52,7 @@ export interface signature {
     input: input[];
     output: value; // | values;
 }
+
+export interface signatures {
+    [key: string]: signature;
+}

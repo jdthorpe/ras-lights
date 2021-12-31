@@ -1480,6 +1480,10 @@
     "schema-utils" "^3.0.0"
     "source-map" "^0.7.3"
 
+"@ras-lights/common@file:../common":
+  "resolved" "file:../common"
+  "version" "0.0.0"
+
 "@rollup/plugin-babel@^5.2.0":
   "integrity" "sha512-9uIC8HZOnVLrLHxayq/PTzw+uS25E14KPUBh5ktF+18Mjo5yK0ToMMx6epY0uEgkjwJw0aBW4x2horYXh8juWw=="
   "resolved" "https://registry.npmjs.org/@rollup/plugin-babel/-/plugin-babel-5.3.0.tgz"
@@ -3125,11 +3129,6 @@
   "integrity" "sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA=="
   "resolved" "https://registry.npmjs.org/common-tags/-/common-tags-1.8.2.tgz"
   "version" "1.8.2"
-
-"common@*":
-  "integrity" "sha1-PHGC9ni9HjaBzVzDSMdZ/o3SI5Q="
-  "resolved" "https://registry.npmjs.org/common/-/common-0.2.5.tgz"
-  "version" "0.2.5"
 
 "commondir@^1.0.1":
   "integrity" "sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs="

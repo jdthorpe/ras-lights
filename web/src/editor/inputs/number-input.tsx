@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { integer_input, range_input } from "common/types/parameters"
+import { integer_input, range_input } from "@ras-lights/common/types/parameters"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 
 
-const styles: Partial<ITextFieldStyles> = { fieldGroup: { width: "3rem" } };
+const styles: Partial<ITextFieldStyles> = { fieldGroup: { width: "5rem" } };
 
 const is_int = /^\d+$/;
 const is_number = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
@@ -12,10 +12,10 @@ interface props {
     spec: integer_input | range_input;
     onChanged: { (x: any): void };
     value: number;
-    onClick?: () => void;
+    activate?: () => void;
 }
 
-export const NumberInput: React.FC<props> = ({ spec, value, onChanged, onClick }) => {
+export const NumberInput: React.FC<props> = ({ spec, value, onChanged, activate }) => {
 
     const { type, label, min, max } = spec;
     const [s_value, setValue] = useState(value.toString())
@@ -45,10 +45,21 @@ export const NumberInput: React.FC<props> = ({ spec, value, onChanged, onClick }
         setValue(newValue);
         onChanged(+newValue)
         setErrorMessage(undefined)
-    }, [min, max, type])
+    }, [min, max, type, onChanged])
 
     return (
-        <div onClick={onClick}>
+        <div
+            onClick={(ev: React.MouseEvent<HTMLElement>) => {
+                if (typeof activate !== "undefined") {
+                    ev.preventDefault()
+                    ev.stopPropagation()
+                    activate()
+                }
+            }}
+            style={{
+                display: 'inline-block',
+                margin: ".5rem"
+            }}>
             <TextField
                 label={label}
                 value={s_value}

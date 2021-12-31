@@ -1,4 +1,4 @@
-import { register } from "../registry";
+import { register } from "../index";
 
 type rgb = [number, number, number];
 

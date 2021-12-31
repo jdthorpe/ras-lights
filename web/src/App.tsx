@@ -2,7 +2,7 @@ import React from "react"
 import { Pivot, PivotItem } from '@fluentui/react';
 import Manual from "./manual"
 import Modes from "./modes"
-import Editor from "./editor"
+import Editor from "./editor/editor"
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 initializeIcons();
 

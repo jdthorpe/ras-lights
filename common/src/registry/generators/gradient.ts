@@ -1,7 +1,5 @@
-import { register } from "../registry";
-import settings from "../settings";
-
-type rgb = [number, number, number];
+import { register, globals } from "../index";
+import { rgb } from "../../../types/mode";
 
 function average(a: rgb, b: rgb, w: number): rgb {
     return [
@@ -16,10 +14,10 @@ interface input {
     b: rgb;
 }
 
-function gradient(x: input): rgb[] {
+function gradient(x: input, globals: globals): rgb[] {
     const out: rgb[] = [];
-    for (let i = 0; i < settings.ws281x.leds; i++) {
-        out.push(average(x.a, x.b, i / Math.max(settings.ws281x.leds - 1, 1)));
+    for (let i = 0; i < globals.leds; i++) {
+        out.push(average(x.a, x.b, i / Math.max(globals.leds - 1, 1)));
     }
     return out;
 }

@@ -14,6 +14,11 @@ export interface func_config {
     params: { [key: string]: mode_param };
 }
 
+export interface mode {
+    (): rgb[];
+    __args__: any;
+}
+
 export type rgb = [number, number, number];
 export type rgbw = [number, number, number, number];
 export type hsv = [number, number, number];

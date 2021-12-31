@@ -1,7 +1,6 @@
 import { hsv } from "color-convert";
 
-import { register } from "../registry";
-import settings from "../settings";
+import { register, globals } from "../index";
 
 interface input {
     n: number;
@@ -9,16 +8,12 @@ interface input {
 
 type rgb = [number, number, number];
 
-function rainbow_stripes(inputs: input): rgb[] {
+function rainbow_stripes(inputs: input, globals: globals): rgb[] {
     const { n } = inputs;
     const out: rgb[] = [];
-    for (let i = 0; i < settings.ws281x.leds; i++)
+    for (let i = 0; i < globals.leds; i++)
         out.push(
-            hsv.rgb([
-                (360 * Math.floor((i * n) / settings.ws281x.leds)) / n,
-                100,
-                100,
-            ])
+            hsv.rgb([(360 * Math.floor((i * n) / globals.leds)) / n, 100, 100])
         );
     return out;
 }

@@ -1,9 +1,5 @@
-import {
-    input,
-    value,
-    values,
-    signature,
-} from "@ras-lights/common/types/parameters";
+/* 
+import { input, value, signature } from "@ras-lights/common/types/parameters";
 
 type func = { (): any } | { (inputs: any): any };
 
@@ -45,3 +41,5 @@ export function get_descriptors(): d {
 
 import "./effects";
 import "./generators";
+
+*/

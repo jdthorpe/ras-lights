@@ -12,7 +12,7 @@ import {
 } from '@fluentui/react/lib/index';
 import { Label } from '@fluentui/react/lib/Label';
 
-import { color_input, color_array_input } from "common/types/parameters"
+import { color_input, color_array_input } from "@ras-lights/common/types/parameters"
 
 const WrappedRow = styled.div`
     display: flex;
@@ -54,12 +54,22 @@ const colorPickerStyles: Partial<IColorPickerStyles> = {
 interface color_value_props {
     spec: color_input;
     value: rgb;
-    onClick: () => void;
+    activate: () => void;
 }
-export const ColorValue: React.FC<color_value_props> = ({ spec, value, onClick }) => {
+export const ColorValue: React.FC<color_value_props> = ({ spec, value, activate }) => {
 
     return (
-        <div onClick={onClick}>
+        <div
+            onClick={(ev: React.MouseEvent<HTMLElement>) => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                console.log("activating??")
+                activate()
+            }}
+            style={{
+                display: 'inline-block',
+                margin: ".5rem"
+            }}>
             <Label>{spec.label}</Label>
             <div
                 style={{
@@ -139,12 +149,18 @@ export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
 interface color_array_value_props {
     spec: color_array_input;
     value: rgb[];
-    onClick: () => void;
+    activate: () => void;
 }
 
-export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, onClick }) => {
+export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, activate }) => {
     return (
-        <div onClick={onClick}>
+        <div
+            onClick={(ev: React.MouseEvent<HTMLElement>) => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                activate()
+            }}
+            style={{ display: 'inline-block' }}>
             <Label>{spec.label}</Label>
             <ColorArray colors={colors} />
         </div>
