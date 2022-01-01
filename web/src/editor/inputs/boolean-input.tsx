@@ -1,32 +1,37 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { boolean_input } from "@ras-lights/common/types/parameters";
 import { Toggle } from '@fluentui/react/lib/Toggle';
+import { EditorContext, pathEquals } from '../editor';
 
 
 interface props {
     spec: boolean_input;
-    onChanged: { (x: any): void };
+    // onChanged: { (x: any): void };
     value: boolean;
-    activate?: () => void;
+    path: number[];
+    // activate?: () => void;
 }
 
-export const BooleanInput: React.FC<props> = ({ spec, value, onChanged, activate }) => {
+export const BooleanInput: React.FC<props> = ({ spec, value, path }) => {
 
     const [checked, setChecked] = useState(value)
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, path)
+
     const onChange = useCallback((val: boolean) => {
         setChecked(val);
-        onChanged(val)
-    }, [])
+        editor.set_value({ type: "boolean", value: val }, path)
+    }, [setChecked, editor])
 
     return (
-        <div onClick={(ev: React.MouseEvent<HTMLElement>) => {
-            if (typeof activate !== "undefined") {
+        <div
+            style={{ backgroundColor: is_active ? "#cccccc" : "tranparent" }}
+            onClick={(ev: React.MouseEvent<HTMLElement>) => {
                 ev.preventDefault()
                 ev.stopPropagation()
-                activate()
-            }
-        }}>
+                editor.set_active_path(path)
+            }}>
             <Toggle
                 label={spec.label}
                 checked={checked}

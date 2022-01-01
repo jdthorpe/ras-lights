@@ -6,6 +6,9 @@ import settings from "../settings";
 import { build_node } from "@ras-lights/common";
 
 import { mode_config } from "../../index";
+import Datastore from "nedb-promises";
+
+const datastore = Datastore.create("/var/lib/ras-lights/modes.db");
 
 const router = Router();
 

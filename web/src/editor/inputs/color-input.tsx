@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import debounce from "lodash.debounce"
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
@@ -11,12 +11,14 @@ import {
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
 import { Label } from '@fluentui/react/lib/Label';
+import { rgb } from '@ras-lights/common/types/mode';
 
 import { color_input, color_array_input } from "@ras-lights/common/types/parameters"
+import { EditorContext, pathEquals } from '../editor';
 
 const WrappedRow = styled.div`
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: wrap;
     gap: .7rem;
 `
@@ -40,7 +42,6 @@ const largeIcon = mergeStyles({
     // margin: '0 25px',
 });
 
-export type rgb = [number, number, number]
 
 const colorPickerStyles: Partial<IColorPickerStyles> = {
     panel: { padding: 12 },
@@ -54,9 +55,13 @@ const colorPickerStyles: Partial<IColorPickerStyles> = {
 interface color_value_props {
     spec: color_input;
     value: rgb;
-    activate: () => void;
+    path: number[]
 }
-export const ColorValue: React.FC<color_value_props> = ({ spec, value, activate }) => {
+
+export const ColorValue: React.FC<color_value_props> = ({ spec, value, path }) => {
+
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, path)
 
     return (
         <div
@@ -64,11 +69,12 @@ export const ColorValue: React.FC<color_value_props> = ({ spec, value, activate 
                 ev.preventDefault()
                 ev.stopPropagation()
                 console.log("activating??")
-                activate()
+                editor.set_active_path(path)
             }}
             style={{
                 display: 'inline-block',
-                margin: ".5rem"
+                margin: "0 .5rem",
+                backgroundColor: is_active ? "#cccccc" : "transparent"
             }}>
             <Label>{spec.label}</Label>
             <div
@@ -90,19 +96,23 @@ export const ColorValue: React.FC<color_value_props> = ({ spec, value, activate 
 interface color_input_props {
     spec: color_input;
     value: rgb;
-    onChanged: { (x: rgb): void };
+    path: number[];
 }
 
 // <FontIcon aria-label="Remove" iconName="Cancel" className={iconClass} onClick={() => setOpen(false)} />
 
-export const ColorInput: React.FC<color_input_props> = ({ value, onChanged, spec }) => {
+export const ColorInput: React.FC<color_input_props> = ({ value, path, spec }) => {
 
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, path)
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
-        onChanged([color.r, color.g, color.b,],)
-    }, 25), [onChanged]);
+        editor.set_value({ type: "rgb", value: [color.r, color.g, color.b,] }, path)
+    }, 50), [editor]);
 
     return (
-        <div>
+        <div
+            style={{ backgroundColor: is_active ? "#cccccc" : "none" }}
+        >
             <Label>{spec.label}</Label>
             <ColorPicker
                 color={`#${cc.rgb.hex(value)}`}
@@ -149,18 +159,23 @@ export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
 interface color_array_value_props {
     spec: color_array_input;
     value: rgb[];
-    activate: () => void;
+    path: number[];
 }
 
-export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, activate }) => {
+export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, path }) => {
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, path)
     return (
         <div
             onClick={(ev: React.MouseEvent<HTMLElement>) => {
                 ev.preventDefault()
                 ev.stopPropagation()
-                activate()
+                editor.set_active_path(path)
             }}
-            style={{ display: 'inline-block' }}>
+            style={{
+                display: 'inline-block',
+                backgroundColor: is_active ? "#cccccc" : "none",
+            }}>
             <Label>{spec.label}</Label>
             <ColorArray colors={colors} />
         </div>
@@ -170,44 +185,55 @@ export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colo
 interface color_array_input_props {
     spec: color_array_input;
     value: rgb[];
-    onChanged: { (x: rgb[]): void };
+    // onChanged: { (x: rgb[]): void };
+    path: number[];
 }
 
-export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colors, spec, onChanged }) => {
+export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colors, spec, path }) => {
 
     const [active_color, set_active_color] = useState(0)
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, path)
 
     const addColor = React.useCallback(() => {
-        onChanged([
+
+        const value = [
             ...colors.slice(0, active_color),
             colors[active_color],
             ...colors.slice(active_color),
-        ])
+        ]
+
+        editor.set_value({ type: "rgb[]", value }, path)
         set_active_color(active_color + 1)
-    }, [onChanged, colors, active_color]);
+
+    }, [editor, colors, active_color]);
 
 
     const dropColor = React.useCallback((i: number) => {
-        onChanged([
+        const value = [
             ...colors.slice(0, i),
             ...colors.slice(i + 1),
-        ])
+        ]
+        editor.set_value({ type: "rgb[]", value }, path)
         if (active_color > i) {
             set_active_color(active_color - 1)
         }
-    }, [onChanged, colors, active_color]);
+    }, [editor, colors, active_color]);
 
 
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
-        onChanged([
+        const value: rgb[] = [
             ...colors.slice(0, active_color),
             [color.r, color.g, color.b,],
             ...colors.slice(active_color + 1),
-        ])
-    }, 25), [onChanged, colors, active_color]);
+        ]
+        editor.set_value({ type: "rgb[]", value }, path)
+    }, 25), [editor, colors, active_color]);
 
     return (
-        <div>
+        <div
+            style={{ backgroundColor: is_active ? "#cccccc" : "tranparent" }}
+        >
             <Label>{spec.label}</Label>
             <WrappedRow>
                 {colors.map((color: rgb, i) => (

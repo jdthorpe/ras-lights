@@ -20,6 +20,7 @@
         "express": "^4.17.2",
         "ini": "^2.0.0",
         "js-yaml": "^4.1.0",
+        "nedb-promises": "^5.0.3",
         "rpi-ws281x": "^1.0.36"
     },
     "devDependencies": {

@@ -3,6 +3,7 @@ import { Pivot, PivotItem } from '@fluentui/react';
 import Manual from "./manual"
 import Modes from "./modes"
 import Editor from "./editor/editor"
+import Schedule from "./schedule/schedule";
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 initializeIcons();
 
@@ -17,7 +18,7 @@ function App() {
         <Modes />
       </PivotItem>
       <PivotItem headerText="Schedule">
-        <Modes />
+        <Schedule />
       </PivotItem>
       <PivotItem headerText="Editor">
         <Editor />

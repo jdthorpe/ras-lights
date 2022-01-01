@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, createContext } from 'react';
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
@@ -16,9 +16,10 @@ import { FuncValue } from './inputs/func-input';
 import { ColorArray, ColorInput, ColorArrayInput, ColorValue } from './inputs/color-input';
 import { BooleanInput } from './inputs/boolean-input';
 import { NumberInput } from './inputs/number-input';
-import { Dropdown, IDropdownOption } from '@fluentui/react';
+import { Dropdown, IDropdownOption, inputProperties } from '@fluentui/react';
 
 import { make_loop, ILoop } from "./loop"
+
 
 const Wrapper = styled.div`
     margin: 1rem;
@@ -34,8 +35,8 @@ const Main = styled.div`
     flex-grow: 1;
 `
 const Options = styled.div`
-    min-width: 30rem;
-    max-width: 30rem;
+    min-width: 20rem;
+    max-width: 20rem;
     background-color: #cccccc;
     padding: .8rem;
 `
@@ -123,6 +124,29 @@ function build_fun(name: string, s: signature): func_config {
     }
 }
 
+
+export function pathEquals(a: number[], b: number[]) {
+    return a.length === b.length &&
+        a.every((val, index) => val === b[index]);
+}
+
+interface EditorContext {
+    set_value: (new_value: mode_param, path: number[],) => void;
+    set_active_path: (path: number[]) => void;
+    get_preview: React.FC<{ path: number[] }>;
+    active_path: number[];
+    onClose: (path: number[]) => void;
+    getWrappers: (path: number[]) => string[];
+}
+export const EditorContext = createContext<EditorContext>({
+    set_value: () => { },
+    set_active_path: () => { },
+    get_preview: () => (<p>too early</p>),
+    active_path: [],
+    onClose: () => { },
+    getWrappers: () => [],
+});
+
 interface editorProps {
     name?: string;
     signatures: signatures
@@ -141,9 +165,101 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     useEffect(() => {
         return function cleanup() {
             console.log("cleaning up")
-            loop.stop()
+            loop.stop();
+            (async () => { await fetch("/api/mode/off"); })()
         };
     }, []);
+
+    const getWrappers = (path: number[]): string[] => {
+
+        const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
+        const s = signatures[old_value.name]
+        const old_type = s.output
+        // const M = Object.entries(signatures).filter(e => { const s = e[1]; return s.output === old_type })
+        // console.log("========> ",
+        //     old_value.name,
+        //     old_type,
+        //     M.length,
+        //     M.map(e => e[0]),
+        //     M.map(e => e[1].input.filter(g => g.type === old_type))
+        // )
+
+        return Object.entries(signatures)
+            .filter(e => {
+                const s = e[1]
+                return s.output === old_type && (s.input.filter((p: input) => p.type === old_type).length > 0)
+            }).map(e => e[0]).sort()
+
+    }
+
+    // // A list of functions whose outputs are the same as the current item type
+    // const onWrap = (path: number[]) => {
+    //     if (similar_children.length) {
+    //         set((old_value as func_config).params[similar_children[0].key], path)
+    //     } else {
+    //         if (active_path.length === 0) {
+    //             set(default_show, [])
+    //         } else {
+    //             const _input = get_item_at_path(show, active_path, signatures)[1]
+    //             set({
+    //                 type: _input!.type,
+    //                 // @ts-ignore no (simple) way to check this 
+    //                 value: _input!.default
+    //             }, active_path)
+    //         }
+    //     }
+    // }
+
+
+    const onClose = (path: number[]) => {
+
+        const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
+        const s = signatures[old_value.name]
+        const old_type = s.output
+        const similar_children = s.input.filter((p: input) => p.type === old_type)
+
+        if (similar_children.length) {
+            set((old_value as func_config).params[similar_children[0].key], path)
+        } else {
+            if (active_path.length === 0) {
+                set(default_show, [])
+            } else {
+                const _input = get_item_at_path(show, active_path, signatures)[1]
+                set({
+                    type: _input!.type,
+                    // @ts-ignore no (simple) way to check this 
+                    value: _input!.default
+                }, active_path)
+            }
+        }
+    }
+
+    useEffect(() => {
+        (async () => {
+            if (show.type === "func") {
+                // const response =
+                await fetch("/api/mode/", {
+                    method: 'POST',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(show)
+                });
+                //console.log("/api/mode/ ==>", response)
+            } else {
+                if (!Array.isArray(show.value))
+                    return
+                // const response =
+                await fetch("/api/lights/set-colors", {
+                    method: 'POST',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(show.value)
+                });
+                //console.log("/api/lights/set-colors ==>", response)
+
+            }
+        })()
+    }, [show]);
 
     const [active_item, active_input] = get_item_at_path(show, active_path, signatures)
 
@@ -198,7 +314,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
 
         let old_value: mode_param = get_item_at_path(show, path, signatures)[0]
-        // console.log("set old_value: ", old_value)
 
         // error checking
         let old_type = old_value.type === "func" ? signatures[old_value.name].output : old_value.type
@@ -242,78 +357,76 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     }
 
     return (
-        <Container>
-            {/* <div>
+        <EditorContext.Provider value={{
+            set_active_path,
+            get_preview,
+            active_path,
+            set_value: set,
+            onClose,
+            getWrappers,
+        }}>
+            <>
+                <Container>
+                    {/* <div>
                 <pre>
                     {JSON.stringify(show, null, 4)}
                 </pre>
                 {JSON.stringify(active_path)}
             </div> */}
-            <Main>
-                {JSON.stringify(active_path)}
-                {show.type === "func" ? (
-                    <div>
-                        <FuncValue
-                            config={show}
-                            path={[]}
-                            signatures={signatures}
-                            activate={set_active_path}
-                            Preview={get_preview}
-                        />
-                    </div>
-                ) : (<ColorArray colors={show.value} />)}
-            </Main>
-            <Options>
-
-                {generators.length && <Dropdown
-                    label="Input Type"
-                    selectedKey={active_item.type === "func" ? active_item.name : "constant"}
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChanged={onDropdownChanged}
-                    placeholder="Select an option"
-                    options={["constant", ...generators].map(s => ({ key: s, text: s }))}
-                />}
-                {active_item.type === "boolean" && (
-                    <BooleanInput
-                        value={active_item.value}
-                        spec={active_input as boolean_input}
-                        onChanged={(value) => set({ type: "boolean", value }, active_path)} />
-                )}
-                {(active_item.type === "number" || active_item.type === "integer") && (
-                    <div>
-                        {JSON.stringify(active_path)}
-
-                        <NumberInput
-                            value={active_item.value}
-                            spec={active_input as range_input | integer_input}
-                            onChanged={function (value) {
-                                // console.log("updating:", active_input?.label)
-                                // console.log(">> active path", active_path)
-                                set({ type: active_item.type, value }, active_path)
-                            }} />
-                    </div>
-                )}
-                {active_item.type === "rgb" && (
-                    <ColorInput
-                        value={active_item.value}
-                        spec={active_input as color_input}
-                        onChanged={(value) => {
-                            // console.log("calling set", value, active_path)
-                            set({ type: "rgb", value }, active_path)
-                        }} />
-                )}
-                {active_item.type === "rgb[]" && (
-                    <ColorArrayInput
-                        value={active_item.value}
-                        spec={active_path.length === 0 ? default_spec : (active_input as color_array_input)}
-                        onChanged={(value) => set({ type: "rgb[]", value }, active_path)} />
-                )}
+                    <Main>
+                        {show.type === "func" ? (
+                            <div>
+                                <FuncValue
+                                    config={show}
+                                    path={[]}
+                                    signatures={signatures}
+                                />
+                            </div>
+                        ) : (<ColorArray colors={show.value} />)}
+                    </Main>
+                    <Options>
+                        {(generators.length > 0) && <Dropdown
+                            label="Input Type"
+                            selectedKey={active_item.type === "func" ? active_item.name : "constant"}
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChanged={onDropdownChanged}
+                            placeholder="Select an option"
+                            options={["constant", ...generators].map(s => ({ key: s, text: s }))}
+                        />}
+                        {active_item.type === "boolean" && (
+                            <BooleanInput
+                                value={active_item.value}
+                                spec={active_input as boolean_input}
+                                path={active_path}
+                            />
+                        )}
+                        {(active_item.type === "number" || active_item.type === "integer") && (
+                            < NumberInput
+                                value={active_item.value}
+                                spec={active_input as range_input | integer_input}
+                                path={active_path}
+                            />
+                        )}
+                        {active_item.type === "rgb" && (
+                            <ColorInput
+                                value={active_item.value}
+                                spec={active_input as color_input}
+                                path={active_path}
+                            />
+                        )}
+                        {active_item.type === "rgb[]" && (
+                            <ColorArrayInput
+                                value={active_item.value}
+                                spec={active_path.length === 0 ? default_spec : (active_input as color_array_input)}
+                                path={active_path}
+                            />
+                        )}
 
 
-            </Options>
-
-        </Container>
-
+                    </Options>
+                </Container>
+            </>
+        </EditorContext.Provider>
     )
 };
 
