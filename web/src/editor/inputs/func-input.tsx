@@ -111,10 +111,9 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                     signatures[config.name].input.map((input, i: number) => {
                         const value = config.params[input.key];
                         if (value.type === "func") {
-                            return (<div>
+                            return (<div key={i} >
                                 <Label>{input.label}:</Label>
                                 <FuncValue
-                                    key={i}
                                     config={value}
                                     path={[...path, i]}
                                     signatures={signatures}
@@ -139,42 +138,43 @@ interface parameterProps {
     path: number[];
 }
 
+const NUM_TYPES = ["number", "integer"]
+
 const Parameter: React.FC<parameterProps> = ({ config, value, path }) => {
+
+    const editor = useContext(EditorContext);
+    if (!editor.showNumericInputs && NUM_TYPES.indexOf(config.type) !== -1)
+        return null
 
     switch (config.type) {
         case "number":
-        case "integer": {
+        case "integer":
             return <NumberValue
                 spec={config as integer_input | range_input}
                 value={(value as num_value).value}
                 path={path}
             />
-        }
-        case "boolean": {
+
+        case "boolean":
             return <BooleanValue
                 spec={config as boolean_input}
                 value={(value as bool_value).value}
                 path={path}
             />
 
-        }
-        case "rgb": {
+        case "rgb":
             return <ColorValue
                 spec={config as color_input}
                 value={(value as rgb_value).value}
                 path={path}
             />
 
-        }
-        case "rgb[]": {
+        case "rgb[]":
             return <ColorArrayValue
                 spec={config as color_array_input}
                 value={(value as rgb_array_value).value}
                 path={path}
             />
 
-        }
     }
-
-
 }

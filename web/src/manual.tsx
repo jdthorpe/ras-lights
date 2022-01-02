@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 // DefaultButton, 
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import debounce from "lodash.debounce"
@@ -8,6 +8,13 @@ import {
     IColor,
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
+import styled from "styled-components"
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+`
 
 async function turnOff() {
     try {
@@ -54,11 +61,16 @@ const Manual: React.FC = () => {
         setColor(colorObj)
         update_color(colorObj)
     }, 25), [setColor, update_color]);
+    useEffect(() => {
+        fetch("/api/mode/off")
+    }, [])
 
     return (
         <div style={{ margin: "1.5rem" }}>
-            <PrimaryButton onClick={setRandomColors} text="Random Colors" />
-            <PrimaryButton onClick={turnOff} text="Off" />
+            <Row>
+                <PrimaryButton onClick={setRandomColors} text="Random Colors" />
+                <PrimaryButton onClick={turnOff} text="Off" />
+            </Row>
             <h3>Click to pick a single color</h3>
             <ColorPicker
                 color={color}

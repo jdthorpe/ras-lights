@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Cron, { CronError } from "react-js-cron"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
-// import { signatures, } from "@ras-lights/common/types/parameters"
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { ISchedule } from '@ras-lights/common/types/schedule';
 import cronstrue from 'cronstrue';
@@ -87,7 +86,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
                         label="Mode"
                         selectedKey={mode}
                         // eslint-disable-next-line react/jsx-no-bind
-                        onChanged={(option: IDropdownOption<any>, index?: number | undefined) => setMode(option.key as string)}
+                        onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<any>, index?: number | undefined) => option && setMode(option.key as string)}
                         placeholder="Select mode"
                         options={modes.sort().map(s => ({ key: s, text: s }))}
                         styles={dropdownStyles}

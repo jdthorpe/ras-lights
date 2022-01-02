@@ -1,10 +1,19 @@
-import React, { useState, useCallback, useEffect, createContext } from 'react';
+import React, { useState, useEffect, createContext, useCallback } from 'react';
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCode, faHashtag } from '@fortawesome/free-solid-svg-icons'
+import { save_show, fetch_modes } from "../utils/api"
+import { Label } from '@fluentui/react/lib/Label';
+import { PrimaryButton } from '@fluentui/react/lib/Button';
+import {
+    ComboBox,
+    IComboBoxOption,
+    IComboBox,
+    IComboBoxStyles,
+} from '@fluentui/react/lib/ComboBox';
 
-// font awesome 
-// <i class="fas fa-gift"></i>
 
 import { func_config, mode_param, rgb_array_value, rgb, mode } from "@ras-lights/common/types/mode";
 import {
@@ -13,16 +22,32 @@ import {
     range_input, integer_input, boolean_input
 } from "@ras-lights/common/types/parameters"
 import { FuncValue } from './inputs/func-input';
-import { ColorArray, ColorInput, ColorArrayInput, ColorValue } from './inputs/color-input';
+import { ColorArray, ColorInput, ColorArrayInput } from './inputs/color-input';
 import { BooleanInput } from './inputs/boolean-input';
 import { NumberInput } from './inputs/number-input';
-import { Dropdown, IDropdownOption, inputProperties } from '@fluentui/react';
+import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
 import { make_loop, ILoop } from "./loop"
+import { type } from 'os';
 
+const ACTIVE_COLOR = "blue"
+const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
+const Header = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    background-color: #cccccc;
+    margin-top: 1rem;
+    padding: 1rem;
+`
 
-const Wrapper = styled.div`
-    margin: 1rem;
+const IconBox = styled.div`
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.2rem;
+    border-radius: 2px;
+    background: grey;
+    padding-top: 0.4rem;
 `
 
 const Container = styled.div`
@@ -137,7 +162,9 @@ interface EditorContext {
     active_path: number[];
     onClose: (path: number[]) => void;
     getWrappers: (path: number[]) => string[];
+    showNumericInputs: boolean;
 }
+
 export const EditorContext = createContext<EditorContext>({
     set_value: () => { },
     set_active_path: () => { },
@@ -145,13 +172,14 @@ export const EditorContext = createContext<EditorContext>({
     active_path: [],
     onClose: () => { },
     getWrappers: () => [],
+    showNumericInputs: false,
 });
 
 interface editorProps {
     name?: string;
     signatures: signatures
 }
-
+const FREE_TEXT_KEY = "__free_text__"
 
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
@@ -160,9 +188,39 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [show, set_show] = useState<func_config | rgb_array_value>(default_show)
     const [colors, set_colors] = useState<rgb[]>()
     const [mode, set_mode] = useState<mode>()
+    const [loading, set_loading] = useState(true)
+    const [showNumericInputs, set_showNumericInputs] = useState<boolean>(false)
+    const [show_raw_input, set_show_raw_input] = useState<boolean>(false)
+
+    const [free_text_option, set_free_text_option] = useState<string>()
+    const [nameKey, set_nameKey] = useState<string | number | undefined>()
+    const [existing_modes, set_existing_modes] = useState<IComboBoxOption[]>()
+    const [existing_shows, set_existing_shows] = useState<{ [key: string]: func_config | rgb_array_value }>()
 
     const [loop] = useState<ILoop>(() => make_loop(set_colors, { leds: 8 }))
+
+    const NameOptions: IComboBoxOption[] = free_text_option ? [
+        { key: FREE_TEXT_KEY, text: free_text_option },
+        ...existing_modes!
+    ] : existing_modes!
+
     useEffect(() => {
+
+        // component will mount
+        (async () => {
+            const shows = await fetch_modes()
+            set_existing_modes(shows.map(m => ({ text: m.name, key: m.name })))
+            const entries = shows
+                .map(s => [s.name, s.def as func_config]);
+            const d_shows = Object.fromEntries(entries)
+            console.log("show entries:", entries)
+            console.log(d_shows)
+            set_existing_shows(d_shows)
+            console.log("set_existing_shows()", typeof d_shows)
+            set_loading(false)
+        })()
+
+        // component will unmount
         return function cleanup() {
             console.log("cleaning up")
             loop.stop();
@@ -170,20 +228,19 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         };
     }, []);
 
+    const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
+    const saveShow = useCallback(async () => {
+        await save_show({
+            name: nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
+            def: show,
+        })
+    }, [show])
+
     const getWrappers = (path: number[]): string[] => {
 
         const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
         const s = signatures[old_value.name]
         const old_type = s.output
-        // const M = Object.entries(signatures).filter(e => { const s = e[1]; return s.output === old_type })
-        // console.log("========> ",
-        //     old_value.name,
-        //     old_type,
-        //     M.length,
-        //     M.map(e => e[0]),
-        //     M.map(e => e[1].input.filter(g => g.type === old_type))
-        // )
-
         return Object.entries(signatures)
             .filter(e => {
                 const s = e[1]
@@ -191,25 +248,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             }).map(e => e[0]).sort()
 
     }
-
-    // // A list of functions whose outputs are the same as the current item type
-    // const onWrap = (path: number[]) => {
-    //     if (similar_children.length) {
-    //         set((old_value as func_config).params[similar_children[0].key], path)
-    //     } else {
-    //         if (active_path.length === 0) {
-    //             set(default_show, [])
-    //         } else {
-    //             const _input = get_item_at_path(show, active_path, signatures)[1]
-    //             set({
-    //                 type: _input!.type,
-    //                 // @ts-ignore no (simple) way to check this 
-    //                 value: _input!.default
-    //             }, active_path)
-    //         }
-    //     }
-    // }
-
 
     const onClose = (path: number[]) => {
 
@@ -244,7 +282,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(show)
                 });
-                //console.log("/api/mode/ ==>", response)
             } else {
                 if (!Array.isArray(show.value))
                     return
@@ -255,8 +292,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(show.value)
                 });
-                //console.log("/api/lights/set-colors ==>", response)
-
             }
         })()
     }, [show]);
@@ -338,7 +373,9 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     }, [show, set_mode, active_path])
 
 
-    const onDropdownChanged = (option: IDropdownOption) => {
+    const onDropdownChanged = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+        if (!option)
+            return
         if (option.key === "constant") {
             if (active_path.length === 0) {
                 set(default_show, [])
@@ -356,6 +393,31 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }
 
+    const onNameChange = React.useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string): void => {
+            let key = option?.key;
+            if (!option && value) {
+                // If allowFreeform is true, the newly selected option might be something the user typed that
+                // doesn't exist in the options list yet. So there's extra work to manually add it.
+                set_free_text_option(value)
+                set_nameKey(FREE_TEXT_KEY);
+            } else {
+                set_nameKey(key);
+
+                if (existing_shows && typeof key === "string" && key !== FREE_TEXT_KEY) {
+                    set(existing_shows[key], [])
+                    // console.log('setting show name', [key])
+                    // console.log('typeof existing', typeof existing_shows)
+                    // console.log('setting show', existing_shows[key])
+                    // set_show(existing_shows[key])
+                    // set_active_path([])
+                }
+            }
+        },
+        [existing_shows],
+    );
+
+    if (loading) return (<p>loading</p>)
     return (
         <EditorContext.Provider value={{
             set_active_path,
@@ -364,12 +426,41 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             set_value: set,
             onClose,
             getWrappers,
+            showNumericInputs,
         }}>
             <>
+                <Header>
+                    <Label>Mode Name</Label>
+                    <ComboBox
+                        allowFreeform={true}
+                        autoComplete={'on'}
+                        options={NameOptions}
+                        styles={comboBoxStyles}
+                        selectedKey={nameKey}
+                        onChange={onNameChange}
+                    />
+                    <div style={{ margin: "auto" }}></div>
+                    <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
+                        <FontAwesomeIcon
+                            title="Show numeric inputs"
+                            style={{ margin: "auto", display: "block", color: showNumericInputs ? ACTIVE_COLOR : "black" }}
+                            icon={faHashtag} />
+                    </IconBox>
+                    <IconBox onClick={() => set_show_raw_input(!show_raw_input)}>
+                        <FontAwesomeIcon
+                            title="Show raw data"
+                            style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
+                            icon={faCode} />
+                    </IconBox>
+                    <PrimaryButton
+                        onClick={saveShow}
+                        disabled={disableSave}
+                    >Save</PrimaryButton>
+                </Header>
                 <Container>
                     {/* <div>
                 <pre>
-                    {JSON.stringify(show, null, 4)}
+                    {JSON.stringify(NameOptions, null, 4)}
                 </pre>
                 {JSON.stringify(active_path)}
             </div> */}
@@ -383,13 +474,19 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                                 />
                             </div>
                         ) : (<ColorArray colors={show.value} />)}
+                        {show_raw_input &&
+                            <div>
+                                <Label>Raw Data:</Label>
+                                <pre>{JSON.stringify(show, null, 4)}</pre>
+                            </div>
+                        }
                     </Main>
                     <Options>
                         {(generators.length > 0) && <Dropdown
                             label="Input Type"
                             selectedKey={active_item.type === "func" ? active_item.name : "constant"}
                             // eslint-disable-next-line react/jsx-no-bind
-                            onChanged={onDropdownChanged}
+                            onChange={onDropdownChanged}
                             placeholder="Select an option"
                             options={["constant", ...generators].map(s => ({ key: s, text: s }))}
                         />}

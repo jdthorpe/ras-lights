@@ -8,6 +8,11 @@ export type mode_param =
     | rgb_array_value
     | bool_value;
 
+export interface show {
+    name: string;
+    def: func_config | rgb_array_value;
+}
+
 export interface func_config {
     type: "func";
     name: string;

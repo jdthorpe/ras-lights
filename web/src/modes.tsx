@@ -21,6 +21,7 @@ const Modes: React.FC = () => {
                 });
                 try {
                     const config: any[] = await response.json();
+                    console.log("config: ", config)
                     set_mode_config(config)
                     const il: IDropdownOption[] = config.map(x => ({ key: x.name, text: x.name }))
                     console.log("il: ", il)
@@ -55,7 +56,7 @@ const Modes: React.FC = () => {
                 label="Light Mode"
                 options={item_list}
                 styles={dropdownStyles}
-                onChanged={(option: IDropdownOption, index?: number) => set_item(option)}
+                onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => option && set_item(option)}
             />
             {item && (<div style={{ margin: "1rem" }}>
                 <JSONViewer
