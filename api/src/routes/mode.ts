@@ -17,8 +17,7 @@ router.get("/:mode", async (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-// Save a new mode
-router.put("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
     const body = req.body;
     let mode;
     try {
@@ -37,7 +36,8 @@ router.put("/", async (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-router.post("/", async (req: Request, res: Response) => {
+// Save a new mode
+router.put("/", async (req: Request, res: Response) => {
     const body: show = req.body;
 
     console.log(`Creating mode ${body.name}`, body);

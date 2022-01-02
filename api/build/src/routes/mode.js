@@ -17,8 +17,7 @@ router.get("/:mode", async (req, res) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-// Save a new mode
-router.put("/", async (req, res) => {
+router.post("/", async (req, res) => {
     const body = req.body;
     let mode;
     try {
@@ -36,7 +35,8 @@ router.put("/", async (req, res) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-router.post("/", async (req, res) => {
+// Save a new mode
+router.put("/", async (req, res) => {
     const body = req.body;
     console.log(`Creating mode ${body.name}`, body);
     const start = perf_hooks_1.performance.now();
