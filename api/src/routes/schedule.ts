@@ -1,6 +1,7 @@
 import { performance } from "perf_hooks";
 import { Router, Request, Response } from "express";
 import { scheduleStore } from "../db";
+import { cancel, schedule_mode, get_schedules, reload } from "../cron";
 
 /*
 
@@ -20,12 +21,38 @@ curl http://192.168.4.64/api/schedule/
 
 const router = Router();
 
+// ------------------------------
+// utility
+// ------------------------------
+
+// RESTART the cron jobs
+router.get("/restart", async (req: Request, res: Response) => {
+    const start = performance.now();
+    await reload();
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+
+// GET the list of scheduled jobs
+router.get("/next", async (req: Request, res: Response) => {
+    const results = await get_schedules();
+    res.status(200);
+    res.json(results);
+});
+
+// ------------------------------
+// CRUD operations
+// ------------------------------
+
+// READ
 router.get("/", async (req: Request, res: Response) => {
     const results = await scheduleStore.find({}, { _id: 0 });
     res.status(200);
     res.json(results);
 });
 
+// CREATE + UPDATE (upsert)
 router.post("/", (req: Request, res: Response) => {
     const body = req.body;
     console.log(`schedule body: ${JSON.stringify(body)}`);
@@ -36,11 +63,13 @@ router.post("/", (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
+// DELETEjkkj
 router.delete("/", (req: Request, res: Response) => {
-    const body = req.body;
+    const body: { name: string } = req.body;
     const start = performance.now();
     if (!body.name) throw new Error("missing name");
     scheduleStore.remove({ name: body.name }, { multi: true });
+    cancel(body.name);
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
