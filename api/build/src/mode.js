@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMode = exports.create_node = void 0;
+exports.setMode = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const common_1 = require("@ras-lights/common");
 const ws681x_1 = require("./ws681x");
@@ -22,14 +22,12 @@ const schema = {
 // ----------------------------------------
 // registry
 // ----------------------------------------
-const modes = {};
-function create_node(name, x) {
-    modes[name] = (0, common_1.build_node)(x, { leds: settings_1.default.ws281x.leds });
-}
-exports.create_node = create_node;
+// const modes: { [key: string]: { (): any } } = {};
+// export function create_node(name: string, x: func_config) {
+//     modes[name] = build_node(x, { leds: settings.ws281x.leds });
+// }
 async function get_mode(name) {
-    if (name in modes)
-        return modes[name];
+    // if (name in modes) return modes[name];
     let mode;
     try {
         mode = await db_1.modeStore.findOne({ name });
@@ -40,7 +38,7 @@ async function get_mode(name) {
     const func = (0, common_1.build_node)(mode.def, {
         leds: settings_1.default.ws281x.leds,
     });
-    modes[name] = func;
+    // modes[name] = func;
     return func;
 }
 // ----------------------------------------

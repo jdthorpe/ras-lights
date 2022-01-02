@@ -19,14 +19,14 @@ const schema = {
 // ----------------------------------------
 // registry
 // ----------------------------------------
-const modes: { [key: string]: { (): any } } = {};
+// const modes: { [key: string]: { (): any } } = {};
 
-export function create_node(name: string, x: func_config) {
-    modes[name] = build_node(x, { leds: settings.ws281x.leds });
-}
+// export function create_node(name: string, x: func_config) {
+//     modes[name] = build_node(x, { leds: settings.ws281x.leds });
+// }
 
 async function get_mode(name: string): Promise<() => any> {
-    if (name in modes) return modes[name];
+    // if (name in modes) return modes[name];
     let mode: show;
     try {
         mode = await modeStore.findOne({ name });
@@ -36,7 +36,7 @@ async function get_mode(name: string): Promise<() => any> {
     const func = build_node(mode.def as func_config, {
         leds: settings.ws281x.leds,
     });
-    modes[name] = func;
+    // modes[name] = func;
     return func;
 }
 
