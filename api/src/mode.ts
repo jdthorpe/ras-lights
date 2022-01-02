@@ -1,7 +1,7 @@
 import Ajv from "ajv";
 import { build_node } from "@ras-lights/common";
 import { turn_off, set_colors } from "./ws681x";
-import { func_config, rgb } from "@ras-lights/common/types/mode";
+import { show, func_config, rgb } from "@ras-lights/common/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
 
@@ -27,13 +27,15 @@ export function create_node(name: string, x: func_config) {
 
 async function get_mode(name: string): Promise<() => any> {
     if (name in modes) return modes[name];
-    let mode: func_config;
+    let mode: show;
     try {
         mode = await modeStore.findOne({ name });
     } catch (err) {
         throw new Error(`No such mode "${name}"`);
     }
-    const func = build_node(mode, { leds: settings.ws281x.leds });
+    const func = build_node(mode.def as func_config, {
+        leds: settings.ws281x.leds,
+    });
     modes[name] = func;
     return func;
 }

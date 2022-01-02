@@ -37,7 +37,9 @@ async function get_mode(name) {
     catch (err) {
         throw new Error(`No such mode "${name}"`);
     }
-    const func = (0, common_1.build_node)(mode, { leds: settings_1.default.ws281x.leds });
+    const func = (0, common_1.build_node)(mode.def, {
+        leds: settings_1.default.ws281x.leds,
+    });
     modes[name] = func;
     return func;
 }
