@@ -39,7 +39,6 @@ const Row = styled.div`
 const Box = styled.div`
     width: 1rem;
     padding: 2px;
-    margin: 0 .3rem;
     border-radius: 2px;
     background: grey;
 `
@@ -81,7 +80,11 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                     display: "flex",
                     flexDirection: "row",
                     position: "absolute",
-                    left: `${mainWidth - menuWidth - 5}px`
+                    left: `${mainWidth - menuWidth - 5}px`,
+                    padding: '.4rem',
+                    gap: '.4rem',
+                    borderRadius: "2px",
+                    backgroundColor: "rgba(255,255,255,0.85)",
                 }}>
                 {wrappers.length > 0 && (
                     <Box>
@@ -90,11 +93,7 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                             icon={faGift} />
                     </Box>
                 )}
-                <Box onClick={() => {
-                    alert(typeof editor.onClose)
-                    editor.onClose(path)
-                }
-                }>
+                <Box onClick={() => { editor.onClose(path) }}>
                     <FontAwesomeIcon
                         style={{ margin: "auto", display: "block" }}
                         icon={faTimes} />

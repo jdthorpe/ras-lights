@@ -9,7 +9,6 @@ import cronstrue from 'cronstrue';
 
 import styled from "styled-components"
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
-import Schedule from './schedule';
 
 const Row = styled.div`
     display: flex;

@@ -101,7 +101,7 @@ const Schedule: React.FC<ScheduleProps> = ({ }) => {
                 const response = await fetch("/api/mode/");
                 try {
                     const config: any = await response.json();
-                    set_modes(config.map((x: any) => x.name))
+                    set_modes(["off", ...config.map((x: any) => x.name)])
                 } catch (err) {
                     console.log(`fetch("/api/mode/").json() failed with`, err)
                     console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")

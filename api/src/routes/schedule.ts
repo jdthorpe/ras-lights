@@ -68,7 +68,7 @@ router.post("/", (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-// DELETEjkkj
+// DELETE
 router.delete("/", (req: Request, res: Response) => {
     const body: { name: string } = req.body;
     const start = performance.now();

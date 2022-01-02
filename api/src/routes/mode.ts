@@ -4,7 +4,6 @@ import { Router, Request, Response } from "express";
 import { setMode } from "../mode";
 import settings from "../settings";
 import { build_node } from "@ras-lights/common";
-
 import { modeStore } from "../db";
 
 const router = Router();
