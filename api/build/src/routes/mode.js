@@ -17,9 +17,9 @@ router.get("/:mode", async (req, res) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-router.post("/", async (req, res) => {
+// Save a new mode
+router.put("/", async (req, res) => {
     const body = req.body;
-    console.log(`mode body: ${JSON.stringify(body)}`);
     let mode;
     try {
         mode = (0, common_1.build_node)(body, { leds: settings_1.default.ws281x.leds });
@@ -27,11 +27,20 @@ router.post("/", async (req, res) => {
     catch (error) {
         console.log(error);
         res.status(500);
-        res.send(`failed to create a mode function:\n${error.message}`);
+        res.send(`failed to save a mode function:\n${error.message}`);
         return;
     }
     const start = perf_hooks_1.performance.now();
     await (0, mode_1.setMode)(mode);
+    const end = perf_hooks_1.performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+router.post("/", async (req, res) => {
+    const body = req.body;
+    console.log(`Creating mode ${body.name}`, body);
+    const start = perf_hooks_1.performance.now();
+    // await modeStore.update({ name: body.name }, body, { upsert: true });
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
