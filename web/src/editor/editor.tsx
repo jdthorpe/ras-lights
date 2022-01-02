@@ -3,8 +3,8 @@ import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faHashtag } from '@fortawesome/free-solid-svg-icons'
-import { save_mode, fetch_modes } from "../utils/api"
+import { faCode, faHashtag, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { delete_mode, save_mode, fetch_modes } from "../utils/api"
 import { Label } from '@fluentui/react/lib/Label';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import {
@@ -28,7 +28,7 @@ import { NumberInput } from './inputs/number-input';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
 import { make_loop, ILoop } from "./loop"
-import { type } from 'os';
+
 
 const ACTIVE_COLOR = "blue"
 const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
@@ -229,11 +229,18 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     }, []);
 
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
+
     const saveShow = useCallback(async () => {
         await save_mode({
             name: nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
             def: show,
         })
+    }, [show, free_text_option, nameKey])
+
+    const deleteShow = useCallback(async () => {
+        await delete_mode(
+            nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
+        )
     }, [show, free_text_option, nameKey])
 
     const getWrappers = (path: number[]): string[] => {
@@ -452,6 +459,12 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             title="Show raw data"
                             style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
                             icon={faCode} />
+                    </IconBox>
+                    <IconBox onClick={() => deleteShow()}>
+                        <FontAwesomeIcon
+                            title="Delete Show"
+                            style={{ margin: "auto", display: "block" }}
+                            icon={faTrashAlt} />
                     </IconBox>
                     <PrimaryButton
                         onClick={saveShow}

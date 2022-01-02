@@ -9,6 +9,17 @@ import { show } from "@ras-lights/common/types/mode";
 
 const router = Router();
 
+// DELETE
+router.delete("/", (req: Request, res: Response) => {
+    const body: { name: string } = req.body;
+    const start = performance.now();
+    if (!body.name) throw new Error("missing name");
+    modeStore.remove({ name: body.name }, { multi: true });
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+
 router.get("/:mode", async (req: Request, res: Response) => {
     const start = performance.now();
     await setMode(req.params.mode);
