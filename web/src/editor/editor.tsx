@@ -446,7 +446,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         selectedKey={nameKey}
                         onChange={onNameChange}
                     />
-                    <p>{FREE_TEXT_KEY ? free_text_option! : (nameKey as string)}</p>
                     <div style={{ margin: "auto" }}></div>
                     <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
                         <FontAwesomeIcon
