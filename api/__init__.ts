@@ -7,7 +7,13 @@ import { modeStore } from "./src/db";
 import modes from "./default-modes.json";
 
 (async () => {
-    for (let [name, def] of Object.entries(modes)) {
-        await modeStore.update({ name }, { name, def }, { upsert: true });
+    const count = await modeStore.count({});
+    if (count) {
+        console.log(`There aer aleady ${count} modes`);
+    } else {
+        for (let show of modes) {
+            console.log(`Creating mode ${show.name}`);
+            await modeStore.update({ name: show.name }, show, { upsert: true });
+        }
     }
 })();
