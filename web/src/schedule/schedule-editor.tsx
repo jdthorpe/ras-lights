@@ -4,7 +4,7 @@ import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
 // import { signatures, } from "@ras-lights/common/types/parameters"
 import { PrimaryButton } from '@fluentui/react/lib/Button';
-import { ISchedule } from "./schedule"
+import { ISchedule } from '@ras-lights/common/types/schedule';
 import cronstrue from 'cronstrue';
 
 import styled from "styled-components"

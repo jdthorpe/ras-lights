@@ -18,6 +18,10 @@ curl -X DELETE http://192.168.4.64/api/schedule/ \
 
 curl http://192.168.4.64/api/schedule/
 
+curl http://192.168.4.64/api/schedule/restart
+
+curl http://192.168.4.64/api/schedule/next
+
 */
 const router = (0, express_1.Router)();
 // ------------------------------
@@ -52,6 +56,7 @@ router.post("/", (req, res) => {
     console.log(`schedule body: ${JSON.stringify(body)}`);
     const start = perf_hooks_1.performance.now();
     db_1.scheduleStore.update({ name: body.name }, body, { upsert: true });
+    (0, cron_1.schedule_mode)(body);
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
