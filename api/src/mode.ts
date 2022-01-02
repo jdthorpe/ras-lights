@@ -3,6 +3,7 @@ import { build_node } from "@ras-lights/common";
 import { turn_off, set_colors } from "./ws681x";
 import { func_config, rgb } from "@ras-lights/common/types/mode";
 import settings from "./settings";
+import { modeStore } from "./db";
 
 const ajv = new Ajv();
 const schema = {
@@ -24,6 +25,19 @@ export function create_node(name: string, x: func_config) {
     modes[name] = build_node(x, { leds: settings.ws281x.leds });
 }
 
+async function get_mode(name: string): Promise<() => any> {
+    if (name in modes) return modes[name];
+    let mode: func_config;
+    try {
+        mode = await modeStore.findOne({ name });
+    } catch (err) {
+        throw new Error(`No such mode "${name}"`);
+    }
+    const func = build_node(mode, { leds: settings.ws281x.leds });
+    modes[name] = func;
+    return func;
+}
+
 // ----------------------------------------
 // loop
 // ----------------------------------------
@@ -31,7 +45,7 @@ export function create_node(name: string, x: func_config) {
 let loop: ReturnType<typeof setTimeout>;
 let current_mode: string = "off";
 
-export function setMode(new_mode: string | { (): rgb[] }) {
+export async function setMode(new_mode: string | { (): rgb[] }) {
     let mode: { (): any };
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
@@ -44,7 +58,8 @@ export function setMode(new_mode: string | { (): rgb[] }) {
             return;
         }
         if (current_mode === new_mode) return;
-        mode = modes[new_mode];
+
+        mode = await get_mode(new_mode);
     } else {
         mode = new_mode;
     }

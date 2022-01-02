@@ -8,6 +8,7 @@ const ajv_1 = __importDefault(require("ajv"));
 const common_1 = require("@ras-lights/common");
 const ws681x_1 = require("./ws681x");
 const settings_1 = __importDefault(require("./settings"));
+const db_1 = require("./db");
 const ajv = new ajv_1.default();
 const schema = {
     type: "array",
@@ -26,12 +27,26 @@ function create_node(name, x) {
     modes[name] = (0, common_1.build_node)(x, { leds: settings_1.default.ws281x.leds });
 }
 exports.create_node = create_node;
+async function get_mode(name) {
+    if (name in modes)
+        return modes[name];
+    let mode;
+    try {
+        mode = await db_1.modeStore.findOne({ name });
+    }
+    catch (err) {
+        throw new Error(`No such mode "${name}"`);
+    }
+    const func = (0, common_1.build_node)(mode, { leds: settings_1.default.ws281x.leds });
+    modes[name] = func;
+    return func;
+}
 // ----------------------------------------
 // loop
 // ----------------------------------------
 let loop;
 let current_mode = "off";
-function setMode(new_mode) {
+async function setMode(new_mode) {
     let mode;
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
@@ -45,7 +60,7 @@ function setMode(new_mode) {
         }
         if (current_mode === new_mode)
             return;
-        mode = modes[new_mode];
+        mode = await get_mode(new_mode);
     }
     else {
         mode = new_mode;

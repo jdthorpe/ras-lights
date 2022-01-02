@@ -5,9 +5,11 @@ import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
 // import { signatures, } from "@ras-lights/common/types/parameters"
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { ISchedule } from "./schedule"
+import cronstrue from 'cronstrue';
 
 import styled from "styled-components"
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import Schedule from './schedule';
 
 const Row = styled.div`
     display: flex;
@@ -26,61 +28,84 @@ const defaultValue = '* * * * *'
 
 interface EditScheduleProps {
     modes: string[];
-    name?: string;
-    mode?: string;
-    schedule?: string;
+    // name?: string;
+    // mode?: string;
+    schedule?: ISchedule;
     save: (s: ISchedule) => void;
 }
-const EditSchedule: React.FC<EditScheduleProps> = ({ modes, name, mode, schedule, save }) => {
+const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) => {
 
-    const [cronString, setCronString] = useState<string>(schedule || defaultValue);
+    const [_schedule, set_schedule] = useState(schedule)
+
+    const [cronString, setCronString] = useState<string>(schedule?.schedule || defaultValue);
     const [cronError, setCronError] = useState<CronError>();
-    const [_name, setName] = useState<string | undefined>(name || "");
-    const [_mode, setMode] = useState<string | undefined>(mode);
+    const [name, setName] = useState<string | undefined>(schedule?.name || "");
+    const [mode, setMode] = useState<string | undefined>(schedule?.mode);
+
+    if (typeof schedule !== "undefined" && !Object.is(_schedule, schedule)) {
+        // respond to the outside world
+        set_schedule(schedule)
+        setMode(schedule.mode)
+        setName(schedule.name)
+        setCronString(schedule?.schedule)
+        setCronError(undefined)
+    }
+
     // const [value, setValue] = useState(defaultValue);
     const disabled = (
-        typeof _mode === "undefined" ||
-        typeof _name === "undefined" ||
+        typeof mode === "undefined" ||
+        typeof name === "undefined" ||
         typeof cronString === "undefined" ||
         typeof cronError !== "undefined" ||
-        _mode.length === 0 ||
-        _name.length === 0 ||
+        mode.length === 0 ||
+        name.length === 0 ||
         cronString.length === 0 ||
         cronString === defaultValue
     )
+    console.log("cronString: ", cronString)
 
     return (
         <div
             style={{
-                width: "max-content"
+                backgroundColor: "#c2d2ff",
             }}
         >
-            <Row>
-                <TextField
-                    label="Schedule Name"
-                    value={_name}
-                    onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => setName(newValue)}
-                    styles={textboxStyle}
-                // errorMessage={errorMessage}
-                />
-                <Dropdown
-                    label="Mode"
-                    selectedKey={_mode}
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChanged={(option: IDropdownOption<any>, index?: number | undefined) => setMode(option.key as string)}
-                    placeholder="Select an mode"
-                    options={modes.sort().map(s => ({ key: s, text: s }))}
-                    styles={dropdownStyles}
-                />
-                <PrimaryButton
-                    style={{ marginLeft: "auto" }}
-                    onClick={() => save({ name: _name!, mode: _mode!, schedule: cronString })}
-                    disabled={disabled}
-                >Save</PrimaryButton>
-            </Row>
-            <Row>
-                <Cron value={cronString} setValue={setCronString} onError={setCronError} />
-            </Row>
+
+            <div
+                style={{
+                    width: "max-content",
+                }}
+            >
+                <Row>
+                    <TextField
+                        label="Schedule Name"
+                        value={name}
+                        onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => setName(newValue)}
+                        styles={textboxStyle}
+                    // errorMessage={errorMessage}
+                    />
+                    <Dropdown
+                        label="Mode"
+                        selectedKey={mode}
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChanged={(option: IDropdownOption<any>, index?: number | undefined) => setMode(option.key as string)}
+                        placeholder="Select mode"
+                        options={modes.sort().map(s => ({ key: s, text: s }))}
+                        styles={dropdownStyles}
+                    />
+                    <PrimaryButton
+                        style={{ marginLeft: "auto" }}
+                        onClick={() => save({ name: name!, mode: mode!, schedule: cronString })}
+                        disabled={disabled}
+                    >Save</PrimaryButton>
+                </Row>
+                <Row>
+                    <Cron value={cronString} setValue={setCronString} onError={setCronError} />
+                </Row>
+                <Row>
+                    <p>{cronstrue.toString(cronString)} </p>
+                </Row>
+            </div>
         </div>
     )
 }

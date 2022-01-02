@@ -4,8 +4,9 @@ import ini from "ini";
 
 interface Isettings {
     LEDS: number;
-    controller: {
-        port: number;
+    api?: {
+        port?: number;
+        "app-dir"?: string;
     };
     show: {
         controller_host: string;

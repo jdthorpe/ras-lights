@@ -5,22 +5,19 @@ import { setMode } from "../mode";
 import settings from "../settings";
 import { build_node } from "@ras-lights/common";
 
-import { mode_config } from "../../index";
-import Datastore from "nedb-promises";
-
-const datastore = Datastore.create("/var/lib/ras-lights/modes.db");
+import { modeStore } from "../db";
 
 const router = Router();
 
-router.get("/:mode", (req: Request, res: Response) => {
+router.get("/:mode", async (req: Request, res: Response) => {
     const start = performance.now();
-    setMode(req.params.mode);
+    await setMode(req.params.mode);
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
 });
 
-router.post("/", (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
     const body = req.body;
     console.log(`mode body: ${JSON.stringify(body)}`);
     let mode;
@@ -36,14 +33,15 @@ router.post("/", (req: Request, res: Response) => {
     }
 
     const start = performance.now();
-    setMode(mode);
+    await setMode(mode);
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
 });
 
-router.get("/", (req: Request, res: Response) => {
-    res.json(mode_config);
+router.get("/", async (req: Request, res: Response) => {
+    const results = await modeStore.find({}, { _id: 0 });
+    res.json(results);
 });
 
 export default router;

@@ -20,11 +20,9 @@ const Modes: React.FC = () => {
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 });
                 try {
-                    const config = await response.json();
+                    const config: any[] = await response.json();
                     set_mode_config(config)
-                    const il: IDropdownOption[] = []
-                    for (let mode of Object.keys(config))
-                        il.push({ key: mode, text: mode })
+                    const il: IDropdownOption[] = config.map(x => ({ key: x.name, text: x.name }))
                     console.log("il: ", il)
                     set_item_list(il)
 

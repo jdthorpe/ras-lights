@@ -7,7 +7,6 @@ import Ajv from "ajv";
 import yaml from "js-yaml";
 
 import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
-import { setMode } from "../mode";
 
 const schema: any = yaml.load(
     readFileSync(

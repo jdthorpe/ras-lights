@@ -8,18 +8,16 @@ const express_1 = require("express");
 const mode_1 = require("../mode");
 const settings_1 = __importDefault(require("../settings"));
 const common_1 = require("@ras-lights/common");
-const index_1 = require("../../index");
-const nedb_promises_1 = __importDefault(require("nedb-promises"));
-const datastore = nedb_promises_1.default.create("/var/lib/ras-lights/modes.db");
+const db_1 = require("../db");
 const router = (0, express_1.Router)();
-router.get("/:mode", (req, res) => {
+router.get("/:mode", async (req, res) => {
     const start = perf_hooks_1.performance.now();
-    (0, mode_1.setMode)(req.params.mode);
+    await (0, mode_1.setMode)(req.params.mode);
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     const body = req.body;
     console.log(`mode body: ${JSON.stringify(body)}`);
     let mode;
@@ -33,12 +31,13 @@ router.post("/", (req, res) => {
         return;
     }
     const start = perf_hooks_1.performance.now();
-    (0, mode_1.setMode)(mode);
+    await (0, mode_1.setMode)(mode);
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
 });
-router.get("/", (req, res) => {
-    res.json(index_1.mode_config);
+router.get("/", async (req, res) => {
+    const results = await db_1.modeStore.find({}, { _id: 0 });
+    res.json(results);
 });
 exports.default = router;

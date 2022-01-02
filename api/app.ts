@@ -4,9 +4,10 @@ import lights from "./src/routes/lights";
 import mode from "./src/routes/mode";
 import registry from "./src/routes/registry";
 import schedule from "./src/routes/schedule";
+import settings from "./src/settings";
 
 const app = express();
-const port = 5000;
+const port = (settings.api && settings.api.port) || 5000;
 
 app.use(bodyParser.json());
 app.use("/lights", lights);
