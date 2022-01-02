@@ -42,7 +42,7 @@ router.put("/", async (req: Request, res: Response) => {
 
     console.log(`Creating mode ${body.name}`, body);
     const start = performance.now();
-    // await modeStore.update({ name: body.name }, body, { upsert: true });
+    await modeStore.update({ name: body.name }, body, { upsert: true });
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

@@ -5,16 +5,16 @@ export async function fetch_modes(): Promise<show[]> {
     return await response.json();
 }
 
-export async function save_show(show: show): Promise<void> {
-    await fetch("/api/show/", {
-        method: "POST",
+export async function save_mode(show: show): Promise<void> {
+    await fetch("/api/mode/", {
+        method: "PUT",
         cache: "no-cache",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(show),
     });
 }
 
-export async function set_current_show(show: show): Promise<void> {
+export async function set_current_mode(show: show): Promise<void> {
     await fetch("/api/mode/", {
         method: "POST",
         cache: "no-cache",

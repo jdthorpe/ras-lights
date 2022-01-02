@@ -4,7 +4,7 @@ import cc from "color-convert"
 import copy from "fast-copy";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCode, faHashtag } from '@fortawesome/free-solid-svg-icons'
-import { save_show, fetch_modes } from "../utils/api"
+import { save_mode, fetch_modes } from "../utils/api"
 import { Label } from '@fluentui/react/lib/Label';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import {
@@ -230,11 +230,11 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
     const saveShow = useCallback(async () => {
-        await save_show({
+        await save_mode({
             name: nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
             def: show,
         })
-    }, [show])
+    }, [show, free_text_option, nameKey])
 
     const getWrappers = (path: number[]): string[] => {
 
@@ -439,6 +439,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         selectedKey={nameKey}
                         onChange={onNameChange}
                     />
+                    <p>{FREE_TEXT_KEY ? free_text_option! : (nameKey as string)}</p>
                     <div style={{ margin: "auto" }}></div>
                     <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
                         <FontAwesomeIcon

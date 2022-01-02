@@ -40,7 +40,7 @@ router.put("/", async (req, res) => {
     const body = req.body;
     console.log(`Creating mode ${body.name}`, body);
     const start = perf_hooks_1.performance.now();
-    // await modeStore.update({ name: body.name }, body, { upsert: true });
+    await db_1.modeStore.update({ name: body.name }, body, { upsert: true });
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
