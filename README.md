@@ -4,21 +4,21 @@ A rasperry pi based light show and web app
 
 ## TODO
 
--   Add a set of validators to common (including that defaults have been included in function signatures)
--   Add validation for the signatures fetched from the backend (if the server is
+* Add a set of validators to common (including that defaults have been included in function signatures)
+* Add validation for the signatures fetched from the backend (if the server is
     not running or the proxy is not set, the text is an HTML rendering from NGINX with a 502 or 404 message)
 
 ## Set Up
 
 1. Usual Raspeberry pi setup
 
--   install rasbian
--   setup ssh
--   get the ip address (that's how you'll connect with ssh and to the web app)
--   make an IP address reservation on your router (so you can find your pi online)
--   disable visual mode on your pi (optional, probably)
+* install rasbian
+* setup ssh
+* get the ip address (that's how you'll connect with ssh and to the web app)
+* make an IP address reservation on your router (so you can find your pi online)
+* disable visual mode on your pi (optional, probably)
 
--   install the app as follows:
+* install the app as follows:
 
 This probably belongs in a `setup.sh` script:
 
@@ -38,12 +38,12 @@ sudo cp supervisor.conf /etc/supervisor/confi.d/supervisor.conf
 
 # install npm dependencies
 pushd web
-npm i
+npm install
 popd
 
 # install npm dependencies (necessary???)
 pushd common
-npm i
+npm install
 popd
 
 # star tthe apps
