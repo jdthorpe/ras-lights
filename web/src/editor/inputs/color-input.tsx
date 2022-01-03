@@ -18,7 +18,7 @@ import { EditorContext, pathEquals } from '../editor';
 
 const WrappedRow = styled.div`
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     flex-wrap: wrap;
     gap: .7rem;
 `

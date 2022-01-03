@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-// import JSONViewer from 'react-json-view'
 
 const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },
@@ -58,14 +57,6 @@ const Modes: React.FC = () => {
                 styles={dropdownStyles}
                 onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => option && set_item(option)}
             />
-            {/* {item && (<div style={{ margin: "1rem" }}>
-                <JSONViewer
-                    displayObjectSize={false}
-                    displayDataTypes={false}
-                    name="Mode"
-                    src={mode_config[item.key]}
-                />
-            </div>)} */}
         </div>
     );
 };

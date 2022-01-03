@@ -6,13 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCode, faHashtag, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { delete_mode, save_mode, fetch_modes } from "../utils/api"
 import { Label } from '@fluentui/react/lib/Label';
-import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import {
     ComboBox,
     IComboBoxOption,
     IComboBox,
     IComboBoxStyles,
 } from '@fluentui/react/lib/ComboBox';
+import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { useId, useBoolean } from '@fluentui/react-hooks';
 
 
 import { func_config, mode_param, rgb_array_value, rgb, mode } from "@ras-lights/common/types/mode";
@@ -32,6 +34,14 @@ import { make_loop, ILoop } from "./loop"
 
 const ACTIVE_COLOR = "blue"
 const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
+const dialogStyles = { main: { maxWidth: 450 } };
+const dialogContentProps = {
+    type: DialogType.normal,
+    title: 'Are you sure?',
+    closeButtonAriaLabel: 'Close',
+    subText: 'Are you sure you want to delete this mode?',
+}
+
 const Header = styled.div`
     display: flex;
     flex-direction: row;
@@ -191,6 +201,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [loading, set_loading] = useState(true)
     const [showNumericInputs, set_showNumericInputs] = useState<boolean>(false)
     const [show_raw_input, set_show_raw_input] = useState<boolean>(false)
+    const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
 
     const [free_text_option, set_free_text_option] = useState<string>()
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
@@ -204,21 +215,24 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         ...existing_modes!
     ] : existing_modes!
 
-    useEffect(() => {
-
-        // component will mount
-        (async () => {
+    const init = useCallback(
+        async () => {
             const shows = await fetch_modes()
             set_existing_modes(shows.map(m => ({ text: m.name, key: m.name })))
             const entries = shows
                 .map(s => [s.name, s.def as func_config]);
             const d_shows = Object.fromEntries(entries)
-            console.log("show entries:", entries)
-            console.log(d_shows)
             set_existing_shows(d_shows)
-            console.log("set_existing_shows()", typeof d_shows)
             set_loading(false)
-        })()
+        }
+        , [])
+
+    useEffect(() => {
+
+        // component will mount
+        init();
+        update_LEDS();
+        set(default_show, [])
 
         // component will unmount
         return function cleanup() {
@@ -231,16 +245,20 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
 
     const saveShow = useCallback(async () => {
+        const name = nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)
         await save_mode({
-            name: nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
+            name,
             def: show,
         })
+        init()
     }, [show, free_text_option, nameKey])
 
     const deleteShow = useCallback(async () => {
         await delete_mode(
             nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string),
         )
+        set(default_show, [])
+        init()
     }, [show, free_text_option, nameKey])
 
     const getWrappers = (path: number[]): string[] => {
@@ -279,29 +297,29 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }
 
-    useEffect(() => {
-        (async () => {
-            if (show.type === "func") {
-                // const response =
-                await fetch("/api/mode/", {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(show)
-                });
-            } else {
-                if (!Array.isArray(show.value))
-                    return
-                // const response =
-                await fetch("/api/lights/set-colors", {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(show.value)
-                });
-            }
-        })()
-    }, [show]);
+    const update_LEDS = useCallback((async () => {
+        if (show.type === "func") {
+            // const response =
+            await fetch("/api/mode/", {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(show)
+            });
+        } else {
+            if (!Array.isArray(show.value))
+                return
+            // const response =
+            await fetch("/api/lights/set-colors", {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(show.value)
+            });
+        }
+    }), [show])
+
+    useEffect(() => { update_LEDS() }, [show]);
 
     const [active_item, active_input] = get_item_at_path(show, active_path, signatures)
 
@@ -459,7 +477,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
                             icon={faCode} />
                     </IconBox>
-                    <IconBox onClick={() => deleteShow()}>
+                    <IconBox onClick={toggleHideDialog}>
                         <FontAwesomeIcon
                             title="Delete Show"
                             style={{ margin: "auto", display: "block" }}
@@ -535,6 +553,17 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
                     </Options>
                 </Container>
+                <Dialog
+                    hidden={hideDialog}
+                    onDismiss={toggleHideDialog}
+                    dialogContentProps={dialogContentProps}
+                    modalProps={{ isBlocking: false, styles: dialogStyles, }}
+                >
+                    <DialogFooter>
+                        <PrimaryButton onClick={() => { toggleHideDialog(); deleteShow() }} text="Delete" />
+                        <DefaultButton onClick={toggleHideDialog} text="Cancel" />
+                    </DialogFooter>
+                </Dialog>
             </>
         </EditorContext.Provider>
     )
