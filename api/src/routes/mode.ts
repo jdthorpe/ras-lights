@@ -4,18 +4,24 @@ import { Router, Request, Response, NextFunction } from "express";
 import { setMode } from "../mode";
 import settings from "../settings";
 import { build_node } from "@ras-lights/common";
-import { modeStore } from "../db";
+import { modeStore, scheduleStore } from "../db";
 import { show } from "@ras-lights/common/types/mode";
-import { nextTick } from "process";
 
 const router = Router();
 
 // DELETE
-router.delete("/", (req: Request, res: Response) => {
+router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
     const body: { name: string } = req.body;
     const start = performance.now();
-    if (!body.name) throw new Error("missing name");
-    modeStore.remove({ name: body.name }, { multi: true });
+    try {
+        if (!body.name) throw new Error("missing name");
+        if ((await scheduleStore.count({ name: body.name })) > 0)
+            throw new Error("Mode is used by an existing schedule");
+        modeStore.remove({ name: body.name }, { multi: true });
+    } catch (error) {
+        next(error);
+        return;
+    }
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

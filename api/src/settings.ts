@@ -7,6 +7,7 @@ interface Isettings {
     api?: {
         port?: number;
         "app-dir"?: string;
+        loop_delay_ms: number;
     };
     show: {
         controller_host: string;

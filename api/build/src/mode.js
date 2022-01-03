@@ -9,6 +9,7 @@ const common_1 = require("@ras-lights/common");
 const ws681x_1 = require("./ws681x");
 const settings_1 = __importDefault(require("./settings"));
 const db_1 = require("./db");
+const DELAY_MS = settings_1.default?.api?.loop_delay_ms || 50;
 const ajv = new ajv_1.default();
 const schema = {
     type: "array",
@@ -81,7 +82,7 @@ function create_loop(mode) {
         else {
             return;
         }
-        loop = setTimeout(fun, 50);
+        loop = setTimeout(fun, DELAY_MS);
     };
     return fun;
 }

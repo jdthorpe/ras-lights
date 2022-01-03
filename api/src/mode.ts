@@ -5,6 +5,8 @@ import { show, func_config, rgb } from "@ras-lights/common/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
 
+const DELAY_MS = settings?.api?.loop_delay_ms || 50;
+
 const ajv = new Ajv();
 const schema = {
     type: "array",
@@ -82,7 +84,7 @@ function create_loop(mode: { (): any }): { (): void } {
         } else {
             return;
         }
-        loop = setTimeout(fun, 50);
+        loop = setTimeout(fun, DELAY_MS);
     };
     return fun;
 }

@@ -11,12 +11,20 @@ const common_1 = require("@ras-lights/common");
 const db_1 = require("../db");
 const router = (0, express_1.Router)();
 // DELETE
-router.delete("/", (req, res) => {
+router.delete("/", async (req, res, next) => {
     const body = req.body;
     const start = perf_hooks_1.performance.now();
-    if (!body.name)
-        throw new Error("missing name");
-    db_1.modeStore.remove({ name: body.name }, { multi: true });
+    try {
+        if (!body.name)
+            throw new Error("missing name");
+        if ((await db_1.scheduleStore.count({ name: body.name })) > 0)
+            throw new Error("Mode is used by an existing schedule");
+        db_1.modeStore.remove({ name: body.name }, { multi: true });
+    }
+    catch (error) {
+        next(error);
+        return;
+    }
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
