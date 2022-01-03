@@ -17,38 +17,15 @@ A rasperry pi based light show and web app
 * get the ip address (that's how you'll connect with ssh and to the web app)
 * make an IP address reservation on your router (so you can find your pi online)
 * disable visual mode on your pi (optional, probably)
+* install the with either:
 
-* install the app as follows:
+    ```sh
+    /bsudo in/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/install.sh)"
+    ```
 
-This probably belongs in a `setup.sh` script:
+    or clone this repo into `/home/pi/` and run the install script with `sudo install.sh`
 
-```sh
-sudo apt-get update
-sudo apt-get install nginx -y
-sudo apt-get install supervisor -y
-sudo apt-get install node -y
-
-cd /home/pi
-git clone https://github.com/jdthorpe/ras-lights
-
-# config files
-cd /home/pi/ras-lights
-sudo cp nginx.conf /etc/nginx/nginx.conf
-sudo cp supervisor.conf /etc/supervisor/confi.d/supervisor.conf
-
-# install npm dependencies
-pushd web
-npm install
-popd
-
-# install npm dependencies (necessary???)
-pushd common
-npm install
-popd
-
-# star tthe apps
-sudo supervisorctl reload
-```
+Then visit the app at `http://<<your pi's ip address here>>/`
 
 <!--
 ```sh
@@ -56,15 +33,13 @@ sudo /etc/init.d/nginx start
 ```
 # always handy
 sudo apt-get install vim -y
--->
 
 ## Connect to the Rasperry
 
 ```sh
 ssh pi@168.192.4.64
 ```
-
-[site](http://168.192.4.64/)
+-->
 
 ## local dev setup
 
