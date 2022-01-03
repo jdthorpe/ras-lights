@@ -14,7 +14,8 @@ import {
     IComboBoxStyles,
 } from '@fluentui/react/lib/ComboBox';
 import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
-import { useId, useBoolean } from '@fluentui/react-hooks';
+import { useBoolean } from '@fluentui/react-hooks';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
 
 import { func_config, mode_param, rgb_array_value, rgb, mode } from "@ras-lights/common/types/mode";
@@ -442,7 +443,12 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         [existing_shows],
     );
 
-    if (loading) return (<p>loading</p>)
+
+    if (loading) {
+        return (<div>
+            <Spinner label="I am totally loading..." size={SpinnerSize.large} />
+        </div>)
+    }
     return (
         <EditorContext.Provider value={{
             set_active_path,
@@ -453,118 +459,116 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             getWrappers,
             showNumericInputs,
         }}>
-            <>
-                <Header>
-                    <Label>Mode Name</Label>
-                    <ComboBox
-                        allowFreeform={true}
-                        autoComplete={'on'}
-                        options={NameOptions}
-                        styles={comboBoxStyles}
-                        selectedKey={nameKey}
-                        onChange={onNameChange}
-                    />
-                    <div style={{ margin: "auto" }}></div>
-                    <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
-                        <FontAwesomeIcon
-                            title="Show numeric inputs"
-                            style={{ margin: "auto", display: "block", color: showNumericInputs ? ACTIVE_COLOR : "black" }}
-                            icon={faHashtag} />
-                    </IconBox>
-                    <IconBox onClick={() => set_show_raw_input(!show_raw_input)}>
-                        <FontAwesomeIcon
-                            title="Show raw data"
-                            style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
-                            icon={faCode} />
-                    </IconBox>
-                    <IconBox onClick={toggleHideDialog}>
-                        <FontAwesomeIcon
-                            title="Delete Show"
-                            style={{ margin: "auto", display: "block" }}
-                            icon={faTrashAlt} />
-                    </IconBox>
-                    <PrimaryButton
-                        onClick={saveShow}
-                        disabled={disableSave}
-                    >Save</PrimaryButton>
-                </Header>
-                <Container>
-                    {/* <div>
+            <Header>
+                <Label>Mode Name</Label>
+                <ComboBox
+                    allowFreeform={true}
+                    autoComplete={'on'}
+                    options={NameOptions}
+                    styles={comboBoxStyles}
+                    selectedKey={nameKey}
+                    onChange={onNameChange}
+                />
+                <div style={{ margin: "auto" }}></div>
+                <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
+                    <FontAwesomeIcon
+                        title="Show numeric inputs"
+                        style={{ margin: "auto", display: "block", color: showNumericInputs ? ACTIVE_COLOR : "black" }}
+                        icon={faHashtag} />
+                </IconBox>
+                <IconBox onClick={() => set_show_raw_input(!show_raw_input)}>
+                    <FontAwesomeIcon
+                        title="Show raw data"
+                        style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
+                        icon={faCode} />
+                </IconBox>
+                <IconBox onClick={toggleHideDialog}>
+                    <FontAwesomeIcon
+                        title="Delete Show"
+                        style={{ margin: "auto", display: "block" }}
+                        icon={faTrashAlt} />
+                </IconBox>
+                <PrimaryButton
+                    onClick={saveShow}
+                    disabled={disableSave}
+                >Save</PrimaryButton>
+            </Header>
+            <Container>
+                {/* <div>
                 <pre>
                     {JSON.stringify(NameOptions, null, 4)}
                 </pre>
                 {JSON.stringify(active_path)}
             </div> */}
-                    <Main>
-                        {show.type === "func" ? (
-                            <div>
-                                <FuncValue
-                                    config={show}
-                                    path={[]}
-                                    signatures={signatures}
-                                />
-                            </div>
-                        ) : (<ColorArray colors={show.value} />)}
-                        {show_raw_input &&
-                            <div>
-                                <Label>Raw Data:</Label>
-                                <pre>{JSON.stringify(show, null, 4)}</pre>
-                            </div>
-                        }
-                    </Main>
-                    <Options>
-                        {(generators.length > 0) && <Dropdown
-                            label="Input Type"
-                            selectedKey={active_item.type === "func" ? active_item.name : "constant"}
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onChange={onDropdownChanged}
-                            placeholder="Select an option"
-                            options={["constant", ...generators].map(s => ({ key: s, text: s }))}
-                        />}
-                        {active_item.type === "boolean" && (
-                            <BooleanInput
-                                value={active_item.value}
-                                spec={active_input as boolean_input}
-                                path={active_path}
+                <Main>
+                    {show.type === "func" ? (
+                        <div>
+                            <FuncValue
+                                config={show}
+                                path={[]}
+                                signatures={signatures}
                             />
-                        )}
-                        {(active_item.type === "number" || active_item.type === "integer") && (
-                            < NumberInput
-                                value={active_item.value}
-                                spec={active_input as range_input | integer_input}
-                                path={active_path}
-                            />
-                        )}
-                        {active_item.type === "rgb" && (
-                            <ColorInput
-                                value={active_item.value}
-                                spec={active_input as color_input}
-                                path={active_path}
-                            />
-                        )}
-                        {active_item.type === "rgb[]" && (
-                            <ColorArrayInput
-                                value={active_item.value}
-                                spec={active_path.length === 0 ? default_spec : (active_input as color_array_input)}
-                                path={active_path}
-                            />
-                        )}
+                        </div>
+                    ) : (<ColorArray colors={show.value} />)}
+                    {show_raw_input &&
+                        <div>
+                            <Label>Raw Data:</Label>
+                            <pre>{JSON.stringify(show, null, 4)}</pre>
+                        </div>
+                    }
+                </Main>
+                <Options>
+                    {(generators.length > 0) && <Dropdown
+                        label="Input Type"
+                        selectedKey={active_item.type === "func" ? active_item.name : "constant"}
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange={onDropdownChanged}
+                        placeholder="Select an option"
+                        options={["constant", ...generators].map(s => ({ key: s, text: s }))}
+                    />}
+                    {active_item.type === "boolean" && (
+                        <BooleanInput
+                            value={active_item.value}
+                            spec={active_input as boolean_input}
+                            path={active_path}
+                        />
+                    )}
+                    {(active_item.type === "number" || active_item.type === "integer") && (
+                        < NumberInput
+                            value={active_item.value}
+                            spec={active_input as range_input | integer_input}
+                            path={active_path}
+                        />
+                    )}
+                    {active_item.type === "rgb" && (
+                        <ColorInput
+                            value={active_item.value}
+                            spec={active_input as color_input}
+                            path={active_path}
+                        />
+                    )}
+                    {active_item.type === "rgb[]" && (
+                        <ColorArrayInput
+                            value={active_item.value}
+                            spec={active_path.length === 0 ? default_spec : (active_input as color_array_input)}
+                            path={active_path}
+                        />
+                    )}
 
 
-                    </Options>
-                </Container>
-                <Dialog
-                    hidden={hideDialog}
-                    onDismiss={toggleHideDialog}
-                    dialogContentProps={dialogContentProps}
-                    modalProps={{ isBlocking: false, styles: dialogStyles, }}
-                >
-                    <DialogFooter>
-                        <PrimaryButton onClick={() => { toggleHideDialog(); deleteShow() }} text="Delete" />
-                        <DefaultButton onClick={toggleHideDialog} text="Cancel" />
-                    </DialogFooter>
-                </Dialog>
-            </>
+                </Options>
+            </Container>
+            <Dialog
+                hidden={hideDialog}
+                onDismiss={toggleHideDialog}
+                dialogContentProps={dialogContentProps}
+                modalProps={{ isBlocking: false, styles: dialogStyles, }}
+            >
+                <DialogFooter>
+                    <PrimaryButton onClick={() => { toggleHideDialog(); deleteShow() }} text="Delete" />
+                    <DefaultButton onClick={toggleHideDialog} text="Cancel" />
+                </DialogFooter>
+            </Dialog>
         </EditorContext.Provider>
     )
 };

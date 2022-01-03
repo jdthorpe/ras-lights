@@ -10,20 +10,53 @@ A rasperry pi based light show and web app
 
 ## Set Up
 
+1. Usual Raspeberry pi setup
+
+-   install rasbian
+-   setup ssh
+-   get the ip address (that's how you'll connect with ssh and to the web app)
+-   make an IP address reservation on your router (so you can find your pi online)
+-   disable visual mode on your pi (optional, probably)
+
+-   install the app as follows:
+
+This probably belongs in a `setup.sh` script:
+
 ```sh
 sudo apt-get update
-# always handy
-sudo apt-get install vim -y
-# web server
 sudo apt-get install nginx -y
 sudo apt-get install supervisor -y
-# python lib
-sudo pip install rpi_ws281x
+sudo apt-get install node -y
+
+cd /home/pi
+git clone https://github.com/jdthorpe/ras-lights
+
+# config files
+cd /home/pi/ras-lights
+sudo cp nginx.conf /etc/nginx/nginx.conf
+sudo cp supervisor.conf /etc/supervisor/confi.d/supervisor.conf
+
+# install npm dependencies
+pushd web
+npm i
+popd
+
+# install npm dependencies (necessary???)
+pushd common
+npm i
+popd
+
+# star tthe apps
+sudo supervisorctl reload
 ```
 
+<!--
 ```sh
 sudo /etc/init.d/nginx start
 ```
+# always handy
+sudo apt-get install vim -y
+-->
 
 ## Connect to the Rasperry
 
