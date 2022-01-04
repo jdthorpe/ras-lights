@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMode = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const common_1 = require("@ras-lights/common");
-const ws681x_1 = require("./ws681x");
+// import { turn_off, set_colors } from "./ws681x";
+const driver_1 = require("./driver");
 const settings_1 = __importDefault(require("./settings"));
 const db_1 = require("./db");
 const DELAY_MS = (settings_1.default.api && settings_1.default.api.loop_delay_ms) || 50;
@@ -56,7 +57,7 @@ async function setMode(new_mode) {
         }
         if (new_mode == "off") {
             loop && clearTimeout(loop);
-            (0, ws681x_1.turn_off)();
+            (0, driver_1.turn_off)();
             return;
         }
         if (current_mode === new_mode)
@@ -77,7 +78,7 @@ function create_loop(mode) {
         const colors = mode();
         // console.log("colors", JSON.stringify(colors));
         if (ajv.validate(schema, colors)) {
-            (0, ws681x_1.set_colors)(colors);
+            (0, driver_1.set_colors)(colors);
         }
         else {
             return;

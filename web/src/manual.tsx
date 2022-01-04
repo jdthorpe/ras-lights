@@ -18,9 +18,7 @@ const Row = styled.div`
 
 async function turnOff() {
     try {
-        console.log(`/lights/off `)
-        const res = await fetch("/api/lights/off")
-        console.log("/lights/off SUCCESS", res)
+        await fetch("/api/mode/off")
     } catch (err) {
         console.log("/lights/off failed with error", err)
     }
@@ -28,9 +26,8 @@ async function turnOff() {
 
 async function setRandomColors() {
     try {
-        console.log(`/lights/random `)
-        const res = await fetch("/api/lights/random")
-        console.log("/lights/random SUCCESS", res)
+        await fetch("/api/mode/off")
+        await fetch("/api/lights/random")
     } catch (err) {
         console.log("/lights/random failed with error", err)
     }
@@ -38,7 +35,7 @@ async function setRandomColors() {
 
 async function update_color(x: IColor) {
     try {
-        console.log(`/lights/set-colors ${[[x.r, x.g, x.b]]}`)
+        await fetch("/api/mode/off")
         const res = await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
@@ -47,7 +44,6 @@ async function update_color(x: IColor) {
             },
             body: JSON.stringify([[x.r, x.g, x.b]])
         });
-        console.log("/lights/set-colors SUCCESS", res)
     } catch (err) {
         console.log("/lights/set-colors failed with error", err)
     }

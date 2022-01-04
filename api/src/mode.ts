@@ -1,6 +1,7 @@
 import Ajv from "ajv";
 import { build_node } from "@ras-lights/common";
-import { turn_off, set_colors } from "./ws681x";
+// import { turn_off, set_colors } from "./ws681x";
+import { turn_off, set_colors } from "./driver";
 import { show, func_config, rgb } from "@ras-lights/common/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";

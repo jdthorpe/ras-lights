@@ -8,7 +8,7 @@ A rasperry pi based light show and web app
 * Add validation for the signatures fetched from the backend (if the server is
     not running or the proxy is not set, the text is an HTML rendering from NGINX with a 502 or 404 message)
 
-## Set Up
+## Initial Set Up
 
 1. Usual Raspeberry pi setup
 
@@ -25,43 +25,25 @@ A rasperry pi based light show and web app
 
     or clone this repo into `/home/pi/` and run the install script with `sudo install.sh`
 
-Then visit the app at `http://<<your pi's ip address here>>/`
 
-<!--
-```sh
-sudo /etc/init.d/nginx start
-```
-# always handy
-sudo apt-get install vim -y
+## Quick start
 
-## Connect to the Rasperry
+Plug an 8 light strand like this one into GPIO pin 18 (typially pin 12 on the
+pi)  and visit the app at `http://<<your pi's ip address here>>/`
 
-```sh
-ssh pi@168.192.4.64
-```
--->
+## Configuration
 
-## local dev setup
+The `/home/pi/ras-lights/config.ini` file contains the confifuration parameters.
+These are the ones you should touch
 
-```sh
-conda create -n RasLights python=3.9
-conda activate RasLights
-pip install aiohttp jsonschema pyyaml
-```
+### Section `[ws281x]`: API server parameters
 
-## dev startup
+Includes settings for the [rpi-ws281x]() library which is used to interface with the light strand.
 
-```sh
-docker run --rm -it -p 5000:80 -v $PWD/nginx-dev.conf:/etc/nginx/nginx.conf nginx
-```
+* `leds` indicates the number of leds on the strand.  
+* `dma`, `brightness  indicates the number of leds on the strand.  
 
-reload the nginx script
 
-```sh
-# edit the config
-sudo vim /etc/nginx/nginx.conf
-# validate the config
-sudo nginx -t
-# reload the config
-sudo nginx -s reload
-```
+### Section `[api]`: API server parameters
+
+* `loop_delay_ms` controls the delaty time time in the event loop that runs the light show.  The default (`50`) will refresh the lights about 20 times per second.

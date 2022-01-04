@@ -17,6 +17,19 @@ echo "[ras-lights setup.sh] Installing dependencies"
 apt-get update
 apt-get install nginx -y
 apt-get install supervisor -y
+# node may already be installed...
+if [[ -z "$(type -p node)" ]]
+then 
+  apt-get install node -y
+fi
+
+NODE_VERSION=$(node --version | perl -pe 's/^v(\d+)\..*/\1/')
+if [[ NODE_VERSION -lt 12]]
+then 
+  echo "[ras-lights setup.sh] Incompatible Node version. Please upgrade to version 12 or higher" 
+  exit
+fi
+
 # TODO: test if node is installed and has version > 12 
 # apt-get install node -y # should already be installed
 
