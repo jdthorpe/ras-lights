@@ -1,3 +1,4 @@
+/*
 // @ts-ignore
 import ws281x from "rpi-ws281x";
 import settings from "./settings";
@@ -35,3 +36,5 @@ export function random_colors(): void {
     }
     ws281x.render(pixels);
 }
+
+*/
