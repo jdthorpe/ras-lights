@@ -4,10 +4,10 @@ import Driver, { StripType } from "rpi-ws281x-led";
 export type rgb = [number, number, number];
 
 const LEDS = 300;
-const R = 0x01000000;
-const G = 0x00010000;
-const B = 0x00000100;
-// const W = 0x00000001;
+const W = 0x01000000; // W
+const G = 0x00010000; // G
+const R = 0x00000100; // R
+const B = 0x00000001; // B
 
 // Create the driver. It automatically initializes the underlying components.
 const driver = new Driver({
