@@ -36,7 +36,7 @@ async function setRandomColors() {
 async function update_color(x: IColor) {
     try {
         await fetch("/api/mode/off")
-        const res = await fetch("/api/lights/set-colors", {
+        await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
             headers: {
@@ -57,9 +57,8 @@ const Manual: React.FC = () => {
         setColor(colorObj)
         update_color(colorObj)
     }, 25), [setColor, update_color]);
-    useEffect(() => {
-        fetch("/api/mode/off")
-    }, [])
+
+    // useEffect(() => { fetch("/api/mode/off") }, [])
 
     return (
         <div style={{ margin: "1.5rem" }}>

@@ -24,7 +24,8 @@ const WrappedRow = styled.div`
 `
 
 const SIZE = "2rem"
-const CLOSE_SIZE = "0.9rem"
+const CLOSE_SIZE = "1.1rem"
+const CLOSE_FONT_SIZE = "0.9rem"
 const OFFSET = "1.5rem"
 
 const smallIcon = mergeStyles({
@@ -44,10 +45,14 @@ const largeIcon = mergeStyles({
 
 
 const colorPickerStyles: Partial<IColorPickerStyles> = {
-    panel: { padding: 12 },
+    panel: {
+        padding: 0,
+        marginTop: 12,
+        marginBottom: 12,
+    },
     root: {
         maxWidth: 352,
-        minWidth: 352,
+        minWidth: 152,
     },
     colorRectangle: { height: 268 },
 };
@@ -55,26 +60,15 @@ const colorPickerStyles: Partial<IColorPickerStyles> = {
 interface color_value_props {
     spec: color_input;
     value: rgb;
-    path: number[]
 }
 
-export const ColorValue: React.FC<color_value_props> = ({ spec, value, path }) => {
-
-    const editor = useContext(EditorContext);
-    const is_active = pathEquals(editor.active_path, path)
+export const ColorValue: React.FC<color_value_props> = ({ spec, value }) => {
 
     return (
         <div
-            onClick={(ev: React.MouseEvent<HTMLElement>) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-                console.log("activating??")
-                editor.set_active_path(path)
-            }}
             style={{
                 display: 'inline-block',
                 margin: "0 .5rem",
-                backgroundColor: is_active ? "#cccccc" : "transparent"
             }}>
             <Label>{spec.label}</Label>
             <div
@@ -93,6 +87,19 @@ export const ColorValue: React.FC<color_value_props> = ({ spec, value, path }) =
 }
 
 
+export const Color: React.FC<{ color: rgb }> = ({ color }) => (
+    <div
+        style={{
+            height: SIZE,
+            width: SIZE,
+            backgroundColor: `#${cc.rgb.hex(color)}`,
+            borderStyle: "solid",
+            borderWidth: "1px",
+            borderRadius: "2px",
+            borderColor: "black",
+        }}
+    />
+)
 interface color_input_props {
     spec: color_input;
     value: rgb;
@@ -101,37 +108,53 @@ interface color_input_props {
 
 // <FontIcon aria-label="Remove" iconName="Cancel" className={iconClass} onClick={() => setOpen(false)} />
 
-export const ColorInput: React.FC<color_input_props> = ({ value, path, spec }) => {
+export const ColorOptions: React.FC<color_input_props> = ({ value, path, spec }) => {
 
     const editor = useContext(EditorContext);
     const is_active = pathEquals(editor.active_path, path)
-    const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
-        editor.set_value({ type: "rgb", value: [color.r, color.g, color.b,] }, path)
-    }, 50), [editor]);
 
     return (
         <div
             style={{ backgroundColor: is_active ? "#cccccc" : "none" }}
         >
             <Label>{spec.label}</Label>
-            <ColorPicker
-                color={`#${cc.rgb.hex(value)}`}
-                onChange={updateColor}
-                alphaType="none"
-                showPreview={true}
-                styles={colorPickerStyles}
-                // The ColorPicker provides default English strings for visible text.
-                // If your app is localized, you MUST provide the `strings` prop with localized strings.
-                strings={{
-                    // By default, the sliders will use the text field labels as their aria labels.
-                    // Previously this example had more detailed instructions in the labels, but this is
-                    // a bad practice and not recommended. Labels should be concise, and match visible text when possible.
-                    hueAriaLabel: 'Hue',
-                }}
-            />
+            <ColorValuePicker
+                color={value}
+                onChange={(color) => editor.set_value({ type: "rgb", value: color }, path)} />
         </div>
     )
 }
+
+interface colorValuePickerProps {
+    onChange: (x: rgb) => void;
+    color: rgb;
+}
+
+export const ColorValuePicker: React.FC<colorValuePickerProps> = ({ color, onChange }) => {
+
+    const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
+        onChange([color.r, color.g, color.b,])
+    }, 50), [onChange]);
+
+    return (
+        <ColorPicker
+            color={`#${cc.rgb.hex(color)}`}
+            onChange={updateColor}
+            alphaType="none"
+            showPreview={true}
+            styles={colorPickerStyles}
+            // The ColorPicker provides default English strings for visible text.
+            // If your app is localized, you MUST provide the `strings` prop with localized strings.
+            strings={{
+                // By default, the sliders will use the text field labels as their aria labels.
+                // Previously this example had more detailed instructions in the labels, but this is
+                // a bad practice and not recommended. Labels should be concise, and match visible text when possible.
+                hueAriaLabel: 'Hue',
+            }}
+        />
+    )
+}
+
 
 export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
     return (
@@ -159,28 +182,17 @@ export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
 interface color_array_value_props {
     spec: color_array_input;
     value: rgb[];
-    path: number[];
 }
 
-export const ColorArrayValue: React.FC<color_array_value_props> = ({ value: colors, spec, path }) => {
-    const editor = useContext(EditorContext);
-    const is_active = pathEquals(editor.active_path, path)
-    return (
-        <div
-            onClick={(ev: React.MouseEvent<HTMLElement>) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-                editor.set_active_path(path)
-            }}
-            style={{
-                display: 'inline-block',
-                backgroundColor: is_active ? "#cccccc" : "none",
-            }}>
-            <Label>{spec.label}</Label>
-            <ColorArray colors={colors} />
-        </div>
-    )
-}
+export const ColorArrayValue: React.FC<color_array_value_props> =
+    ({ value: colors, spec }) => {
+        return (
+            <>
+                <Label>{spec.label}</Label>
+                <ColorArray colors={colors} />
+            </>
+        )
+    }
 
 interface color_array_input_props {
     spec: color_array_input;
@@ -189,24 +201,45 @@ interface color_array_input_props {
     path: number[];
 }
 
-export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colors, spec, path }) => {
+export const ColorArrayOptions: React.FC<color_array_input_props> = ({ value: colors, spec, path }) => {
 
-    const [active_color, set_active_color] = useState(0)
     const editor = useContext(EditorContext);
     const is_active = pathEquals(editor.active_path, path)
 
-    const addColor = React.useCallback(() => {
+    return (
+        <div
+            style={{ backgroundColor: is_active ? "#cccccc" : "tranparent" }}
+        >
+            <Label>{spec.label}</Label>
+            <ColorArrayPicker
+                colors={colors}
+                onChange={
+                    (value) => editor.set_value({ type: "rgb[]", value }, path)
+                } />
+        </div>
+    )
+}
 
+
+
+interface colorArrayPickerProps {
+    onChange: (x: rgb[]) => void;
+    colors: rgb[];
+}
+
+export const ColorArrayPicker: React.FC<colorArrayPickerProps> = ({ colors, onChange }) => {
+
+    const [active_color, set_active_color] = useState(0)
+
+    const addColor = React.useCallback(() => {
         const value = [
             ...colors.slice(0, active_color),
             colors[active_color],
             ...colors.slice(active_color),
         ]
-
-        editor.set_value({ type: "rgb[]", value }, path)
+        onChange(value)
         set_active_color(active_color + 1)
-
-    }, [editor, colors, active_color]);
+    }, [onChange, colors, active_color]);
 
 
     const dropColor = React.useCallback((i: number) => {
@@ -214,11 +247,11 @@ export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colo
             ...colors.slice(0, i),
             ...colors.slice(i + 1),
         ]
-        editor.set_value({ type: "rgb[]", value }, path)
+        onChange(value)
         if (active_color > i) {
             set_active_color(active_color - 1)
         }
-    }, [editor, colors, active_color]);
+    }, [onChange, colors, active_color]);
 
 
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
@@ -227,97 +260,108 @@ export const ColorArrayInput: React.FC<color_array_input_props> = ({ value: colo
             [color.r, color.g, color.b,],
             ...colors.slice(active_color + 1),
         ]
-        editor.set_value({ type: "rgb[]", value }, path)
-    }, 25), [editor, colors, active_color]);
+        onChange(value)
+    }, 25), [onChange, colors, active_color]);
 
-    return (
-        <div
-            style={{ backgroundColor: is_active ? "#cccccc" : "tranparent" }}
-        >
-            <Label>{spec.label}</Label>
-            <WrappedRow>
-                {colors.map((color: rgb, i) => (
+    return (<>
+        <WrappedRow>
+            {colors.map((color: rgb, i) => (
 
-                    <div
-                        key={i}
-                        style={{ position: "relative" }}>
-                        <div
-                            style={{
-                                height: SIZE,
-                                width: SIZE,
-                                backgroundColor: `#${cc.rgb.hex(color)}`,
-                                borderColor: (i === active_color) ? "red" : "black",
-                                borderStyle: "solid",
-                                marginTop: (i === active_color) ? undefined : "1px",
-                                borderWidth: (i === active_color) ? "2px" : "1px",
-                                borderRadius: "2px",
-                            }}
-                            onClick={() => set_active_color(i)}
-                        />
-                        <div
-                            style={{
-                                position: "absolute",
-                                left: OFFSET,
-                                top: "-.4rem",
-                                borderRadius: "2px",
-                                borderWidth: "0px",
-                                backgroundColor: "#cccccc",
-                                width: CLOSE_SIZE,
-                                height: CLOSE_SIZE,
-                                padding: "1px",
-                                fontSize: CLOSE_SIZE
-                            }}
-                            onClick={() => dropColor(i)}
-                        >
-                            <FontIcon
-                                aria-label="Remove"
-                                iconName="Cancel"
-                                className={smallIcon}
-                            />
-                        </div>
-                    </div>
-                ))}
-                <div style={{ position: "relative" }}>
+                <div
+                    key={i}
+                    style={{ position: "relative" }}>
                     <div
                         style={{
                             height: SIZE,
                             width: SIZE,
-                            backgroundColor: "#cccccc",
+                            backgroundColor: `#${cc.rgb.hex(color)}`,
+                            borderColor: (i === active_color) ? "red" : "black",
                             borderStyle: "solid",
-                            marginTop: "1px",
-                            borderWidth: "1px",
+                            marginTop: (i === active_color) ? undefined : "1px",
+                            borderWidth: (i === active_color) ? "2px" : "1px",
                             borderRadius: "2px",
                         }}
-                        onClick={() => addColor()}
+                        onClick={() => set_active_color(i)}
+                    />
+                    <div
+                        style={{
+                            position: "absolute",
+                            left: `calc(${SIZE} - ${CLOSE_SIZE} / 2)`,
+                            top: "-.4rem",
+                            borderRadius: "2px",
+                            borderWidth: "1px",
+                            borderColor: "black",
+                            backgroundColor: "#eeeeee",
+                            width: CLOSE_SIZE,
+                            height: CLOSE_SIZE,
+                            padding: "1px",
+                            fontSize: CLOSE_FONT_SIZE
+                        }}
+                        onClick={() => dropColor(i)}
                     >
                         <FontIcon
-                            aria-label="Add"
-                            iconName="Add"
-                            className={largeIcon}
+                            aria-label="Remove"
+                            iconName="Cancel"
+                            className={smallIcon}
                             style={{
-                                marginTop: ".25rem",
-                                marginLeft: ".25rem",
+                                margin: "auto",
+                                position: "relative",
+                                // top: "calc(50% - .8rem)",
+                                top: "calc(50% - .75rem)",
+                                display: "block",
+                                fontSize: "1rem",
+                                width: "1rem",
                             }}
                         />
                     </div>
                 </div>
-            </WrappedRow>
-            <ColorPicker
-                color={`#${cc.rgb.hex(colors[active_color])}`}
-                onChange={updateColor}
-                alphaType="none"
-                showPreview={true}
-                styles={colorPickerStyles}
-                // The ColorPicker provides default English strings for visible text.
-                // If your app is localized, you MUST provide the `strings` prop with localized strings.
-                strings={{
-                    // By default, the sliders will use the text field labels as their aria labels.
-                    // Previously this example had more detailed instructions in the labels, but this is
-                    // a bad practice and not recommended. Labels should be concise, and match visible text when possible.
-                    hueAriaLabel: 'Hue',
-                }}
-            />
-        </div>
-    )
-}
+            ))}
+            <div >
+                <div
+                    style={{
+                        height: SIZE,
+                        width: SIZE,
+                        backgroundColor: "#eeeeee",
+                        borderStyle: "solid",
+                        marginTop: "1px",
+                        borderWidth: "1px",
+                        borderRadius: "2px",
+                    }}
+                    onClick={() => addColor()}
+                >
 
+                    <FontIcon
+                        aria-label="Add"
+                        iconName="Add"
+                        className={largeIcon}
+                        style={{
+                            margin: "auto",
+                            position: "relative",
+                            top: "calc(50% - .8rem)",
+                            display: "block",
+                            fontSize: "1.2rem",
+                            width: "1.2rem",
+                            // marginTop: ".25rem",
+                            // marginLeft: ".25rem",
+                        }}
+                    />
+                </div>
+            </div>
+        </WrappedRow>
+        <ColorPicker
+            color={`#${cc.rgb.hex(colors[active_color])}`}
+            onChange={updateColor}
+            alphaType="none"
+            showPreview={true}
+            styles={colorPickerStyles}
+            // The ColorPicker provides default English strings for visible text.
+            // If your app is localized, you MUST provide the `strings` prop with localized strings.
+            strings={{
+                // By default, the sliders will use the text field labels as their aria labels.
+                // Previously this example had more detailed instructions in the labels, but this is
+                // a bad practice and not recommended. Labels should be concise, and match visible text when possible.
+                hueAriaLabel: 'Hue',
+            }}
+        />
+    </>)
+}

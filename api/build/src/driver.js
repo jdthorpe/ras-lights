@@ -21,6 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.random_colors = exports.turn_off = exports.set_colors = void 0;
 const rpi_ws281x_led_1 = __importStar(require("rpi-ws281x-led"));
+// import settings from "./settings";
 const LEDS = 300;
 const W = 0x01000000; // W
 const G = 0x00010000; // G

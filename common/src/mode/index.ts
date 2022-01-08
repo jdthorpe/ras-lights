@@ -1,6 +1,5 @@
-import { hex } from "color-convert";
 import { value } from "../../types/parameters";
-import { func_config, mode_param, rgb, mode } from "../../types/mode";
+import { func_config, mode_param, mode } from "../../types/mode";
 import { registry, globals } from "../registry";
 
 export function build_node(x: func_config, globals: globals): mode {
@@ -74,6 +73,20 @@ function _build_node(
                 }
                 break;
             }
+            case "button": {
+                switch (param.type) {
+                    case "button": {
+                        args[param.key] = input_value.value;
+                        break;
+                    }
+                    default: {
+                        throw new Error(
+                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
+                        );
+                    }
+                }
+                break;
+            }
             case "rgb": {
                 switch (param.type) {
                     case "rgb": {
@@ -102,36 +115,6 @@ function _build_node(
                 }
                 break;
             }
-            case "hex": {
-                switch (param.type) {
-                    case "rgb": {
-                        args[param.key] = hex.rgb(input_value.value);
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
-            case "hex[]": {
-                switch (param.type) {
-                    case "rgb": {
-                        args[param.key] = input_value.value.map((val) =>
-                            hex.rgb(val)
-                        );
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
             case "boolean": {
                 switch (param.type) {
                     case "boolean": {
@@ -147,8 +130,10 @@ function _build_node(
                 break;
             }
             default: {
+                let exhaustivenessCheck: never = input_value;
+                console.log(exhaustivenessCheck);
                 // @ts-ignore
-                throw new Error(`unknown parameter type ${input_value.type}`);
+                throw new Error(`unknown input type ${input_value.type}`);
             }
         }
     }

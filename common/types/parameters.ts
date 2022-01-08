@@ -1,4 +1,15 @@
-export type value = "boolean" | "integer" | "number" | "rgb" | "rgb[]";
+/*
+ This has the types that are used to describe the inputs (parameters) of a function
+ */
+
+export type value =
+    | "boolean"
+    | "integer"
+    | "number"
+    | "rgb"
+    | "rgb[]"
+    | "button";
+
 import { rgb } from "./mode";
 
 export interface values {
@@ -9,11 +20,17 @@ interface generic_input {
     type: value;
     label: string;
     key: string;
-    default: any; // This should be over ridden by concrete interfaces
+    // default?: any; // This should be over ridden by concrete interfaces
+}
+
+export interface button_input extends generic_input {
+    type: "button";
+    default: string;
 }
 
 export interface boolean_input extends generic_input {
     type: "boolean";
+    // value:
     default: boolean;
 }
 
@@ -43,6 +60,7 @@ export interface color_array_input extends generic_input {
 
 export type input =
     | boolean_input
+    | button_input
     | integer_input
     | range_input
     | color_input

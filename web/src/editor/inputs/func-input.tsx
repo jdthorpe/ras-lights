@@ -2,7 +2,10 @@ import React, { useContext } from 'react';
 import styled from "styled-components"
 import useSize from '@react-hook/size'
 import { BooleanValue } from './boolean-input';
+import { ButtonValue } from './button-input';
+// import { ButtonInput } from "./button-input"
 import { ColorArrayValue, ColorValue } from './color-input';
+
 import {
     input,
     boolean_input,
@@ -10,13 +13,14 @@ import {
     range_input,
     color_input,
     color_array_input,
+    button_input,
     signatures,
 } from "@ras-lights/common/types/parameters"
 import { NumberValue } from './number-input';
 import { Label } from '@fluentui/react/lib/Label';
 import {
     bool_value, func_config, mode_param,
-    num_value, rgb_array_value, rgb_value
+    num_value, rgb_array_value, rgb_value, button_value
 } from "@ras-lights/common/types/mode";
 import { EditorContext, pathEquals } from '../editor';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -121,17 +125,38 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                             </div>
                             )
                         }
-                        return (<Parameter
-                            key={i}
-                            config={input}
-                            value={value}
-                            path={[...path, i]}
-                        />)
+                        return (
+                            <Clickable path={[...path, i]}>
+                                <Parameter
+                                    key={i}
+                                    config={input}
+                                    value={value}
+                                    path={[...path, i]}
+                                />
+                            </Clickable>
+                        )
                     })}</div>
         </Main>
     )
 }
 
+const Clickable: React.FC<{ path: number[] }> = (props) => {
+
+    const editor = useContext(EditorContext);
+    const is_active = pathEquals(editor.active_path, props.path)
+
+    return <div
+        onClick={(ev: React.MouseEvent<HTMLElement>) => {
+            ev.preventDefault()
+            ev.stopPropagation()
+            editor.set_active_path(props.path)
+        }}
+        style={{
+            backgroundColor: is_active ? "#cccccc" : "transparent",
+            display: 'inline-block',
+        }}>{props.children}</div>
+
+}
 interface parameterProps {
     config: input;
     value: mode_param;
@@ -166,15 +191,22 @@ const Parameter: React.FC<parameterProps> = ({ config, value, path }) => {
             return <ColorValue
                 spec={config as color_input}
                 value={(value as rgb_value).value}
-                path={path}
             />
 
         case "rgb[]":
             return <ColorArrayValue
                 spec={config as color_array_input}
                 value={(value as rgb_array_value).value}
-                path={path}
             />
+        case "button":
+            return <ButtonValue
+                spec={config as button_input}
+                value={(value as button_value)}
+            />
+        default:
+            let exhaustivenessCheck: never = config;
+            console.log(exhaustivenessCheck);
+            return <></>
 
     }
 }

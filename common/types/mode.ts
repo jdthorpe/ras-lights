@@ -1,16 +1,22 @@
-export type mode_param =
-    | func_config
-    | num_value
-    | int_value
-    | rgb_value
-    | hex_value
-    | hex_array_value
-    | rgb_array_value
-    | bool_value;
+/* Types in this file represent the data behind a show (mode)
+
+    Specifically, this is everything required to specificy a func_config
+    instance
+*/
+
+import { value } from "./parameters";
+import { ui, ui_slider } from "./user-input";
+
+export type mode_param = func_config | value_instance;
 
 export interface show {
     name: string;
     def: func_config | rgb_array_value;
+}
+
+export interface button_config {
+    type: "button";
+    label: string;
 }
 
 export interface func_config {
@@ -28,35 +34,51 @@ export type rgb = [number, number, number];
 export type rgbw = [number, number, number, number];
 export type hsv = [number, number, number];
 
-export interface num_value {
+interface generic_value_instance {
+    type: value;
+    value: any;
+    ui?: ui;
+}
+
+export interface num_value extends generic_value_instance {
     type: "number";
     value: number;
+    ui?: ui_slider;
 }
-export interface int_value {
+
+export interface int_value extends generic_value_instance {
     type: "integer";
     value: number;
+    ui?: ui_slider;
 }
 
-export interface hex_value {
-    type: "hex";
-    value: string;
-}
-export interface hex_array_value {
-    type: "hex[]";
-    value: string[];
-}
-
-export interface rgb_value {
+export interface rgb_value extends generic_value_instance {
     type: "rgb";
     value: rgb;
+    // ui?: "color-picker";
 }
 
-export interface rgb_array_value {
+export interface rgb_array_value extends generic_value_instance {
     type: "rgb[]";
     value: rgb[];
+    // ui?: "color[]-picker";
 }
 
-export interface bool_value {
+export interface bool_value extends generic_value_instance {
     type: "boolean";
     value: boolean;
+    // ui?: "toggle";
 }
+
+export interface button_value extends generic_value_instance {
+    type: "button";
+    ui: { type: "button"; label: string };
+}
+
+export type value_instance =
+    | button_value
+    | bool_value
+    | rgb_array_value
+    | rgb_value
+    | int_value
+    | num_value;

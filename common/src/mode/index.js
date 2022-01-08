@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.build_node = void 0;
-const color_convert_1 = require("color-convert");
 const registry_1 = require("../registry");
 function build_node(x, globals) {
     return _build_node(x, "rgb[]", globals);
@@ -55,6 +54,18 @@ function _build_node(x, returnType, globals) {
                 }
                 break;
             }
+            case "button": {
+                switch (param.type) {
+                    case "button": {
+                        args[param.key] = input_value.value;
+                        break;
+                    }
+                    default: {
+                        throw new Error(`Parameter type ${input_value.type} is not compatible with input type ${param.type}`);
+                    }
+                }
+                break;
+            }
             case "rgb": {
                 switch (param.type) {
                     case "rgb": {
@@ -79,30 +90,6 @@ function _build_node(x, returnType, globals) {
                 }
                 break;
             }
-            case "hex": {
-                switch (param.type) {
-                    case "rgb": {
-                        args[param.key] = color_convert_1.hex.rgb(input_value.value);
-                        break;
-                    }
-                    default: {
-                        throw new Error(`Parameter type ${input_value.type} is not compatible with input type ${param.type}`);
-                    }
-                }
-                break;
-            }
-            case "hex[]": {
-                switch (param.type) {
-                    case "rgb": {
-                        args[param.key] = input_value.value.map((val) => color_convert_1.hex.rgb(val));
-                        break;
-                    }
-                    default: {
-                        throw new Error(`Parameter type ${input_value.type} is not compatible with input type ${param.type}`);
-                    }
-                }
-                break;
-            }
             case "boolean": {
                 switch (param.type) {
                     case "boolean": {
@@ -116,8 +103,10 @@ function _build_node(x, returnType, globals) {
                 break;
             }
             default: {
+                let exhaustivenessCheck = input_value;
+                console.log(exhaustivenessCheck);
                 // @ts-ignore
-                throw new Error(`unknown parameter type ${input_value.type}`);
+                throw new Error(`unknown input type ${input_value.type}`);
             }
         }
     }

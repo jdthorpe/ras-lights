@@ -2,8 +2,8 @@ import React, { useState, useEffect, createContext, useCallback } from 'react';
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faHashtag, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { IconButton } from '../utils/icon-button';
+import { faCode, faHashtag, faBolt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { delete_mode, save_mode, fetch_modes } from "../utils/api"
 import { Label } from '@fluentui/react/lib/Label';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
@@ -17,23 +17,27 @@ import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { useBoolean } from '@fluentui/react-hooks';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
+import { ui } from "@ras-lights/common/types/user-input";
 
-import { func_config, mode_param, rgb_array_value, rgb, mode } from "@ras-lights/common/types/mode";
+import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from '@ras-lights/common/types/mode';
 import {
     value, signature, signatures, input,
     color_array_input, color_input,
     range_input, integer_input, boolean_input
 } from "@ras-lights/common/types/parameters"
 import { FuncValue } from './inputs/func-input';
-import { ColorArray, ColorInput, ColorArrayInput } from './inputs/color-input';
-import { BooleanInput } from './inputs/boolean-input';
-import { NumberInput } from './inputs/number-input';
+import { ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
+import { BooleanOptions } from './inputs/boolean-input';
+import { NumberOptions } from './inputs/number-input';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
+
+import UI_Selector from "./inputs/ui-selector"
 
 import { make_loop, ILoop } from "./loop"
 
 
-const ACTIVE_COLOR = "blue"
+const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
+const ACTIVE_COLOR = "9be2fa"; //00c6fc
 const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
 const dialogStyles = { main: { maxWidth: 450 } };
 const dialogContentProps = {
@@ -52,25 +56,16 @@ const Header = styled.div`
     padding: 1rem;
 `
 
-const IconBox = styled.div`
-    width: 2rem;
-    height: 2rem;
-    font-size: 1.2rem;
-    border-radius: 2px;
-    background: grey;
-    padding-top: 0.4rem;
-`
-
 const Container = styled.div`
     display: flex;
     flex-direction: row;
     height: 100%;
 `
-const Main = styled.div`
+const WorkArea = styled.div`
     padding: 1rem;
     flex-grow: 1;
 `
-const Options = styled.div`
+const OptionsPanel = styled.div`
     min-width: 20rem;
     max-width: 20rem;
     background-color: #cccccc;
@@ -200,9 +195,10 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [colors, set_colors] = useState<rgb[]>()
     const [mode, set_mode] = useState<mode>()
     const [loading, set_loading] = useState(true)
-    const [showNumericInputs, set_showNumericInputs] = useState<boolean>(false)
-    const [show_raw_input, set_show_raw_input] = useState<boolean>(false)
+    const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(false)
+    const [show_raw_input, { toggle: toggleShowRawInput }] = useBoolean(false)
     const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
+    const [live, { toggle: toggleLive }] = useBoolean(false);
 
     const [free_text_option, set_free_text_option] = useState<string>()
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
@@ -232,14 +228,14 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
         // component will mount
         init();
-        update_LEDS();
+        // update_LEDS();
         set(default_show, [])
 
         // component will unmount
         return function cleanup() {
             console.log("cleaning up")
             loop.stop();
-            (async () => { await fetch("/api/mode/off"); })()
+            // live && (async () => { await fetch("/api/mode/off"); })()
         };
     }, []);
 
@@ -311,6 +307,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             if (!Array.isArray(show.value))
                 return
             // const response =
+            await fetch("/api/mode/off")
             await fetch("/api/lights/set-colors", {
                 method: 'POST',
                 cache: 'no-cache',
@@ -320,7 +317,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }), [show])
 
-    useEffect(() => { update_LEDS() }, [show]);
+    useEffect(() => { live && update_LEDS() }, [show, live]);
 
     const [active_item, active_input] = get_item_at_path(show, active_path, signatures)
 
@@ -338,6 +335,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
         switch (input.type) {
+            case "button":
+                return <DefaultButton>{data}</DefaultButton>
             case "boolean":
             case "number":
             case "integer": {
@@ -346,6 +345,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             case "rgb": { return <ColorArray colors={[data as rgb]} /> }
             case "rgb[]": { return <ColorArray colors={data as rgb[]} /> }
             default: {
+                let exhaustivenessCheck: never = input;
+                console.log(exhaustivenessCheck);
                 // @ts-ignore
                 return (<p>Unknown input type {input.type}</p>)
             }
@@ -470,37 +471,38 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     onChange={onNameChange}
                 />
                 <div style={{ margin: "auto" }}></div>
-                <IconBox onClick={() => set_showNumericInputs(!showNumericInputs)}>
-                    <FontAwesomeIcon
-                        title="Show numeric inputs"
-                        style={{ margin: "auto", display: "block", color: showNumericInputs ? ACTIVE_COLOR : "black" }}
-                        icon={faHashtag} />
-                </IconBox>
-                <IconBox onClick={() => set_show_raw_input(!show_raw_input)}>
-                    <FontAwesomeIcon
-                        title="Show raw data"
-                        style={{ margin: "auto", display: "block", color: show_raw_input ? ACTIVE_COLOR : "black" }}
-                        icon={faCode} />
-                </IconBox>
-                <IconBox onClick={toggleHideDialog}>
-                    <FontAwesomeIcon
-                        title="Delete Show"
-                        style={{ margin: "auto", display: "block" }}
-                        icon={faTrashAlt} />
-                </IconBox>
+                <IconButton
+                    onClick={toggleLive}
+                    title="Use Live Updates"
+                    style={{ color: live ? ACTIVE_COLOR : "black" }}
+                    icon={faBolt}
+                />
+                <IconButton
+                    onClick={toggleShowNumericInputs}
+                    title="Show numeric inputs"
+                    style={{ color: showNumericInputs ? ACTIVE_COLOR : "black" }}
+                    icon={faHashtag}
+                />
+                <IconButton
+                    onClick={toggleShowRawInput}
+                    title="Show raw data"
+                    style={{ color: show_raw_input ? ACTIVE_COLOR : "black" }}
+                    icon={faCode}
+                />
+                <IconButton
+                    onClick={() => (!disableSave && toggleHideDialog())}
+                    title="Delete Show"
+                    style={{ color: disableSave ? "#dddddd" : "black" }}
+                    icon={faTrashAlt}
+                />
+
                 <PrimaryButton
                     onClick={saveShow}
                     disabled={disableSave}
                 >Save</PrimaryButton>
             </Header>
             <Container>
-                {/* <div>
-                <pre>
-                    {JSON.stringify(NameOptions, null, 4)}
-                </pre>
-                {JSON.stringify(active_path)}
-            </div> */}
-                <Main>
+                <WorkArea>
                     {show.type === "func" ? (
                         <div>
                             <FuncValue
@@ -516,8 +518,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             <pre>{JSON.stringify(show, null, 4)}</pre>
                         </div>
                     }
-                </Main>
-                <Options>
+                </WorkArea>
+                <OptionsPanel>
                     {(generators.length > 0) && <Dropdown
                         label="Input Type"
                         selectedKey={active_item.type === "func" ? active_item.name : "constant"}
@@ -526,29 +528,40 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         placeholder="Select an option"
                         options={["constant", ...generators].map(s => ({ key: s, text: s }))}
                     />}
+                    {VALUE_NAMES.indexOf((active_item as value_instance).type) !== -1 && (
+                        <UI_Selector
+                            el={active_item as value_instance}
+                            spec={active_input!}
+                            onChange={
+                                (ui: ui | undefined) =>
+                                    // @ts-ignore
+                                    set({ ...active_item as value_instance, ui }, active_path)
+                            }
+                        />
+                    )}
                     {active_item.type === "boolean" && (
-                        <BooleanInput
+                        <BooleanOptions
                             value={active_item.value}
                             spec={active_input as boolean_input}
                             path={active_path}
                         />
                     )}
                     {(active_item.type === "number" || active_item.type === "integer") && (
-                        < NumberInput
+                        <NumberOptions
                             value={active_item.value}
                             spec={active_input as range_input | integer_input}
                             path={active_path}
                         />
                     )}
                     {active_item.type === "rgb" && (
-                        <ColorInput
+                        <ColorOptions
                             value={active_item.value}
                             spec={active_input as color_input}
                             path={active_path}
                         />
                     )}
                     {active_item.type === "rgb[]" && (
-                        <ColorArrayInput
+                        <ColorArrayOptions
                             value={active_item.value}
                             spec={active_path.length === 0 ? default_spec : (active_input as color_array_input)}
                             path={active_path}
@@ -556,7 +569,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     )}
 
 
-                </Options>
+                </OptionsPanel>
             </Container>
             <Dialog
                 hidden={hideDialog}

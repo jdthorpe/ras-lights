@@ -1,29 +1,26 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { integer_input, range_input } from "@ras-lights/common/types/parameters"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
-import { EditorContext, pathEquals } from '../editor';
+import { EditorContext } from '../editor';
 
 const styles: Partial<ITextFieldStyles> = { fieldGroup: { width: "5rem" } };
 
-const is_int = /^\d+$/;
-const is_number = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
+export const is_int = /^\d+$/;
+export const is_number = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
 
 interface props {
     spec: integer_input | range_input;
-    //onChanged: { (x: any): void };
     value: number;
     path: number[];
-    //activate?: () => void;
 }
 
-export const NumberInput: React.FC<props> = ({ spec, value, path }) => {
+export const NumberOptions: React.FC<props> = ({ spec, value, path }) => {
 
     const { type, label, min, max } = spec;
     // const [s_value, setValue] = useState(value.toString())
     const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
     const editor = useContext(EditorContext);
-    const is_active = pathEquals(editor.active_path, path)
 
     useEffect(() => {
         // error messages should only stick around for 5 seconds (since the bad
@@ -63,17 +60,7 @@ export const NumberInput: React.FC<props> = ({ spec, value, path }) => {
     }, [min, max, type, editor])
 
     return (
-        <div
-            onClick={(ev: React.MouseEvent<HTMLElement>) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-                editor.set_active_path(path)
-            }}
-            style={{
-                backgroundColor: is_active ? "#cccccc" : "transparent",
-                display: 'inline-block',
-                margin: ".5rem"
-            }}>
+        <div style={{ display: 'inline-block', margin: ".5rem" }}>
             <TextField
                 label={label}
                 value={`${value}`}
@@ -85,4 +72,4 @@ export const NumberInput: React.FC<props> = ({ spec, value, path }) => {
     )
 }
 
-export const NumberValue = NumberInput;
+export const NumberValue = NumberOptions;
