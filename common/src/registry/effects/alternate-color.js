@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const registry_1 = require("../registry");
+const index_1 = require("../index");
 function average(a, b, w) {
     return [
         Math.floor(a[0] * w + b[0] * (1 - w)),
@@ -26,7 +26,7 @@ function alternate(x) {
     }
     return average(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
-(0, registry_1.register)("Alternate", alternate, [
+(0, index_1.register)("Alternate", alternate, [
     {
         key: "a",
         type: "rgb",

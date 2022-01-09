@@ -1,4 +1,4 @@
-import { register } from "../registry";
+import { register } from "../";
 import { rgb } from "../../../types/mode";
 
 interface input {

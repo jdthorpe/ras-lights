@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.build_node = void 0;
-const registry_1 = require("../registry/registry");
+const registry_1 = require("../registry");
 function build_node(x, globals) {
     return _build_node(x, "rgb[]", globals);
 }
@@ -10,7 +10,7 @@ function _build_node(x, returnType, globals) {
     // get the function and its types from the registry
     const f = registry_1.registry[x.name];
     if (typeof f === "undefined") {
-        throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => `${a}, ${b}`)}`);
+        throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => `${a}, ${b}`, "")}`);
     }
     const [func, inputs, value] = f;
     if (returnType !== value) {

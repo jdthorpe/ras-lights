@@ -26,8 +26,12 @@ export function make_loop(
 
     return {
         start: (x: func_config) => {
-            console.log("(start)");
+            console.log("[make loop] About to build node");
+            console.log("[make loop] About to build node");
+            console.log(x, globals);
+            console.log("===========");
             const mode = build_node(x, globals);
+            console.log("[make loop] node built");
             timeout && clearTimeout(timeout);
 
             const fun = () => {

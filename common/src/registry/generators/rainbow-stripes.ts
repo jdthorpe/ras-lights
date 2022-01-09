@@ -1,4 +1,4 @@
-import { register, globals } from "../registry";
+import { register, globals } from "../";
 import { hsv } from "color-convert";
 
 interface input {
