@@ -126,7 +126,7 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                             )
                         }
                         return (
-                            <Clickable path={[...path, i]}>
+                            <Clickable path={[...path, i]} key={i}>
                                 <Parameter
                                     key={i}
                                     config={input}

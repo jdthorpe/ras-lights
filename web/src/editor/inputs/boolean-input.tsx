@@ -15,7 +15,7 @@ export const BooleanOptions: React.FC<props> = ({ spec, value, path }) => {
     const editor = useContext(EditorContext);
 
     const onChange = useCallback((val: boolean) => {
-        editor.set_value({ type: "boolean", value: val }, path) // , trigger_label
+        editor.update_value({ value: val }, path) // , trigger_label
     }, [editor]) // , trigger_label // setChecked, 
 
     return (

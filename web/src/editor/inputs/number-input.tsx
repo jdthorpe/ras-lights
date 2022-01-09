@@ -55,7 +55,7 @@ export const NumberOptions: React.FC<props> = ({ spec, value, path }) => {
             setErrorMessage(`Value must be at most ${max}`)
 
         //setValue(newValue);
-        editor.set_value({ type, value: +newValue }, path)
+        editor.update_value({ value: +newValue }, path)
         setErrorMessage(undefined)
     }, [min, max, type, editor])
 

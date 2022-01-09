@@ -72,7 +72,7 @@ export interface bool_value extends generic_value_instance {
 
 export interface button_value extends generic_value_instance {
     type: "button";
-    ui: { type: "button"; label: string };
+    ui: { type: "button"; label: string; key: string };
 }
 
 export type value_instance =

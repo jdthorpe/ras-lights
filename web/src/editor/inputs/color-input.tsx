@@ -120,7 +120,7 @@ export const ColorOptions: React.FC<color_input_props> = ({ value, path, spec })
             <Label>{spec.label}</Label>
             <ColorValuePicker
                 color={value}
-                onChange={(color) => editor.set_value({ type: "rgb", value: color }, path)} />
+                onChange={(color) => editor.update_value({ value: color }, path)} />
         </div>
     )
 }
@@ -214,7 +214,7 @@ export const ColorArrayOptions: React.FC<color_array_input_props> = ({ value: co
             <ColorArrayPicker
                 colors={colors}
                 onChange={
-                    (value) => editor.set_value({ type: "rgb[]", value }, path)
+                    (value) => editor.update_value({ value }, path)
                 } />
         </div>
     )

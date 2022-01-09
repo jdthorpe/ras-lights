@@ -17,7 +17,7 @@ import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { useBoolean } from '@fluentui/react-hooks';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
-import { ui } from "@ras-lights/common/types/user-input";
+import { ui, ui_data } from "@ras-lights/common/types/user-input";
 
 import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from '@ras-lights/common/types/mode';
 import {
@@ -34,6 +34,7 @@ import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import UI_Selector from "./inputs/ui-selector"
 
 import { make_loop, ILoop } from "./loop"
+import { UI_instance } from '../ui';
 
 
 const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
@@ -54,6 +55,11 @@ const Header = styled.div`
     background-color: #cccccc;
     margin-top: 1rem;
     padding: 1rem;
+`
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
 `
 
 const Container = styled.div`
@@ -162,6 +168,7 @@ export function pathEquals(a: number[], b: number[]) {
 }
 
 interface EditorContext {
+    update_value: (new_value: Partial<mode_param>, path: number[],) => void;
     set_value: (new_value: mode_param, path: number[],) => void;
     set_active_path: (path: number[]) => void;
     get_preview: React.FC<{ path: number[] }>;
@@ -172,6 +179,7 @@ interface EditorContext {
 }
 
 export const EditorContext = createContext<EditorContext>({
+    update_value: () => { },
     set_value: () => { },
     set_active_path: () => { },
     get_preview: () => (<p>too early</p>),
@@ -186,6 +194,26 @@ interface editorProps {
     signatures: signatures
 }
 const FREE_TEXT_KEY = "__free_text__"
+
+function walk_inputs(
+    x: func_config,
+    signatures: signatures,
+    fun: { (x: value_instance, path: number[]): void },
+    path?: number[],
+) {
+    if (typeof path === "undefined")
+        path = []
+
+    for (let i of signatures[x.name].input) {
+        let p = x.params[i.key]
+        if (p.type === "func") {
+            walk_inputs(p, signatures, fun, path)
+        } else {
+            fun(p, path)
+        }
+    }
+}
+
 
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
@@ -204,6 +232,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
     const [existing_modes, set_existing_modes] = useState<IComboBoxOption[]>()
     const [existing_shows, set_existing_shows] = useState<{ [key: string]: func_config | rgb_array_value }>()
+    const [ui_components, set_ui_components] = useState<ui_data[]>([])
 
     const [loop] = useState<ILoop>(() => make_loop(set_colors, { leds: 8 }))
 
@@ -271,6 +300,16 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     }
 
+    const getUIcomponents = (p: func_config): ui_data[] => {
+        const inputs: ui_data[] = []
+        walk_inputs(p, signatures, (el: value_instance, path: number[]) => {
+            if (typeof el.ui !== "undefined")
+                inputs.push({ el, ui: el.ui, path })
+        })
+        return inputs
+
+    }
+
     const onClose = (path: number[]) => {
 
         const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
@@ -317,7 +356,11 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }), [show])
 
-    useEffect(() => { live && update_LEDS() }, [show, live]);
+    useEffect(() => {
+        live && update_LEDS()
+        if (show.type === "func")
+            set_ui_components(getUIcomponents(show))
+    }, [show, live]);
 
     const [active_item, active_input] = get_item_at_path(show, active_path, signatures)
 
@@ -354,7 +397,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
         }
     }, [mode, signatures, show, colors])
-
     const set = useCallback((
         new_value: mode_param,
         path: number[],
@@ -398,6 +440,17 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         set_active_path(path)
 
     }, [show, set_mode, active_path])
+
+    const update_value = useCallback((
+        new_value: Partial<mode_param>,
+        path: number[],
+    ) => {
+        let old_value: mode_param = get_item_at_path(show, path, signatures)[0]
+        // @ts-ignore
+        set({ ...old_value, ...new_value }, path)
+
+    }, [show, set_mode, active_path])
+
 
 
     const onDropdownChanged = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
@@ -456,6 +509,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             get_preview,
             active_path,
             set_value: set,
+            update_value,
             onClose,
             getWrappers,
             showNumericInputs,
@@ -512,6 +566,17 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             />
                         </div>
                     ) : (<ColorArray colors={show.value} />)}
+                    {ui_components.length > 0 && (
+                        <>
+                            <h3 style={{ marginTop: "2rem" }}>UI Components</h3>
+                            <Row>{
+                                ui_components.map((data, i) =>
+                                    <div key={i} style={{ margin: 10 }}>
+                                        <UI_instance value={data} />
+                                    </div>)
+                            }</Row>
+                        </>
+                    )}
                     {show_raw_input &&
                         <div>
                             <Label>Raw Data:</Label>
@@ -528,17 +593,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         placeholder="Select an option"
                         options={["constant", ...generators].map(s => ({ key: s, text: s }))}
                     />}
-                    {VALUE_NAMES.indexOf((active_item as value_instance).type) !== -1 && (
-                        <UI_Selector
-                            el={active_item as value_instance}
-                            spec={active_input!}
-                            onChange={
-                                (ui: ui | undefined) =>
-                                    // @ts-ignore
-                                    set({ ...active_item as value_instance, ui }, active_path)
-                            }
-                        />
-                    )}
                     {active_item.type === "boolean" && (
                         <BooleanOptions
                             value={active_item.value}
@@ -567,6 +621,17 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             path={active_path}
                         />
                     )}
+                    {VALUE_NAMES.indexOf((active_item as value_instance).type) !== -1 && (
+                        <UI_Selector
+                            el={active_item as value_instance}
+                            spec={active_input!}
+                            onChange={
+                                (ui: ui | undefined) =>
+                                    // @ts-ignore
+                                    set({ ...active_item as value_instance, ui }, active_path)
+                            }
+                        />
+                    )}
 
 
                 </OptionsPanel>
@@ -582,7 +647,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     <DefaultButton onClick={toggleHideDialog} text="Cancel" />
                 </DialogFooter>
             </Dialog>
-        </EditorContext.Provider>
+        </EditorContext.Provider >
     )
 };
 

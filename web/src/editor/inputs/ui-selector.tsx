@@ -7,6 +7,7 @@ import { Slider } from '@fluentui/react';
 // import { value } from '@ras-lights/common/types/parameters';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import equal from "fast-deep-equal"
 
 const textboxStyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
 const dropdownStyles: Partial<IDropdownStyles> = {
@@ -44,13 +45,22 @@ function get_ui_options(el: value_instance): IDropdownOption[] {
             ]
         default:
             const checker: never = el
-            console.log(checker)
+            console.log("something went wrong with checker get_ui_options()", el)
             return []
     }
 
 }
 
 
+function makeid(length: number): string {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
 
 interface props {
     el: value_instance;
@@ -58,33 +68,42 @@ interface props {
     onChange: (ui: ui | undefined) => void;
 }
 
+
 const Selector: React.FC<props> = ({ el, spec, onChange }) => {
 
-    const [_key, set_key] = useState<ui_type | "none">("none")
-    const [_label, _set_label] = useState<string>("")
-    const [_type, _set_type] = useState<string>("")
+    console.log("spec: ", spec)
+    const [_el, set_el] = useState<value_instance>()
+    const [dropdown_key, set_dropdown_key] = useState<ui_type | "none">(el.ui?.type || "none")
+    const [key, _set_key] = useState<string>(() => (el.ui?.key || makeid(8)))
+    const [_label, _set_label] = useState<string>(el.ui?.label || spec?.label || "")
+    const [el_type, set_el_type] = useState<string>(el.type)
     const [_options, set_options] = useState<IDropdownOption[]>([])
 
     useEffect(() => {
-        // update whenever there is a new input element
-        if (_type !== el.type) {
-            _set_type(el.type)
-            set_options(get_ui_options(el))
-        }
-        _set_label((el.ui && el.ui.label) || "")
-        set_key((el.ui && el.ui.type) || "none")
-    }, [el])
+        if (!equal(el, _el)) {
+            set_el(el)
+            set_el_type(el.type)
+            const options = get_ui_options(el)
+            console.log("get_ui_options()  => ", options)
+            set_options(options)
 
-    useEffect(() => {
-        // update whenever there is a new input element
-        if (_key === "none") {
-            onChange(undefined)
+            _set_label((el.ui && el.ui.label) || spec?.label || "")
+            set_dropdown_key((el.ui && el.ui.type) || "none")
         } else {
-            onChange({ type: _key, label: _label })
-        }
-    }, [_key, _label])
 
-    // (el.ui && alert(JSON.stringify(el.ui)));
+            const val = (
+                dropdown_key === "none" ?
+                    undefined :
+                    { type: dropdown_key, label: _label, key }
+            )
+            console.log("val: ", val, el.ui)
+            if (!equal(val, el.ui))
+                onChange(val)
+
+        }
+
+    }, [el, dropdown_key, _label, key])
+
 
     return (
         <>
@@ -93,23 +112,42 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
                 placeholder="Select UI type"
                 options={_options}
                 styles={dropdownStyles}
-                selectedKey={_key}
+                selectedKey={dropdown_key}
                 onChange={(
                     event: React.FormEvent<HTMLDivElement>,
                     option?: IDropdownOption, index?: number
-                ) => option && set_key(option.key as ui_type)
+                ) => {
+                    if (option) {
+                        console.log("updating optoins")
+                        set_dropdown_key(option.key as ui_type)
+                    } else {
+                        console.log("NOT updating optoins")
+                    }
+                }
                 }
             />
             {el.ui &&
-                <TextField
-                    label="Label"
-                    value={el.ui.label || ""}
-                    onChange={(
-                        event: any,
-                        newValue?: string | undefined
-                    ) => _set_label(newValue || "")}
-                    styles={textboxStyle}
-                />}
+                <>
+                    <TextField
+                        label="Label"
+                        value={el.ui.label || ""}
+                        onChange={(
+                            event: any,
+                            newValue?: string | undefined
+                        ) => _set_label(newValue || "")}
+                        styles={textboxStyle}
+                    />
+                    <TextField
+                        label="Key"
+                        value={el.ui.key || ""}
+                        onChange={(
+                            event: any,
+                            newValue?: string | undefined
+                        ) => _set_key(newValue || "")}
+                        styles={textboxStyle}
+                    />
+                </>
+            }
             {el.ui && el.ui.type === "slider" &&
                 <Slider
                     ranged

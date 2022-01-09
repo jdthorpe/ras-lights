@@ -5,7 +5,7 @@ import InputPicker from "./input"
 import { value, input, color_array_input, color_input } from '@ras-lights/common/types/parameters';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { DefaultButton } from '@fluentui/react/lib/Button';
-import { rgb } from "@ras-lights/common/types/mode"
+import { rgb, func_config } from '@ras-lights/common/types/mode';
 import ValuePicker from "./valuePicker"
 
 import copy from 'copy-to-clipboard';
