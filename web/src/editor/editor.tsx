@@ -217,6 +217,7 @@ function walk_inputs(
 
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
+    console.log("signatures: ", signatures)
     // path to the active element
     const [active_path, set_active_path] = useState<number[]>([])
     const [show, set_show] = useState<func_config | rgb_array_value>(default_show)
@@ -367,6 +368,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     // A list of functions whose outputs are the same as the current item type
     const value_type: value = active_item.type === "func" ? signatures[active_item.name].output : active_item.type as value;
     const generators: string[] = Object.entries(signatures).filter(e => e[1].output === value_type).map(e => e[0]).sort()
+    console.log("generators: ", generators)
 
     const get_preview = useCallback((props: { path: number[] }) => {
 
@@ -675,6 +677,10 @@ const EditorTab: React.FC = () => {
 
     if (typeof signatures === "undefined")
         return (<div><p>Loading...</p></div>)
+
+    if (Object.keys(signatures).length === 0)
+        return (<div><p>Something went wrong -- no functions available...</p></div>)
+
     return (<Editor
         signatures={signatures}
     />)

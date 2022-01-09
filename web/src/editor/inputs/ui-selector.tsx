@@ -109,7 +109,7 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
             if (!equal(val, el.ui))
                 onChange(val)
         }
-    }, [el, spec, dropdown_key, _label, key, slider_options])
+    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options])
 
 
     return (
