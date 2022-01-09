@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const registry_1 = require("../registry");
 function solid(x) {
     return [x.a];
 }
-(0, index_1.register)("Solid", solid, [
+(0, registry_1.register)("Solid", solid, [
     {
         key: "a",
         type: "rgb",

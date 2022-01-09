@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const registry_1 = require("../registry");
 function average(a, b, w) {
     return [
         Math.floor(a[0] * w + b[0] * (1 - w)),
@@ -15,7 +15,7 @@ function gradient(x, globals) {
     }
     return out;
 }
-(0, index_1.register)("Gradient", gradient, [
+(0, registry_1.register)("Gradient", gradient, [
     {
         key: "a",
         type: "rgb",

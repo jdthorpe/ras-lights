@@ -1,6 +1,5 @@
+import { register, globals } from "../registry";
 import { hsv } from "color-convert";
-
-import { register, globals } from "../index";
 
 interface input {
     n: number;

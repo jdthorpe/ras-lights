@@ -1,4 +1,4 @@
-import { register, globals } from "../index";
+import { register, globals } from "../registry";
 import { rgb } from "../../../types/mode";
 
 function average(a: rgb, b: rgb, w: number): rgb {
