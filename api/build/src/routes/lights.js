@@ -9,7 +9,6 @@ const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
 const js_yaml_1 = __importDefault(require("js-yaml"));
-// import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
 const driver_1 = require("../driver");
 const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "schema.yaml"), "utf-8"));
 const ajv = new ajv_1.default();

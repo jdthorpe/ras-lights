@@ -36,10 +36,6 @@ export function default_slider_config(
     el: value_instance,
 ): Partial<ui_slider> {
 
-
-
-    console.log("SPEC:", spec)
-    console.log("EL:", el)
     if (spec.type === "number" || spec.type === "integer") {
         let ui: ui_slider | undefined = el.ui as ui_slider
         return {

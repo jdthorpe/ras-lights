@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.build_node = void 0;
-const registry_1 = require("../registry");
+const registry_1 = require("../registry/registry");
 function build_node(x, globals) {
     return _build_node(x, "rgb[]", globals);
 }

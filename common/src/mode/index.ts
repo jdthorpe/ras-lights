@@ -1,6 +1,6 @@
 import { value } from "../../types/parameters";
 import { func_config, mode_param, mode } from "../../types/mode";
-import { registry, globals } from "../registry";
+import { registry, globals } from "../registry/registry";
 
 export function build_node(x: func_config, globals: globals): mode {
     return _build_node(x, "rgb[]", globals);

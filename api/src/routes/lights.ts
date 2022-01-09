@@ -6,8 +6,8 @@ import { Router, Request, Response } from "express";
 import Ajv from "ajv";
 import yaml from "js-yaml";
 
-// import { turn_off, set_colors, random_colors, rgb } from "../ws681x";
-import { turn_off, set_colors, random_colors, rgb } from "../driver";
+import { rgb } from "@ras-lights/common/types/mode";
+import { turn_off, set_colors, random_colors } from "../driver";
 
 const schema: any = yaml.load(
     readFileSync(
