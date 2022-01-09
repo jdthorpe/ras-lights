@@ -35,7 +35,7 @@ register(
             label: "intensity",
             default: 90,
             min: 0,
-            max: 0,
+            max: 100,
         },
     ],
     "rgb[]"
