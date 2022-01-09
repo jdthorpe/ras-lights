@@ -7,11 +7,11 @@ interface input {
 }
 
 function effect(x: input): rgb[] {
-    const intensity = Math.max(0, Math.min(x.intensity, 100));
+    const intensity = Math.max(0, Math.min(x.intensity, 100)) / 100;
     return x.main.map((color: rgb) => [
-        (color[0] * intensity) / 100,
-        (color[1] * intensity) / 100,
-        (color[2] * intensity) / 100,
+        Math.floor(color[0] * intensity),
+        Math.floor(color[1] * intensity),
+        Math.floor(color[2] * intensity),
     ]);
 }
 

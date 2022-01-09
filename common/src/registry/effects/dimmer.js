@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 function effect(x) {
-    const intensity = Math.max(0, Math.min(x.intensity, 100));
+    const intensity = Math.max(0, Math.min(x.intensity, 100)) / 100;
     return x.main.map((color) => [
-        (color[0] * intensity) / 100,
-        (color[1] * intensity) / 100,
-        (color[2] * intensity) / 100,
+        Math.floor(color[0] * intensity),
+        Math.floor(color[1] * intensity),
+        Math.floor(color[2] * intensity),
     ]);
 }
 (0, __1.register)("Dimmer", effect, [
