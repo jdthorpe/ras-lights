@@ -31,7 +31,6 @@ const numberTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "3r
 const Row = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: end;
     gap: 10px;
     padding: 0 10px 10px 10px;
 `
@@ -39,8 +38,8 @@ const Row = styled.div`
 const is_js_identifier = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
 
 interface props {
-    input: input | undefined;
-    onChange: (x?: input) => void;
+    input: input;// | undefined;
+    onChange: (x: input) => void;
     onRemove: () => void;
     onActivate?: () => void;
     onUp?: () => void;
@@ -51,18 +50,18 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
 
     const [_input, set_input] = useState<input | undefined>(input);
 
-    const [type, set_value_type] = useState<value | "button">();
-    const [key, set_key] = useState<string>("");
+    const [type, set_value_type] = useState<value | "button">(input ? input.type : "rgb");
+    const [key, set_key] = useState<string>(input ? input.key : "");
     const [key_error, set_key_error] = useState<string | undefined>("");
-    const [label, set_label] = useState<string>("");
+    const [label, set_label] = useState<string>(input ? input.label : "");
 
     const [bool, set_bool] = useState<boolean>(false);
-    const [color, set_color] = useState<rgb>([0, 0, 255]);
+    const [color, set_color] = useState<rgb>((input && input.type === "rgb") ? input.default : [0, 0, 255]);
     const [color_array, set_color_array] = useState<rgb[]>([[0, 0, 255], [0, 255, 255], [100, 0, 255],]);
-    const [number, set_number] = useState<string>();
-    const [button_label, set_button_label] = useState<string>("");
-    const [min, set_min] = useState<string>();
-    const [max, set_max] = useState<string>();
+    const [button_label, set_button_label] = useState<string>("My Button");
+    const [number, set_number] = useState<string>("5");
+    const [min, set_min] = useState<string>("1");
+    const [max, set_max] = useState<string>("10");
 
     useEffect(() => {
         if (input === _input)
@@ -97,10 +96,10 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
     }, [input])
 
     useEffect(() => {
-        if (typeof type === "undefined")
-            return onChange()
-        if (!key || !label || !type)
-            return onChange()
+        // if (typeof type === "undefined")
+        //     return onChange()
+        // if (!key || !label || !type)
+        //     return onChange()
         let input: input | undefined;
 
         switch (type) {
@@ -130,8 +129,10 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
                 console.log(checker)
 
         }
-        set_input(input)
-        onChange(input)
+        if (typeof input !== "undefined") {
+            set_input(input)
+            onChange(input)
+        }
     }, [type, key, label, bool, color, color_array, number, min, max, button_label,])
 
     useEffect(() => {
@@ -220,14 +221,17 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         </>}
         <div style={{ margin: "auto" }}></div>
         < IconButton
+            buttonStyle={{ marginTop: "2rem" }}
             title="Move Up"
             icon={faChevronUp}
             onClick={onUp} />
         < IconButton
+            buttonStyle={{ marginTop: "2rem" }}
             title="Move Down"
             icon={faChevronDown}
             onClick={onDown} />
         < IconButton
+            buttonStyle={{ marginTop: "2rem" }}
             title="Remove Input"
             icon={faTimes}
             onClick={onRemove} />

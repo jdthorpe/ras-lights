@@ -17,7 +17,7 @@ ${usedValueTypes}
 interface input {
 ${interfaces}}
 
-function effect(x: input, globals: globals): ${output_type} {
+function effect(this: any, x: input, globals: globals): ${output_type} {
     // Your code goes here...
 }
 

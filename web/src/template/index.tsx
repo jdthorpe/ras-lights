@@ -8,12 +8,15 @@ import { DefaultButton } from '@fluentui/react/lib/Button';
 import { rgb } from "@ras-lights/common/types/mode"
 import ValuePicker from "./valuePicker"
 
+import copy from 'copy-to-clipboard';
+
 import CodeMirror from 'rodemirror'
 import { Extension } from '@codemirror/state'
 import { basicSetup } from '@codemirror/basic-setup'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { javascript } from '@codemirror/lang-javascript'
 import { ColorArrayPicker, ColorValuePicker } from "../editor/inputs/color-input"
+import reportWebVitals from '../reportWebVitals';
 
 const nameTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
 
@@ -60,16 +63,44 @@ const Editor: React.FC<{ code: string }> = ({ code }) => {
     )
 }
 
+let input_number = 0
+const default_input = (): color_input => ({
+    type: "rgb",
+    default: [0, 0, 255],
+    label: "My Color",
+    key: `input_${input_number++}`
+})
+
+function validateInputs(x: input[]): string[] {
+    const out: string[] = []
+    const keys = new Set<string>()
+    const labels = new Set<string>()
+    for (let input of x) {
+        console.log("input :", input)
+        if (keys.has(input.key)) {
+            out.push(`keys must be unique but "${input.key}" appears more than once`)
+        }
+        if (labels.has(input.label)) {
+            out.push(`labels must be unique but "${input.label}" appears more than once`)
+        }
+        labels.add(input.label)
+        keys.add(input.key)
+    }
+
+    return out
+}
+
 const Template: React.FC = () => {
 
     const [name, setName] = useState<string>("")
     const [code, setCode] = useState<string>("")
-    const [inputs, setInputs] = useState<(input | undefined)[]>([])
+    const [inputs, setInputs] = useState<(input)[]>([])
     const [output, setOutput] = useState<value>()
     const [activeInput, setActiveInput] = useState<number>(0)
+    const [errors, set_errors] = useState<string[]>([])
 
 
-    const updateInput = (input: input | undefined, i: number) => {
+    const updateInput = (input: input, i: number) => {
         let inp = [...inputs]
         inp[i] = input
         setInputs(inp)
@@ -118,6 +149,7 @@ const Template: React.FC = () => {
 
         }
 
+        set_errors(validateInputs(inputs))
 
     }, [inputs, name, output])
 
@@ -137,12 +169,18 @@ const Template: React.FC = () => {
                             value={name}
                             onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => newValue && setName(newValue)}
                             styles={nameTextBoxstyle} />
-                        <DefaultButton
-                            style={{ marginLeft: "auto" }}
-                            onClick={() => setInputs([...inputs, undefined])}>Add Input</DefaultButton>
                     </Row>
 
-                    <h3 style={{ marginTop: "1rem" }}>Inputs</h3>
+                    <Row
+                        style={{
+                            justifyContent: "space-between",
+                            margin: "1.5rem 8px .7rem"
+                        }}>
+                        <h3>Inputs</h3>
+                        <DefaultButton
+                            onClick={() => setInputs([...inputs, default_input()])}>Add Input</DefaultButton>
+                    </Row>
+
                     {inputs.map((input, i) => (
                         <div style={{
                             // padding: "5px",
@@ -152,7 +190,7 @@ const Template: React.FC = () => {
                             {/* <p>{JSON.stringify(input)}</p> */}
                             <InputPicker
                                 input={input}
-                                onChange={(inp: input | undefined) => updateInput(inp, i)}
+                                onChange={(inp: input) => updateInput(inp, i)}
                                 onRemove={() => dropInput(i)}
                                 onActivate={() => setActiveInput(i)}
                                 onUp={() => moveUp(i)}
@@ -161,7 +199,23 @@ const Template: React.FC = () => {
                         </div>
                     ))}
 
-                    <h3 style={{ marginTop: "1rem" }}>Code Template</h3>
+                    {errors.length > 0 && (
+                        <>
+                            <h3 style={{ color: "red" }}>Errors:</h3>
+                            <ul>
+                                {errors.map((e, i) => (<li key={i} style={{ color: "red" }}>{e}</li>))}
+                            </ul>
+                        </>
+                    )}
+
+                    <Row
+                        style={{
+                            justifyContent: "space-between",
+                            margin: "1.5rem 8px .7rem"
+                        }}>
+                        <h3 >Code Template</h3>
+                        <DefaultButton onClick={() => copy(code)}>Copy to Clipboard</DefaultButton>
+                    </Row>
                     <Editor code={code} />
                 </div>
                 <OptionsPanel>

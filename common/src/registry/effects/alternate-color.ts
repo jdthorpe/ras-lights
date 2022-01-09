@@ -1,6 +1,5 @@
 import { register } from "../index";
-
-type rgb = [number, number, number];
+import { rgb } from "../../../types/mode";
 
 function average(a: rgb, b: rgb, w: number): rgb {
     return [
