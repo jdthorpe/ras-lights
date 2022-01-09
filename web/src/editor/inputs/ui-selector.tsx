@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ui_type, ui } from "@ras-lights/common/types/user-input";
-import { value_instance } from '@ras-lights/common/types/mode';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ui_type, ui, ui_slider } from "@ras-lights/common/types/user-input";
+import { num_value, value_instance } from '@ras-lights/common/types/mode';
 import { input, integer_input } from '@ras-lights/common/types/parameters';
-import { Slider } from '@fluentui/react';
+// import { Slider } from '@fluentui/react';
+import { SliderConfig, default_slider_config } from '../../ui/slider';
 
 // import { value } from '@ras-lights/common/types/parameters';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
@@ -71,38 +72,44 @@ interface props {
 
 const Selector: React.FC<props> = ({ el, spec, onChange }) => {
 
-    console.log("spec: ", spec)
     const [_el, set_el] = useState<value_instance>()
+    const [_spec, set_spec] = useState<input>()
     const [dropdown_key, set_dropdown_key] = useState<ui_type | "none">(el.ui?.type || "none")
     const [key, _set_key] = useState<string>(() => (el.ui?.key || makeid(8)))
     const [_label, _set_label] = useState<string>(el.ui?.label || spec?.label || "")
-    const [el_type, set_el_type] = useState<string>(el.type)
     const [_options, set_options] = useState<IDropdownOption[]>([])
+    // still not extensible...
+    const [slider_options, set_slider_options] = useState<Partial<ui_slider>>()
 
     useEffect(() => {
-        if (!equal(el, _el)) {
+        if (typeof el === "undefined" || typeof spec === "undefined")
+            return
+        if (el !== _el || spec !== _spec) {
+            console.log("Updating from the << OUTSIDE >>")
             set_el(el)
-            set_el_type(el.type)
-            const options = get_ui_options(el)
-            console.log("get_ui_options()  => ", options)
-            set_options(options)
+            set_spec(spec)
+            set_options(get_ui_options(el))
+            set_slider_options(default_slider_config(spec, el))
 
             _set_label((el.ui && el.ui.label) || spec?.label || "")
             set_dropdown_key((el.ui && el.ui.type) || "none")
         } else {
+            console.log("Updating from the >> INSIDE <<")
 
             const val = (
                 dropdown_key === "none" ?
                     undefined :
-                    { type: dropdown_key, label: _label, key }
+                    {
+                        type: dropdown_key,
+                        label: _label,
+                        key,
+                        ...slider_options
+                    }
             )
-            console.log("val: ", val, el.ui)
             if (!equal(val, el.ui))
                 onChange(val)
-
         }
-
-    }, [el, dropdown_key, _label, key])
+    }, [el, spec, dropdown_key, _label, key, slider_options])
 
 
     return (
@@ -148,19 +155,13 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
                     />
                 </>
             }
+
             {el.ui && el.ui.type === "slider" &&
-                <Slider
-                    ranged
-                    label="Input Range"
-                    min={(spec as integer_input).min}
-                    max={(spec as integer_input).max}
-                    defaultValue={(spec as integer_input).max}
-                    defaultLowerValue={(spec as integer_input).min}
-                />
-
+                <SliderConfig
+                    el={el as num_value}
+                    spec={spec as integer_input}
+                    onChange={set_slider_options} />
             }
-
-
         </>
 
     )

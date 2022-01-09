@@ -204,12 +204,12 @@ function walk_inputs(
     if (typeof path === "undefined")
         path = []
 
-    for (let i of signatures[x.name].input) {
-        let p = x.params[i.key]
+    for (let [i, input] of signatures[x.name].input.entries()) {
+        let p = x.params[input.key]
         if (p.type === "func") {
-            walk_inputs(p, signatures, fun, path)
+            walk_inputs(p, signatures, fun, [...path, i])
         } else {
-            fun(p, path)
+            fun(p, [...path, i])
         }
     }
 }
@@ -575,6 +575,9 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                                         <UI_instance value={data} />
                                     </div>)
                             }</Row>
+                            <pre>
+                                {JSON.stringify(ui_components, null, 2)}
+                            </pre>
                         </>
                     )}
                     {show_raw_input &&
