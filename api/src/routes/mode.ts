@@ -44,17 +44,8 @@ router.get(
 );
 
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
-    const body = req.body;
-    let mode;
-    try {
-        mode = build_node(body, { leds: settings.ws281x.leds });
-    } catch (error) {
-        next(error);
-        return;
-    }
-
     const start = performance.now();
-    await setMode(mode);
+    await setMode(req.body);
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

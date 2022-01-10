@@ -10,7 +10,7 @@ function _build_node(x, returnType, globals) {
     // get the function and its types from the registry
     const f = registry_1.registry[x.name];
     if (typeof f === "undefined") {
-        throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => `${a}, ${b}`, "")}`);
+        throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => (a === "" ? b : `${a}, ${b}`), "")}`);
     }
     const [func, inputs, value] = f;
     if (returnType !== value) {
@@ -112,13 +112,13 @@ function _build_node(x, returnType, globals) {
     }
     let out;
     if (func.length === 0) {
-        out = func.bind({});
+        out = func.bind(/* this */ {});
     }
     else if (func.length === 1) {
-        out = func.bind({}, args);
+        out = func.bind(/* this */ {}, args);
     }
     else {
-        out = func.bind({}, args, globals);
+        out = func.bind(/* this */ {}, args, globals);
     }
     out.__args__ = args;
     return out;

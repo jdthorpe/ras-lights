@@ -1,10 +1,15 @@
 import Ajv from "ajv";
-import { build_node } from "@ras-lights/common";
+import { build_node, registry } from "@ras-lights/common";
 // import { turn_off, set_colors } from "./ws681x";
 import { turn_off, set_colors } from "./driver";
 import { show, func_config, rgb } from "@ras-lights/common/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
+import { input } from "@ras-lights/common/types/parameters";
+import { mode } from "@ras-lights/common/types/mode";
+import { appendFileSync } from "fs";
+import { ui } from "@ras-lights/common/types/user-input";
+import path from "path/posix";
 
 const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
 
@@ -28,15 +33,18 @@ const schema = {
 //     modes[name] = build_node(x, { leds: settings.ws281x.leds });
 // }
 
-async function get_mode(name: string): Promise<() => any> {
+async function get_show(name: string): Promise<show> {
     // if (name in modes) return modes[name];
-    let mode: show;
     try {
-        mode = await modeStore.findOne({ name });
+        return await modeStore.findOne({ name });
     } catch (err) {
         throw new Error(`No such mode "${name}"`);
     }
-    const func = build_node(mode.def as func_config, {
+}
+
+async function get_mode(show: show): Promise<mode> {
+    // if (name in modes) return modes[name];
+    const func = build_node(show.def as func_config, {
         leds: settings.ws281x.leds,
     });
     // modes[name] = func;
@@ -46,12 +54,54 @@ async function get_mode(name: string): Promise<() => any> {
 // ----------------------------------------
 // loop
 // ----------------------------------------
-
 let loop: ReturnType<typeof setTimeout>;
 let current_mode: string = "off";
+let updates: { [key: string]: string } = {};
 
-export async function setMode(new_mode: string | { (): rgb[] }) {
-    let mode: { (): any };
+interface ui_index {
+    [k: string]: ui;
+}
+
+let unset_values: [mode, string, any][] = [];
+
+function unset(): void {
+    for (let [f, key, value] of unset_values) {
+        f.__args__[key] = value;
+    }
+}
+
+function apply_update(mode: mode, show: show, indx: ui_index) {
+    for (let [key, value] of Object.entries(updates)) {
+        let ui: ui = indx[key];
+        if (typeof ui === "undefined") continue;
+
+        let f: mode = mode;
+        let s: func_config = show.def as func_config;
+
+        // walk up the chain
+        for (let i = 0; i < ui.path.length - 1; i++) {
+            // all but the last should be func_config objects, hence length - 1
+            let inputs: input[] = registry[s.name][1];
+            let inp: input = inputs[ui.path[i]];
+            s = s.params[ui.path[i]] as func_config;
+            f = f.__args__[inp.key];
+        }
+
+        // get the head element
+        let inputs: input[] = registry[s.name][1];
+        let inp: input = inputs[ui.path[ui.path[ui.path.length - 1]]];
+        if (inp.type === "button") unset_values.push([f, inp.key, false]);
+        f.__args__[inp.key] = value;
+    }
+}
+
+export function set_updates(key: string, value: string) {
+    updates[key] = value;
+}
+
+export async function setMode(new_mode: string | show): Promise<void> {
+    let show: show;
+
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
             loop && clearTimeout(loop);
@@ -64,22 +114,40 @@ export async function setMode(new_mode: string | { (): rgb[] }) {
         }
         if (current_mode === new_mode) return;
 
-        mode = await get_mode(new_mode);
+        show = await get_show(new_mode);
     } else {
-        mode = new_mode;
+        show = new_mode;
     }
 
-    if (typeof mode === "undefined")
+    if (typeof show === "undefined")
         throw new Error(`No sucn mode "${new_mode}"`);
 
-    loop && clearTimeout(loop);
-    loop = setTimeout(create_loop(mode), 0);
+    const mode: mode = await get_mode(show);
+
+    let before: cb | undefined = undefined;
+    let after: cb | undefined = undefined;
+
+    if (typeof show.ui !== "undefined") {
+        let indx: ui_index = Object.fromEntries(
+            show.ui.map((ui) => [ui.key, ui])
+        );
+        before = () => apply_update(mode, show, indx);
+        after = unset;
+    }
+
+    if (typeof loop !== "undefined") clearTimeout(loop);
+    // reset the updates before restarting the loop
+    updates = {};
+    loop = setTimeout(create_loop(mode, before, after), 0);
 }
 
-function create_loop(mode: { (): any }): { (): void } {
+type cb = () => void;
+
+function create_loop(mode: mode, before?: cb, after?: cb): { (): void } {
     const fun = () => {
+        before && before();
         const colors = mode();
-        // console.log("colors", JSON.stringify(colors));
+        after && after();
         if (ajv.validate(schema, colors)) {
             set_colors(colors);
         } else {

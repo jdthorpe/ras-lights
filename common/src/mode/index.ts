@@ -17,7 +17,7 @@ function _build_node(
         throw new Error(
             `Unknown function ${x.name}. Known functions include: ${Object.keys(
                 registry
-            ).reduce((a, b) => `${a}, ${b}`, "")}`
+            ).reduce((a, b) => (a === "" ? b : `${a}, ${b}`), "")}`
         );
     }
     const [func, inputs, value] = f;
@@ -140,11 +140,11 @@ function _build_node(
 
     let out: { (): any; __args__?: any };
     if (func.length === 0) {
-        out = (func as { (): any }).bind({});
+        out = (func as { (): any }).bind(/* this */ {});
     } else if (func.length === 1) {
-        out = func.bind({}, args);
+        out = func.bind(/* this */ {}, args);
     } else {
-        out = func.bind({}, args, globals);
+        out = func.bind(/* this */ {}, args, globals);
     }
     out.__args__ = args;
     return out as { (): any; __args__: any };

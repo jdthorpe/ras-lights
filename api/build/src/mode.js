@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMode = void 0;
+exports.setMode = exports.set_updates = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const common_1 = require("@ras-lights/common");
 // import { turn_off, set_colors } from "./ws681x";
@@ -28,16 +28,18 @@ const schema = {
 // export function create_node(name: string, x: func_config) {
 //     modes[name] = build_node(x, { leds: settings.ws281x.leds });
 // }
-async function get_mode(name) {
+async function get_show(name) {
     // if (name in modes) return modes[name];
-    let mode;
     try {
-        mode = await db_1.modeStore.findOne({ name });
+        return await db_1.modeStore.findOne({ name });
     }
     catch (err) {
         throw new Error(`No such mode "${name}"`);
     }
-    const func = (0, common_1.build_node)(mode.def, {
+}
+async function get_mode(show) {
+    // if (name in modes) return modes[name];
+    const func = (0, common_1.build_node)(show.def, {
         leds: settings_1.default.ws281x.leds,
     });
     // modes[name] = func;
@@ -48,8 +50,42 @@ async function get_mode(name) {
 // ----------------------------------------
 let loop;
 let current_mode = "off";
+let updates = {};
+let unset_values = [];
+function unset() {
+    for (let [f, key, value] of unset_values) {
+        f.__args__[key] = value;
+    }
+}
+function apply_update(mode, show, indx) {
+    for (let [key, value] of Object.entries(updates)) {
+        let ui = indx[key];
+        if (typeof ui === "undefined")
+            continue;
+        let f = mode;
+        let s = show.def;
+        // walk up the chain
+        for (let i = 0; i < ui.path.length - 1; i++) {
+            // all but the last should be func_config objects, hence length - 1
+            let inputs = common_1.registry[s.name][1];
+            let inp = inputs[ui.path[i]];
+            s = s.params[ui.path[i]];
+            f = f.__args__[inp.key];
+        }
+        // get the head element
+        let inputs = common_1.registry[s.name][1];
+        let inp = inputs[ui.path[ui.path[ui.path.length - 1]]];
+        if (inp.type === "button")
+            unset_values.push([f, inp.key, false]);
+        f.__args__[inp.key] = value;
+    }
+}
+function set_updates(key, value) {
+    updates[key] = value;
+}
+exports.set_updates = set_updates;
 async function setMode(new_mode) {
-    let mode;
+    let show;
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
             loop && clearTimeout(loop);
@@ -62,21 +98,33 @@ async function setMode(new_mode) {
         }
         if (current_mode === new_mode)
             return;
-        mode = await get_mode(new_mode);
+        show = await get_show(new_mode);
     }
     else {
-        mode = new_mode;
+        show = new_mode;
     }
-    if (typeof mode === "undefined")
+    if (typeof show === "undefined")
         throw new Error(`No sucn mode "${new_mode}"`);
-    loop && clearTimeout(loop);
-    loop = setTimeout(create_loop(mode), 0);
+    const mode = await get_mode(show);
+    let before = undefined;
+    let after = undefined;
+    if (typeof show.ui !== "undefined") {
+        let indx = Object.fromEntries(show.ui.map((ui) => [ui.key, ui]));
+        before = () => apply_update(mode, show, indx);
+        after = unset;
+    }
+    if (typeof loop !== "undefined")
+        clearTimeout(loop);
+    // reset the updates before restarting the loop
+    updates = {};
+    loop = setTimeout(create_loop(mode, before, after), 0);
 }
 exports.setMode = setMode;
-function create_loop(mode) {
+function create_loop(mode, before, after) {
     const fun = () => {
+        before && before();
         const colors = mode();
-        // console.log("colors", JSON.stringify(colors));
+        after && after();
         if (ajv.validate(schema, colors)) {
             (0, driver_1.set_colors)(colors);
         }
