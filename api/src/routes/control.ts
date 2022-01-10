@@ -7,7 +7,7 @@ const router = Router();
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     const start = performance.now();
     try {
-        // console.log("body:", JSON.stringify(req.body));
+        console.log("body:", JSON.stringify(req.body));
         set_updates(req.body);
     } catch (err) {
         next(err);

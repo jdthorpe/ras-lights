@@ -74,7 +74,7 @@ function apply_update(mode, show, indx) {
         }
         // get the head element
         let inputs = common_1.registry[s.name][1];
-        let inp = inputs[ui.path[ui.path[ui.path.length - 1]]];
+        let inp = inputs[ui.path[ui.path.length - 1]];
         if (inp.type === "button")
             unset_values.push([f, inp.key, false]);
         f.__args__[inp.key] = value;

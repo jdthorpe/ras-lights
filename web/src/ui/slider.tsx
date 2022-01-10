@@ -1,14 +1,36 @@
 import React, { useEffect, useState } from 'react';
+import debounce from "lodash.debounce"
 import { Label } from '@fluentui/react/lib/Label';
 import { Slider } from '@fluentui/react/lib/Slider';
 import { int_value, num_value, value_instance } from '@ras-lights/common/types/mode';
 import { range_input, integer_input, input } from '@ras-lights/common/types/parameters';
 import { ui_slider } from '@ras-lights/common/types/user-input';
 
+
+async function set_update(key: string, value: any) {
+    try {
+        const obj = Object.fromEntries([[key, value]])
+        console.log("/api/ctl/ TRYING ", JSON.stringify(obj))
+        await fetch("/api/ctl/", {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        })
+        console.log("/api/ctl/ SUCCESS")
+    } catch (err) {
+        console.log("/api/ctl/ failed with error", err)
+    }
+}
+
 export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
 
-    // if (typeof value === "undefined")
-    //     return <></>
+    const onChange = React.useCallback(debounce((value: number) => {
+        set_update(ui.key, value)
+    }, 25), [ui]);
+
     return (
         <div style={{ minWidth: 200, maxWidth: 300 }} >
             <Label>{ui!.label}</Label>
@@ -19,6 +41,7 @@ export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
                 // value={value.value}
                 defaultValue={ui.default}
                 showValue={false}
+                onChange={onChange}
             // snapToStep={value.type === "integer"}
             />
         </div>

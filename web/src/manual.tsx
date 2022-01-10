@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 // DefaultButton, 
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import debounce from "lodash.debounce"
@@ -9,6 +9,7 @@ import {
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
 import styled from "styled-components"
+import useCallback from 'react';
 
 const Row = styled.div`
     display: flex;
@@ -24,18 +25,20 @@ async function turnOff() {
     }
 }
 
-async function setRandomColors() {
+async function setRandomColors(on: boolean) {
     try {
-        await fetch("/api/mode/off")
+        if (on)
+            await fetch("/api/mode/off")
         await fetch("/api/lights/random")
     } catch (err) {
         console.log("/lights/random failed with error", err)
     }
 }
 
-async function update_color(x: IColor) {
+async function update_color(x: IColor, on: boolean) {
     try {
-        await fetch("/api/mode/off")
+        if (on)
+            await fetch("/api/mode/off")
         await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
@@ -51,19 +54,26 @@ async function update_color(x: IColor) {
 
 
 const Manual: React.FC = () => {
-    const [color, setColor] = React.useState(white);
+    const [color, setColor] = useState(white);
+    const [on, set_on] = useState(true)
 
     const updateColor = React.useCallback(debounce((ev: any, colorObj: IColor) => {
+        set_on(false)
         setColor(colorObj)
-        update_color(colorObj)
-    }, 25), [setColor, update_color]);
+        update_color(colorObj, on)
+    }, 25), [setColor, update_color, on]);
+
+    const set_random = React.useCallback(debounce(() => {
+        set_on(false)
+        setRandomColors(on)
+    }, 25), [on]);
 
     // useEffect(() => { fetch("/api/mode/off") }, [])
 
     return (
         <div style={{ margin: "1.5rem" }}>
             <Row>
-                <PrimaryButton onClick={setRandomColors} text="Random Colors" />
+                <PrimaryButton onClick={set_random} text="Random Colors" />
                 <PrimaryButton onClick={turnOff} text="Off" />
             </Row>
             <h3>Click to pick a single color</h3>

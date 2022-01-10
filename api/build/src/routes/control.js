@@ -7,7 +7,7 @@ const router = (0, express_1.Router)();
 router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
-        // console.log("body:", JSON.stringify(req.body));
+        console.log("body:", JSON.stringify(req.body));
         (0, mode_1.set_updates)(req.body);
     }
     catch (err) {
