@@ -4,22 +4,18 @@ import { set_updates } from "../mode";
 
 const router = Router();
 
-router.post(
-    "/:key",
-    async (req: Request, res: Response, next: NextFunction) => {
-        const start = performance.now();
-        try {
-            console.log("params:", JSON.stringify(req.params));
-            console.log("body:", JSON.stringify(req.body));
-            set_updates(req.params.key, req.body);
-        } catch (err) {
-            next(err);
-            return;
-        }
-        const end = performance.now();
-        res.status(200);
-        res.send(`OK ${end - start}`);
+router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+    const start = performance.now();
+    try {
+        // console.log("body:", JSON.stringify(req.body));
+        set_updates(req.body);
+    } catch (err) {
+        next(err);
+        return;
     }
-);
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
 
 export default router;

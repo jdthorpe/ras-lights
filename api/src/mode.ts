@@ -95,8 +95,8 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
     }
 }
 
-export function set_updates(key: string, value: string) {
-    updates[key] = value;
+export function set_updates(x: { [key: string]: any }) {
+    for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
 
 export async function setMode(new_mode: string | show): Promise<void> {

@@ -80,8 +80,9 @@ function apply_update(mode, show, indx) {
         f.__args__[inp.key] = value;
     }
 }
-function set_updates(key, value) {
-    updates[key] = value;
+function set_updates(x) {
+    for (let [key, value] of Object.entries(x))
+        updates[key] = value;
 }
 exports.set_updates = set_updates;
 async function setMode(new_mode) {

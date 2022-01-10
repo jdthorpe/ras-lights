@@ -4,12 +4,11 @@ const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const mode_1 = require("../mode");
 const router = (0, express_1.Router)();
-router.post("/:key", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
-        console.log("params:", JSON.stringify(req.params));
-        console.log("body:", JSON.stringify(req.body));
-        (0, mode_1.set_updates)(req.params.key, req.body);
+        // console.log("body:", JSON.stringify(req.body));
+        (0, mode_1.set_updates)(req.body);
     }
     catch (err) {
         next(err);
