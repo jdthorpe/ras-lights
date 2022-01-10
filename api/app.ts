@@ -4,7 +4,8 @@ import lights from "./src/routes/lights";
 import mode from "./src/routes/mode";
 import registry from "./src/routes/registry";
 import schedule from "./src/routes/schedule";
-import controller from "./src/control";
+import controller from "./src/routes/control";
+import settings from "./src/settings";
 
 const app = express();
 const port = (settings.api && settings.api.port) || 5000;
