@@ -1,12 +1,13 @@
 import React from 'react';
 import { DefaultButton } from '@fluentui/react/lib/Button';
-import { button_value } from '@ras-lights/common/types/mode';
+// import { button_value } from '@ras-lights/common/types/mode';
+import { generic_ui } from '@ras-lights/common/types/user-input';
 
-export const Button: React.FC<{ value: button_value }> = ({ value }) => {
+export const Button: React.FC<{ ui: generic_ui }> = ({ ui }) => {
 
     return (
-        <DefaultButton onClick={() => alert(value.ui.label)}>{
-            value.ui.label
+        <DefaultButton onClick={() => alert(ui.label)}>{
+            ui.label
         }</DefaultButton >
     )
 }

@@ -17,7 +17,7 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 
 
 const NoneOption: IDropdownOption = { key: "none", text: "None" }
-function get_ui_options(el: value_instance): IDropdownOption[] {
+function get_ui_type_options(el: value_instance): IDropdownOption[] {
     switch (el.type) {
         case "boolean":
             return [
@@ -66,18 +66,19 @@ function makeid(length: number): string {
 interface props {
     el: value_instance;
     spec: input;
+    path: number[];
     onChange: (ui: ui | undefined) => void;
 }
 
 
-const Selector: React.FC<props> = ({ el, spec, onChange }) => {
+const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
 
     const [_el, set_el] = useState<value_instance>()
     const [_spec, set_spec] = useState<input>()
     const [dropdown_key, set_dropdown_key] = useState<ui_type | "none">(el.ui?.type || "none")
     const [key, _set_key] = useState<string>(() => (el.ui?.key || makeid(8)))
     const [_label, _set_label] = useState<string>(el.ui?.label || spec?.label || "")
-    const [_options, set_options] = useState<IDropdownOption[]>([])
+    const [ui_type_options, set_ui_type_options] = useState<IDropdownOption[]>([])
     // still not extensible...
     const [slider_options, set_slider_options] = useState<Partial<ui_slider>>()
 
@@ -88,7 +89,7 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
             console.log("Updating from the << OUTSIDE >>")
             set_el(el)
             set_spec(spec)
-            set_options(get_ui_options(el))
+            set_ui_type_options(get_ui_type_options(el))
             set_slider_options(default_slider_config(spec, el))
 
             _set_label((el.ui && el.ui.label) || spec?.label || "")
@@ -96,20 +97,22 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
         } else {
             console.log("Updating from the >> INSIDE <<")
 
-            const val = (
+            const val: ui | undefined = (
                 dropdown_key === "none" ?
                     undefined :
                     {
                         type: dropdown_key,
                         label: _label,
                         key,
+                        path,
+                        default: el.value,
                         ...slider_options
                     }
             )
             if (!equal(val, el.ui))
                 onChange(val)
         }
-    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options])
+    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options, path])
 
 
     return (
@@ -117,7 +120,7 @@ const Selector: React.FC<props> = ({ el, spec, onChange }) => {
             <Dropdown
                 label="UI Element"
                 placeholder="Select UI type"
-                options={_options}
+                options={ui_type_options}
                 styles={dropdownStyles}
                 selectedKey={dropdown_key}
                 onChange={(

@@ -5,13 +5,14 @@
 */
 
 import { value } from "./parameters";
-import { ui, ui_slider } from "./user-input";
+import { ui, ui_slider, generic_ui } from "./user-input";
 
 export type mode_param = func_config | value_instance;
 
 export interface show {
     name: string;
     def: func_config | rgb_array_value;
+    ui?: ui[];
 }
 
 export interface button_config {
@@ -70,9 +71,13 @@ export interface bool_value extends generic_value_instance {
     // ui?: "toggle";
 }
 
+interface button_ui extends generic_ui {
+    type: "button";
+}
+
 export interface button_value extends generic_value_instance {
     type: "button";
-    ui: { type: "button"; label: string; key: string };
+    ui: button_ui;
 }
 
 export type value_instance =

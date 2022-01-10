@@ -17,7 +17,7 @@ import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { useBoolean } from '@fluentui/react-hooks';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
-import { ui, ui_data } from "@ras-lights/common/types/user-input";
+import { ui } from "@ras-lights/common/types/user-input";
 
 import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from '@ras-lights/common/types/mode';
 import {
@@ -232,7 +232,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
     const [existing_modes, set_existing_modes] = useState<IComboBoxOption[]>()
     const [existing_shows, set_existing_shows] = useState<{ [key: string]: func_config | rgb_array_value }>()
-    const [ui_components, set_ui_components] = useState<ui_data[]>([])
+    const [ui_components, set_ui_components] = useState<ui[]>([])
 
     const [loop] = useState<ILoop>(() => make_loop(set_colors, { leds: 8 }))
 
@@ -275,6 +275,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         await save_mode({
             name,
             def: show,
+            ui: ui_components
         })
         init()
     }, [show, free_text_option, nameKey])
@@ -300,11 +301,11 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     }
 
-    const getUIcomponents = (p: func_config): ui_data[] => {
-        const inputs: ui_data[] = []
+    const getUIcomponents = (p: func_config): ui[] => {
+        const inputs: ui[] = []
         walk_inputs(p, signatures, (el: value_instance, path: number[]) => {
             if (typeof el.ui !== "undefined")
-                inputs.push({ el, ui: el.ui, path })
+                inputs.push(el.ui)
         })
         return inputs
 
@@ -582,7 +583,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                             <Row>{
                                 ui_components.map((data, i) =>
                                     <div key={i} style={{ margin: 10 }}>
-                                        <UI_instance value={data} />
+                                        <UI_instance ui={data} />
                                     </div>)
                             }</Row>
                             <pre>
@@ -593,7 +594,10 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     {show_raw_input &&
                         <div>
                             <Label>Raw Data:</Label>
-                            <pre>{JSON.stringify(show, null, 4)}</pre>
+                            <pre>{JSON.stringify({
+                                def: show,
+                                ui: ui_components
+                            }, null, 4)}</pre>
                         </div>
                     }
                 </WorkArea>
@@ -638,6 +642,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         <UI_Selector
                             el={active_item as value_instance}
                             spec={active_input!}
+                            path={active_path}
                             onChange={
                                 (ui: ui | undefined) =>
                                     // @ts-ignore

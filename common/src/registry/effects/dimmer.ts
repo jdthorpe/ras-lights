@@ -32,7 +32,7 @@ register(
         {
             key: "intensity",
             type: "number",
-            label: "intensity",
+            label: "Brightness",
             default: 90,
             min: 0,
             max: 100,

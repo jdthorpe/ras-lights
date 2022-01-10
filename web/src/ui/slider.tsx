@@ -5,21 +5,21 @@ import { int_value, num_value, value_instance } from '@ras-lights/common/types/m
 import { range_input, integer_input, input } from '@ras-lights/common/types/parameters';
 import { ui_slider } from '@ras-lights/common/types/user-input';
 
-export const SliderInput: React.FC<{ value: int_value | num_value }> = ({ value }) => {
+export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
 
-    if (typeof value === "undefined")
-        return <></>
+    // if (typeof value === "undefined")
+    //     return <></>
     return (
-        <div style={{ minWidth: 300 }} >
-            <Label>{value.ui!.label}</Label>
+        <div style={{ minWidth: 200, maxWidth: 300 }} >
+            <Label>{ui!.label}</Label>
             <Slider
-                min={value.ui!.min}
-                max={value.ui!.max}
-                step={value.type === "integer" ? value.ui!.min - value.ui!.max + 1 : undefined}
+                min={ui!.min}
+                max={ui!.max}
+                // step={ ui!.min - ui!.max + 1 : undefined}
                 // value={value.value}
-                defaultValue={value.value}
+                defaultValue={ui.default}
                 showValue={false}
-                snapToStep={value.type === "integer"}
+            // snapToStep={value.type === "integer"}
             />
         </div>
     )

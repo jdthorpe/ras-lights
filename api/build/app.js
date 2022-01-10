@@ -9,14 +9,15 @@ const lights_1 = __importDefault(require("./src/routes/lights"));
 const mode_1 = __importDefault(require("./src/routes/mode"));
 const registry_1 = __importDefault(require("./src/routes/registry"));
 const schedule_1 = __importDefault(require("./src/routes/schedule"));
-const settings_1 = __importDefault(require("./src/settings"));
+const control_1 = __importDefault(require("./src/control"));
 const app = (0, express_1.default)();
-const port = (settings_1.default.api && settings_1.default.api.port) || 5000;
+const port = (settings.api && settings.api.port) || 5000;
 app.use(body_parser_1.default.json());
 app.use("/lights", lights_1.default);
 app.use("/mode", mode_1.default);
 app.use("/registry", registry_1.default);
 app.use("/schedule", schedule_1.default);
+app.use("/ctl", control_1.default);
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

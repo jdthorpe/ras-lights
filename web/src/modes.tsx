@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
+import { UI_instance } from './ui';
 
 const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },
@@ -8,6 +9,7 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 const Modes: React.FC = () => {
 
     const [item, set_item] = useState<IDropdownOption>();
+    const [i, set_i] = useState<number>();
     const [item_list, set_item_list] = useState<IDropdownOption[]>([]);
     const [mode_config, set_mode_config] = useState<any>();
 
@@ -55,8 +57,21 @@ const Modes: React.FC = () => {
                 label="Light Mode"
                 options={item_list}
                 styles={dropdownStyles}
-                onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => option && set_item(option)}
-            />
+                onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
+                    if (option) {
+                        set_item(option);
+                        set_i(index)
+                    }
+                }
+                } />
+            {mode_config && typeof i !== "undefined" && mode_config[i] && mode_config[i].ui && (
+                mode_config[i].ui.map((data: any) =>
+                    <div key={i} style={{ margin: 10 }}>
+                        <UI_instance ui={data} />
+                    </div>)
+            )
+            }
+            <pre>{typeof i !== "undefined" ? JSON.stringify(mode_config[i].ui, null, 2) : null}</pre>
         </div>
     );
 };

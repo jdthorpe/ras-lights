@@ -3,24 +3,23 @@ import { Button } from "./button";
 import { ToggleInput } from "./toggle"
 import { SliderInput } from "./slider";
 import { ColorArrayInput, ColorInput } from "./color";
-import { ui_data, ui_type } from '@ras-lights/common/types/user-input';
-import { bool_value, button_value, num_value, rgb_array_value, rgb_value } from '@ras-lights/common/types/mode';
+import { ui, ui_type, ui_rgb, ui_rgb_array, ui_slider, ui_toggle } from '@ras-lights/common/types/user-input';
+// import { bool_value, button_value, num_value, rgb_array_value, rgb_value } from '@ras-lights/common/types/mode';
 
-export const UI_instance: React.FC<{ value: ui_data }> = ({ value }) => {
-    const { el, ui } = value;
+export const UI_instance: React.FC<{ ui: ui }> = ({ ui }) => {
     const type: ui_type = ui.type
 
     switch (type) {
         case "button":
-            return <Button value={el as button_value} />
+            return <Button ui={ui} />
         case "color-picker":
-            return <ColorInput value={el as rgb_value} />
+            return <ColorInput ui={ui as ui_rgb} />
         case "color[]-picker":
-            return <ColorArrayInput value={el as rgb_array_value} />
+            return <ColorArrayInput ui={ui as ui_rgb_array} />
         case "slider":
-            return <SliderInput value={el as num_value} />
+            return <SliderInput ui={ui as ui_slider} />
         case "toggle":
-            return <ToggleInput value={el as bool_value} />
+            return <ToggleInput ui={ui as ui_toggle} />
         default:
             const checker: never = type
             console.log(checker)
