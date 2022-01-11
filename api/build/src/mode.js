@@ -64,26 +64,33 @@ function apply_update(mode, show, indx) {
             continue;
         let f = mode;
         let s = show.def;
-        console.log("=================== ");
-        console.log("UI: ", ui);
-        console.log(`Known functions include: ${Object.keys(common_1.registry).reduce((a, b) => (a === "" ? b : `${a}, ${b}`), "")}`);
+        // console.log("=================== ");
+        // console.log("UI: ", ui);
+        // console.log(
+        //     `Known functions include: ${Object.keys(registry).reduce(
+        //         (a, b) => (a === "" ? b : `${a}, ${b}`),
+        //         ""
+        //     )}`
+        // );
         // walk up the chain
-        console.log("walk up the chain");
+        // console.log("walk up the chain");
         for (let i = 0; i < ui.path.length - 1; i++) {
             // all but the last should be func_config objects, hence length - 1
-            console.log("[WALK]  s =>", s);
-            console.log("[WALK]  registry[s.name] =>", common_1.registry[s.name]);
+            // console.log("[WALK]  s =>", s);
+            // console.log("[WALK]  registry[s.name] =>", registry[s.name]);
             let inputs = common_1.registry[s.name][1];
             let inp = inputs[ui.path[i]];
-            console.log("[NEXT]  inp =>", inp);
-            console.log("[NEXT]  s.params =>", s.params);
-            console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
-            s = s.params[ui.path[i]];
-            f = f.__args__[inp.key];
+            // console.log("[NEXT]  inp =>", inp);
+            // console.log("[NEXT]  s.params =>", s.params);
+            // console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
+            s = s.params[inp.key];
+            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key).get;
+            // console.log("[NEXT]  s =>", s);
+            // console.log("[NEXT]  f =>", f);
         }
-        console.log("Getting the head elemnt");
-        console.log("[HEAD]  s =>", s);
-        console.log("[HEAD]  registry[s.name] =>", common_1.registry[s.name]);
+        // console.log("Getting the head elemnt");
+        // console.log("[HEAD]  s =>", s);
+        // console.log("[HEAD]  registry[s.name] =>", registry[s.name]);
         // get the head element
         let inputs = common_1.registry[s.name][1];
         let inp = inputs[ui.path[ui.path.length - 1]];
