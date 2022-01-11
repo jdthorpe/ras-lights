@@ -95,6 +95,10 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
             console.log("[WALK]  registry[s.name] =>", registry[s.name]);
             let inputs: input[] = registry[s.name][1];
             let inp: input = inputs[ui.path[i]];
+
+            console.log("[NEXT]  inp =>", inp);
+            console.log("[NEXT]  s.params =>", s.params);
+            console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
             s = s.params[ui.path[i]] as func_config;
             f = f.__args__[inp.key];
         }

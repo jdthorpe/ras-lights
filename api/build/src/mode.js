@@ -75,6 +75,9 @@ function apply_update(mode, show, indx) {
             console.log("[WALK]  registry[s.name] =>", common_1.registry[s.name]);
             let inputs = common_1.registry[s.name][1];
             let inp = inputs[ui.path[i]];
+            console.log("[NEXT]  inp =>", inp);
+            console.log("[NEXT]  s.params =>", s.params);
+            console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
             s = s.params[ui.path[i]];
             f = f.__args__[inp.key];
         }
