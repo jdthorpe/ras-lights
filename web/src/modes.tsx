@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { UI_instance } from './ui';
+import { UI } from './ui';
 
 const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },
@@ -64,14 +64,15 @@ const Modes: React.FC = () => {
                     }
                 }
                 } />
+
             {mode_config && typeof i !== "undefined" && mode_config[i] && mode_config[i].ui && (
-                mode_config[i].ui.map((data: any) =>
-                    <div key={i} style={{ margin: 10 }}>
-                        <UI_instance ui={data} />
-                    </div>)
-            )
-            }
-            <pre>{typeof i !== "undefined" ? JSON.stringify(mode_config[i].ui, null, 2) : null}</pre>
+                <UI ui={mode_config[i].ui} />
+                // mode_config[i].ui.map((data: any) =>
+                //     <div key={i} style={{ margin: 10 }}>
+                //         <UI_instance ui={data} />
+                //     </div>)
+            )}
+            {/* <pre>{typeof i !== "undefined" ? JSON.stringify(mode_config[i].ui, null, 2) : null}</pre> */}
         </div>
     );
 };

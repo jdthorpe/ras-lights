@@ -5,25 +5,7 @@ import { Slider } from '@fluentui/react/lib/Slider';
 import { int_value, num_value, value_instance } from '@ras-lights/common/types/mode';
 import { range_input, integer_input, input } from '@ras-lights/common/types/parameters';
 import { ui_slider } from '@ras-lights/common/types/user-input';
-
-
-async function set_update(key: string, value: any) {
-    try {
-        const obj = Object.fromEntries([[key, value]])
-        console.log("/api/ctl/ TRYING ", JSON.stringify(obj))
-        await fetch("/api/ctl/", {
-            method: 'POST',
-            cache: 'no-cache',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(obj)
-        })
-        console.log("/api/ctl/ SUCCESS")
-    } catch (err) {
-        console.log("/api/ctl/ failed with error", err)
-    }
-}
+import { set_update } from "./utils"
 
 export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
 

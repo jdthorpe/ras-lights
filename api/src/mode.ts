@@ -78,15 +78,30 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
         let f: mode = mode;
         let s: func_config = show.def as func_config;
 
+        console.log("=================== ");
+        console.log("UI: ", ui);
+        console.log(
+            `Known functions include: ${Object.keys(registry).reduce(
+                (a, b) => (a === "" ? b : `${a}, ${b}`),
+                ""
+            )}`
+        );
+
         // walk up the chain
+        console.log("walk up the chain");
         for (let i = 0; i < ui.path.length - 1; i++) {
             // all but the last should be func_config objects, hence length - 1
+            console.log("[WALK]  s =>", s);
+            console.log("[WALK]  registry[s.name] =>", registry[s.name]);
             let inputs: input[] = registry[s.name][1];
             let inp: input = inputs[ui.path[i]];
             s = s.params[ui.path[i]] as func_config;
             f = f.__args__[inp.key];
         }
 
+        console.log("Getting the head elemnt");
+        console.log("[HEAD]  s =>", s);
+        console.log("[HEAD]  registry[s.name] =>", registry[s.name]);
         // get the head element
         let inputs: input[] = registry[s.name][1];
         let inp: input = inputs[ui.path[ui.path.length - 1]];

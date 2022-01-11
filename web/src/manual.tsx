@@ -68,8 +68,6 @@ const Manual: React.FC = () => {
         setRandomColors(on)
     }, 25), [on]);
 
-    // useEffect(() => { fetch("/api/mode/off") }, [])
-
     return (
         <div style={{ margin: "1.5rem" }}>
             <Row>

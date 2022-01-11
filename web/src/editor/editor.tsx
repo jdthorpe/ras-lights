@@ -34,7 +34,7 @@ import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import UI_Selector from "./inputs/ui-selector"
 
 import { make_loop, ILoop } from "./loop"
-import { UI_instance } from '../ui';
+import { UI } from '../ui';
 
 
 const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
@@ -372,12 +372,9 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const get_preview = useCallback((props: { path: number[] }) => {
 
         if (props.path.length == 0)
-            // return (<p>Nothing to preview {JSON.stringify(props.path)}</p>)
             return typeof colors === "undefined" ? (
                 <p>too early (no colors)</p>
             ) : (<ColorArray colors={colors} />)
-        // if (props.path.length == 1)
-        //     return typeof colors === "undefined" ? (<p>too early</p>) : (<ColorArray colors={colors} />)
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
         switch (input.type) {
@@ -524,7 +521,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             getWrappers,
             showNumericInputs,
         }}>
-            {typeof get_preview}
             <Header>
                 <Label>Mode Name</Label>
                 <ComboBox
@@ -580,12 +576,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     {ui_components.length > 0 && (
                         <>
                             <h3 style={{ marginTop: "2rem" }}>UI Components</h3>
-                            <Row>{
-                                ui_components.map((data, i) =>
-                                    <div key={i} style={{ margin: 10 }}>
-                                        <UI_instance ui={data} />
-                                    </div>)
-                            }</Row>
+                            <UI ui={ui_components} />
                             <pre>
                                 {JSON.stringify(ui_components, null, 2)}
                             </pre>
