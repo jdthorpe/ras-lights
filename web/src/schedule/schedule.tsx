@@ -42,7 +42,6 @@ const Schedule: React.FC<ScheduleProps> = ({ }) => {
     const deleteSchedule = (i: number) => {
         if (typeof schedules === "undefined")
             return
-        console.log(`deleteing schedule ${schedules[i].name}`);
         (async () => {
             const results = await fetch("/api/schedule/", {
                 method: 'DELETE',
@@ -59,12 +58,10 @@ const Schedule: React.FC<ScheduleProps> = ({ }) => {
     const editSchedule = (i: number) => {
         if (typeof schedules === "undefined")
             return
-        console.log(`editing schedule ${schedules[i].name}`)
         set_current_schedule(schedules[i])
     }
 
     const saveSchedule = async (s: ISchedule) => {
-        console.log("new schedule: ", s)
         set_current_schedule(s)
         const results = await fetch("/api/schedule/", {
             method: 'POST',

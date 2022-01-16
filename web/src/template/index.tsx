@@ -76,7 +76,6 @@ function validateInputs(x: input[]): string[] {
     const keys = new Set<string>()
     const labels = new Set<string>()
     for (let input of x) {
-        console.log("input :", input)
         if (keys.has(input.key)) {
             out.push(`keys must be unique but "${input.key}" appears more than once`)
         }
@@ -115,7 +114,6 @@ const Template: React.FC = () => {
         const tmp = Array.from(inputs)
         tmp.splice(i, 1)
         tmp.splice(i - 1, 0, inputs[i])
-        console.log("settting UP", tmp)
         setInputs(tmp)
     }
     const moveDown = (i: number) => {
@@ -124,7 +122,6 @@ const Template: React.FC = () => {
         const tmp = Array.from(inputs)
         tmp.splice(i, 1)
         tmp.splice(i + 1, 0, inputs[i])
-        console.log("settting down", tmp)
         setInputs(tmp)
     }
 

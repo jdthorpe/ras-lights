@@ -86,7 +86,7 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
         if (typeof el === "undefined" || typeof spec === "undefined")
             return
         if (el !== _el || spec !== _spec) {
-            console.log("Updating from the << OUTSIDE >>")
+            // console.log("Updating from the << OUTSIDE >>")
             set_el(el)
             set_spec(spec)
             set_ui_type_options(get_ui_type_options(el))
@@ -95,7 +95,7 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
             _set_label((el.ui && el.ui.label) || spec?.label || "")
             set_dropdown_key((el.ui && el.ui.type) || "none")
         } else {
-            console.log("Updating from the >> INSIDE <<")
+            // console.log("Updating from the >> INSIDE <<")
 
             const val: ui | undefined = (
                 dropdown_key === "none" ?
@@ -128,10 +128,7 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
                     option?: IDropdownOption, index?: number
                 ) => {
                     if (option) {
-                        console.log("updating optoins")
                         set_dropdown_key(option.key as ui_type)
-                    } else {
-                        console.log("NOT updating optoins")
                     }
                 }
                 }

@@ -22,10 +22,8 @@ const Modes: React.FC = () => {
                 });
                 try {
                     const config: any[] = await response.json();
-                    console.log("config: ", config)
                     set_mode_config(config)
                     const il: IDropdownOption[] = config.map(x => ({ key: x.name, text: x.name }))
-                    console.log("il: ", il)
                     set_item_list(il)
 
                 } catch (err) {

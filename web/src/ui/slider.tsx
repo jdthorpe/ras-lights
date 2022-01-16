@@ -58,7 +58,6 @@ export const SliderConfig: React.FC<ConfigProps> = ({ el, spec, onChange }) => {
 
     useEffect(() => {
         if (el !== _el || spec !== _spec) {
-            console.log("SLIDER Updating from the << OUTSIDE >>")
             set_el(el)
             set_spec(spec)
         }
@@ -76,12 +75,11 @@ export const SliderConfig: React.FC<ConfigProps> = ({ el, spec, onChange }) => {
                 // defaultValue={spec.max}
                 // defaultLowerValue={spec.min}
                 onChange={(_: unknown, range?: [number, number]) => {
-                    console.log("slider change", range)
                     if (range)
                         onChange({ min: range[0], max: range[1] })
                 }}
             />
-            <pre>{JSON.stringify(el, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(el, null, 2)}</pre> */}
         </>
 
     )

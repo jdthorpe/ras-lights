@@ -60,7 +60,6 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
         cronString.length === 0 ||
         cronString === defaultValue
     )
-    console.log("cronString: ", cronString)
 
     return (
         <div

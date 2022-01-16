@@ -1,12 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get_descriptors = exports.register = exports.registry = void 0;
+exports.get_descriptors = exports.register = exports.setActiveLibrary = exports.registry = void 0;
 const RESERVED_NAMES = ["manual", "none"];
 exports.registry = {};
+let activeLibrary = undefined;
+function setActiveLibrary(name) {
+    activeLibrary = name;
+}
+exports.setActiveLibrary = setActiveLibrary;
 function register(name, func, input, output // | values
 ) {
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
+    if (typeof activeLibrary !== "undefined")
+        name = `${activeLibrary}/${name}`;
     if (name in exports.registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);
     exports.registry[name] = [func, input, output];

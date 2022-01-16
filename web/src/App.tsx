@@ -27,6 +27,9 @@ function App() {
       <PivotItem headerText="Template">
         <Template />
       </PivotItem>
+      <PivotItem headerText="Admin">
+        <Template />
+      </PivotItem>
     </Pivot>
   );
 }

@@ -262,7 +262,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
         // component will unmount
         return function cleanup() {
-            console.log("cleaning up")
             loop.stop();
             // live && (async () => { await fetch("/api/mode/off"); })()
         };
@@ -577,18 +576,13 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         <>
                             <h3 style={{ marginTop: "2rem" }}>UI Components</h3>
                             <UI ui={ui_components} />
-                            <pre>
-                                {JSON.stringify(ui_components, null, 2)}
-                            </pre>
+                            {/* <pre>{JSON.stringify(ui_components, null, 2)}</pre> */}
                         </>
                     )}
                     {show_raw_input &&
                         <div>
                             <Label>Raw Data:</Label>
-                            <pre>{JSON.stringify({
-                                def: show,
-                                ui: ui_components
-                            }, null, 4)}</pre>
+                            {/* <pre>{JSON.stringify({ def: show, ui: ui_components }, null, 4)}</pre> */}
                         </div>
                     }
                 </WorkArea>

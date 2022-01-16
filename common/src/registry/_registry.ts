@@ -15,6 +15,12 @@ export const registry: {
     [x: string]: [func, input[], value]; // | values
 } = {};
 
+let activeLibrary: string | undefined = undefined;
+
+export function setActiveLibrary(name?: string) {
+    activeLibrary = name;
+}
+
 export function register(
     name: string,
     func: func,
@@ -23,6 +29,8 @@ export function register(
 ): void {
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
+
+    if (typeof activeLibrary !== "undefined") name = `${activeLibrary}/${name}`;
 
     if (name in registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);
