@@ -18,6 +18,7 @@
         "url": "git+https://github.com/jdthorpe/ras-lights.git"
     },
     "scripts": {
+        "build": "",
         "test": "echo \"Error: run tests from root\" && exit 1"
     },
     "bugs": {
