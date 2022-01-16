@@ -453,6 +453,10 @@
         //   "reviewCategory": "tools"
         // }
         {
+            "packageName": "web",
+            "projectFolder": "web"
+        },
+        {
             "packageName": "api",
             "projectFolder": "api"
         },
