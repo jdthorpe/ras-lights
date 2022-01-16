@@ -1,4 +1,4 @@
-import { show } from "@ras-lights/common/types/mode";
+import { show } from "@ras-lights/shared/types/mode";
 
 export async function fetch_modes(): Promise<show[]> {
     const response = await fetch("/api/mode/");

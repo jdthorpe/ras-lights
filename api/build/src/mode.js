@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMode = exports.set_updates = void 0;
 const ajv_1 = __importDefault(require("ajv"));
-const common_1 = require("@ras-lights/common");
+const shared_1 = require("@ras-lights/shared");
 // import { turn_off, set_colors } from "./ws681x";
 const driver_1 = require("./driver");
 const settings_1 = __importDefault(require("./settings"));
@@ -39,7 +39,7 @@ async function get_show(name) {
 }
 async function get_mode(show) {
     // if (name in modes) return modes[name];
-    const func = (0, common_1.build_node)(show.def, {
+    const func = (0, shared_1.build_node)(show.def, {
         leds: settings_1.default.ws281x.leds,
     });
     // modes[name] = func;
@@ -78,7 +78,7 @@ function apply_update(mode, show, indx) {
             // all but the last should be func_config objects, hence length - 1
             // console.log("[WALK]  s =>", s);
             // console.log("[WALK]  registry[s.name] =>", registry[s.name]);
-            let inputs = common_1.registry[s.name][1];
+            let inputs = shared_1.registry[s.name][1];
             let inp = inputs[ui.path[i]];
             // console.log("[NEXT]  inp =>", inp);
             // console.log("[NEXT]  s.params =>", s.params);
@@ -92,7 +92,7 @@ function apply_update(mode, show, indx) {
         // console.log("[HEAD]  s =>", s);
         // console.log("[HEAD]  registry[s.name] =>", registry[s.name]);
         // get the head element
-        let inputs = common_1.registry[s.name][1];
+        let inputs = shared_1.registry[s.name][1];
         let inp = inputs[ui.path[ui.path.length - 1]];
         if (inp.type === "button")
             unset_values.push([f, inp.key, false]);

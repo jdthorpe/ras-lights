@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = void 0;
 const chokidar_1 = __importDefault(require("chokidar"));
 const require_directory_1 = __importDefault(require("require-directory"));
-const registry_1 = require("@ras-lights/common/src/registry");
+const registry_1 = require("@ras-lights/shared/src/registry");
 function watch(lib) {
     chokidar_1.default.watch(lib.path).on("change", () => reimport(lib));
 }

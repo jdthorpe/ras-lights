@@ -3,9 +3,9 @@ import { performance } from "perf_hooks";
 import { Router, Request, Response, NextFunction } from "express";
 import { setMode } from "../mode";
 import settings from "../settings";
-import { build_node } from "@ras-lights/common";
+import { build_node } from "@ras-lights/shared";
 import { modeStore, scheduleStore } from "../db";
-import { show } from "@ras-lights/common/types/mode";
+import { show } from "@ras-lights/shared/types/mode";
 
 const router = Router();
 

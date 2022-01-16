@@ -1,7 +1,7 @@
 import chokidar from "chokidar";
 import requireDirectory from "require-directory";
-import { user_library } from "../../common/types/admin";
-import { setActiveLibrary } from "@ras-lights/common/src/registry";
+import { user_library } from "../../shared/types/admin";
+import { setActiveLibrary } from "@ras-lights/shared/src/registry";
 
 export function watch(lib: user_library) {
     chokidar.watch(lib.path).on("change", () => reimport(lib));

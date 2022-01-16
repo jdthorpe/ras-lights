@@ -1,6 +1,6 @@
 import Ajv from "ajv";
-import { build_node } from "@ras-lights/common/src/mode";
-import { func_config, rgb, mode } from "@ras-lights/common/types/mode";
+import { build_node } from "@ras-lights/shared/src/mode";
+import { func_config, rgb, mode } from "@ras-lights/shared/types/mode";
 
 const ajv = new Ajv();
 const schema = {

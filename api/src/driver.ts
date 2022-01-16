@@ -1,5 +1,5 @@
 import Driver, { StripType } from "rpi-ws281x-led";
-import { rgb } from "@ras-lights/common/types/mode";
+import { rgb } from "@ras-lights/shared/types/mode";
 // import settings from "./settings";
 
 const LEDS = 300;

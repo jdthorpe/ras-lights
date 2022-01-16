@@ -1,7 +1,7 @@
 import nodeSchedule, { Job } from "node-schedule";
 import { setMode } from "./mode";
 import { scheduleStore } from "./db";
-import { ISchedule } from "@ras-lights/common/types/schedule";
+import { ISchedule } from "@ras-lights/shared/types/schedule";
 
 let JOBS: { [key: string]: Job } = {};
 

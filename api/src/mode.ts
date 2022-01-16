@@ -1,14 +1,14 @@
 import Ajv from "ajv";
-import { build_node, registry } from "@ras-lights/common";
+import { build_node, registry } from "@ras-lights/shared";
 // import { turn_off, set_colors } from "./ws681x";
 import { turn_off, set_colors } from "./driver";
-import { show, func_config, rgb } from "@ras-lights/common/types/mode";
+import { show, func_config, rgb } from "@ras-lights/shared/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
-import { input } from "@ras-lights/common/types/parameters";
-import { mode } from "@ras-lights/common/types/mode";
+import { input } from "@ras-lights/shared/types/parameters";
+import { mode } from "@ras-lights/shared/types/mode";
 import { appendFileSync } from "fs";
-import { ui } from "@ras-lights/common/types/user-input";
+import { ui } from "@ras-lights/shared/types/user-input";
 import path from "path/posix";
 
 const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
