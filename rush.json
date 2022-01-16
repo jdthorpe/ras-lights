@@ -453,6 +453,10 @@
         //   "reviewCategory": "tools"
         // }
         {
+            "packageName": "api",
+            "projectFolder": "api"
+        },
+        {
             "packageName": "shared",
             "projectFolder": "shared"
         }
