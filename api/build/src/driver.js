@@ -24,9 +24,10 @@ const rpi_ws281x_led_1 = __importStar(require("rpi-ws281x-led"));
 // import settings from "./settings";
 const LEDS_0 = 8;
 const LEDS_1 = 300;
+// https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L146-L169
 const W = 0x01000000; // W
-const G = 0x00010000; // G
-const R = 0x00000100; // R
+const R = 0x00010000; // G
+const G = 0x00000100; // R
 const B = 0x00000001; // B
 // Create the driver. It automatically initializes the underlying components.
 const driver = new rpi_ws281x_led_1.default({
@@ -36,14 +37,14 @@ const driver = new rpi_ws281x_led_1.default({
             gpio: 18,
             count: LEDS_0,
             // type: StripType.WS2812_STRIP,
-            type: rpi_ws281x_led_1.StripType.WS2811_STRIP_RBG,
+            type: rpi_ws281x_led_1.StripType.WS2811_STRIP_RGB,
             brightness: 64,
         },
         {
             gpio: 13,
             count: LEDS_1,
             // type: StripType.WS2811_STRIP_RGBW,
-            type: rpi_ws281x_led_1.StripType.SK6812_STRIP_RGBW,
+            type: rpi_ws281x_led_1.StripType.SK6812_STRIP_GRBW,
             brightness: 55,
         },
     ],
