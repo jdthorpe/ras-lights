@@ -15,13 +15,13 @@ import {
     color_array_input,
     button_input,
     signatures,
-} from "@ras-lights/common/types/parameters"
+} from "shared/types/parameters"
 import { NumberValue } from './number-input';
 import { Label } from '@fluentui/react/lib/Label';
 import {
     bool_value, func_config, mode_param,
     num_value, rgb_array_value, rgb_value, button_value
-} from "@ras-lights/common/types/mode";
+} from "shared/types/mode";
 import { EditorContext, pathEquals } from '../editor';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGift, faTimes } from '@fortawesome/free-solid-svg-icons'

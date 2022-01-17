@@ -11,9 +11,9 @@ import {
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
 import { Label } from '@fluentui/react/lib/Label';
-import { rgb } from '@ras-lights/common/types/mode';
+import { rgb } from 'shared/types/mode';
 
-import { color_input, color_array_input } from "@ras-lights/common/types/parameters"
+import { color_input, color_array_input } from "shared/types/parameters"
 import { EditorContext, pathEquals } from '../editor';
 
 const WrappedRow = styled.div`

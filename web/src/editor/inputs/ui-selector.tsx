@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ui_type, ui, ui_slider } from "@ras-lights/common/types/user-input";
-import { num_value, value_instance } from '@ras-lights/common/types/mode';
-import { input, integer_input } from '@ras-lights/common/types/parameters';
+import { ui_type, ui, ui_slider } from "shared/types/user-input";
+import { num_value, value_instance } from 'shared/types/mode';
+import { input, integer_input } from 'shared/types/parameters';
 // import { Slider } from '@fluentui/react';
 import { SliderConfig, default_slider_config } from '../../ui/slider';
 
-// import { value } from '@ras-lights/common/types/parameters';
+// import { value } from 'shared/types/parameters';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import equal from "fast-deep-equal"

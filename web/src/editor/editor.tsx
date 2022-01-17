@@ -17,14 +17,14 @@ import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { useBoolean } from '@fluentui/react-hooks';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
-import { ui } from "@ras-lights/common/types/user-input";
+import { ui } from "shared/types/user-input";
 
-import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from '@ras-lights/common/types/mode';
+import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from 'shared/types/mode';
 import {
     value, signature, signatures, input,
     color_array_input, color_input,
     range_input, integer_input, boolean_input
-} from "@ras-lights/common/types/parameters"
+} from "shared/types/parameters"
 import { FuncValue } from './inputs/func-input';
 import { ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
 import { BooleanOptions } from './inputs/boolean-input';

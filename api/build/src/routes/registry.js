@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-require("@ras-lights/shared/src/registry"); // side effects (bad)
-const registry_1 = require("@ras-lights/shared/src/registry");
+const registry_1 = require("shared/src/registry");
 const router = (0, express_1.Router)();
 router.get("/descriptors", (req, res) => {
     res.json((0, registry_1.get_descriptors)());

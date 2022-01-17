@@ -4,8 +4,8 @@ import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Label } from '@fluentui/react/lib/Label';
 import { Toggle } from '@fluentui/react/lib/Toggle';
-import { rgb } from "@ras-lights/common/types/mode"
-import { value, input, button_input } from '@ras-lights/common/types/parameters';
+import { rgb } from "shared/types/mode"
+import { value, input, button_input } from 'shared/types/parameters';
 import { Color, ColorArray } from "../editor/inputs/color-input";
 import { is_int, is_number } from "../editor/inputs/number-input";
 import { IconButton } from "../utils/icon-button";

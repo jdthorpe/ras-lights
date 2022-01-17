@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useContext } from 'react';
-// import { ui_button } from "@ras-lights/common/types/user-input";
-import { button_input } from "@ras-lights/common/types/parameters";
-import { button_value } from '@ras-lights/common/types/mode';
+// import { ui_button } from "shared/types/user-input";
+import { button_input } from "shared/types/parameters";
+import { button_value } from 'shared/types/mode';
 // import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Label } from '@fluentui/react/lib/Label';
 import { DefaultButton } from '@fluentui/react/lib/Button';

@@ -3,7 +3,7 @@ import Cron, { CronError } from "react-js-cron"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
-import { ISchedule } from '@ras-lights/common/types/schedule';
+import { ISchedule } from 'shared/types/schedule';
 import cronstrue from 'cronstrue';
 
 import styled from "styled-components"

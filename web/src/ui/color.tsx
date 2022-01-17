@@ -1,8 +1,8 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { Color, ColorArray, ColorValuePicker, ColorArrayPicker } from '../editor/inputs/color-input';
 import { Label } from '@fluentui/react/lib/Label';
-import { rgb } from '@ras-lights/common/types/mode';
-import { ui_rgb, ui_rgb_array } from '@ras-lights/common/types/user-input';
+import { rgb } from 'shared/types/mode';
+import { ui_rgb, ui_rgb_array } from 'shared/types/user-input';
 import { ToolContext } from "./utils"
 import { set_update } from "./utils"
 

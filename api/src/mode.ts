@@ -1,15 +1,13 @@
 import Ajv from "ajv";
-import { build_node, registry } from "@ras-lights/shared";
+import { build_node, registry } from "shared";
 // import { turn_off, set_colors } from "./ws681x";
 import { turn_off, set_colors } from "./driver";
-import { show, func_config, rgb } from "@ras-lights/shared/types/mode";
+import { show, func_config, rgb } from "shared/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
-import { input } from "@ras-lights/shared/types/parameters";
-import { mode } from "@ras-lights/shared/types/mode";
-import { appendFileSync } from "fs";
-import { ui } from "@ras-lights/shared/types/user-input";
-import path from "path/posix";
+import { input } from "shared/types/parameters";
+import { mode } from "shared/types/mode";
+import { ui } from "shared/types/user-input";
 
 const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
 
@@ -101,7 +99,7 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
             // console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
 
             s = s.params[inp.key] as func_config;
-            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key)!.get;
+            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key)!.get as mode;
             // console.log("[NEXT]  s =>", s);
             // console.log("[NEXT]  f =>", f);
         }

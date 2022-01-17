@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
-import "@ras-lights/shared/src/registry"; // side effects (bad)
-import { get_descriptors } from "@ras-lights/shared/src/registry";
+import { get_descriptors } from "shared/src/registry";
 
 const router = Router();
 

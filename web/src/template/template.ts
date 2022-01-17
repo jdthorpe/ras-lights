@@ -1,4 +1,4 @@
-import { value, input } from "@ras-lights/shared/types/parameters";
+import { value, input } from "shared/types/parameters";
 
 type _builder = (args: templateParams) => string;
 
@@ -88,7 +88,7 @@ function usedValueTypes(args: templateParams): string {
     const type_imports = Array.from(types.values()).reduce(
         (a, b) => `${a}, ${b}`
     );
-    return `import { ${type_imports} } from "@ras-lights/shared/types/mode";\n`;
+    return `import { ${type_imports} } from "shared/types/mode";\n`;
 }
 
 export default templateBuilder;

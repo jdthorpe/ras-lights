@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import debounce from "lodash.debounce"
 import { Label } from '@fluentui/react/lib/Label';
 import { Slider } from '@fluentui/react/lib/Slider';
-import { int_value, num_value, value_instance } from '@ras-lights/common/types/mode';
-import { range_input, integer_input, input } from '@ras-lights/common/types/parameters';
-import { ui_slider } from '@ras-lights/common/types/user-input';
+import { int_value, num_value, value_instance } from 'shared/types/mode';
+import { range_input, integer_input, input } from 'shared/types/parameters';
+import { ui_slider } from 'shared/types/user-input';
 import { set_update } from "./utils"
 
 export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {

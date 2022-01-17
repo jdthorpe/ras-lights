@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { value } from "@ras-lights/common/types/parameters"
+import { value } from "shared/types/parameters"
 
 const VALUE_TYPES: value[] = ["boolean", "integer", "number", "rgb", "rgb[]"]
 const VALUE_LABELS: { [key: string]: string } = {

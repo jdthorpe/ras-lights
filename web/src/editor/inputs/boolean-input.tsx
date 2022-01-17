@@ -1,6 +1,6 @@
 
 import React, { useCallback, useContext } from 'react';
-import { boolean_input } from "@ras-lights/common/types/parameters";
+import { boolean_input } from "shared/types/parameters";
 import { Toggle } from '@fluentui/react/lib/Toggle';
 import { EditorContext } from '../editor'; //, pathEquals 
 

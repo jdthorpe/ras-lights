@@ -2,10 +2,10 @@ import React, { useState, useMemo, useEffect } from "react"
 import styled from "styled-components"
 import templateBuilder from "./template"
 import InputPicker from "./input"
-import { value, input, color_array_input, color_input } from '@ras-lights/common/types/parameters';
+import { value, input, color_array_input, color_input } from 'shared/types/parameters';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { DefaultButton } from '@fluentui/react/lib/Button';
-import { rgb, func_config } from '@ras-lights/common/types/mode';
+import { rgb, func_config } from 'shared/types/mode';
 import ValuePicker from "./valuePicker"
 
 import copy from 'copy-to-clipboard';

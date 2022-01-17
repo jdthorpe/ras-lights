@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMode = exports.set_updates = void 0;
 const ajv_1 = __importDefault(require("ajv"));
-const shared_1 = require("@ras-lights/shared");
+const shared_1 = require("shared");
 // import { turn_off, set_colors } from "./ws681x";
 const driver_1 = require("./driver");
 const settings_1 = __importDefault(require("./settings"));

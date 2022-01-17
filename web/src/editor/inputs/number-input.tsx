@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
-import { integer_input, range_input } from "@ras-lights/common/types/parameters"
+import { integer_input, range_input } from "shared/types/parameters"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { EditorContext } from '../editor';
 

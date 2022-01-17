@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import lights from "./src/routes/lights";
 import mode from "./src/routes/mode";
 import registry from "./src/routes/registry";
@@ -10,7 +10,7 @@ import settings from "./src/settings";
 const app = express();
 const port = (settings.api && settings.api.port) || 5000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use("/lights", lights);
 app.use("/mode", mode);
 app.use("/registry", registry);

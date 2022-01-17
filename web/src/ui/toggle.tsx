@@ -1,6 +1,6 @@
 import React from 'react';
 import { Toggle } from '@fluentui/react/lib/Toggle';
-import { ui_toggle } from '@ras-lights/common/types/user-input';
+import { ui_toggle } from 'shared/types/user-input';
 import { set_update } from "./utils"
 
 export const ToggleInput: React.FC<{ ui: ui_toggle }> = ({ ui }) => (

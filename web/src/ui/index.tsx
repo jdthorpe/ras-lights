@@ -4,7 +4,7 @@ import { Button } from "./button";
 import { ToggleInput } from "./toggle"
 import { SliderInput } from "./slider";
 import { ColorArrayInput, ColorInput } from "./color";
-import { ui, ui_type, ui_rgb, ui_rgb_array, ui_slider, ui_toggle } from '@ras-lights/common/types/user-input';
+import { ui, ui_type, ui_rgb, ui_rgb_array, ui_slider, ui_toggle } from 'shared/types/user-input';
 import { ToolContext } from "./utils"
 
 const Row = styled.div`
