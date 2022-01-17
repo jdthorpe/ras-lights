@@ -35,7 +35,8 @@ const driver = new rpi_ws281x_led_1.default({
         {
             gpio: 18,
             count: LEDS_0,
-            type: rpi_ws281x_led_1.StripType.WS2812_STRIP,
+            // type: StripType.WS2812_STRIP,
+            type: rpi_ws281x_led_1.StripType.WS2811_STRIP_RBG,
             brightness: 64,
         },
         {
@@ -48,8 +49,8 @@ const driver = new rpi_ws281x_led_1.default({
     ],
 });
 // Create the driver. It automatically initializes the underlying components.
-const channel0 = driver.channels[1];
-channel0.leds = new Uint32Array(LEDS_1).fill(0x000000);
+const channel0 = driver.channels[0];
+channel0.leds = new Uint32Array(LEDS_0).fill(0x000000);
 channel0.brightness = 35;
 channel0.render();
 const channel1 = driver.channels[1];
@@ -79,6 +80,8 @@ exports.set_colors = set_colors;
 function turn_off() {
     channel1.leds.fill(0x000000);
     channel1.render();
+    channel0.leds.fill(0x000000);
+    channel0.render();
 }
 exports.turn_off = turn_off;
 function random_colors() {
@@ -89,5 +92,11 @@ function random_colors() {
         channel1.leds[i] = (R * r) | (G * g) | (B * Math.max(255 - r - g, 0));
     }
     channel1.render();
+    for (let i = 0; i < LEDS_0; i++) {
+        r = Math.floor(Math.random() * 255);
+        g = Math.floor(Math.random() * 255);
+        channel0.leds[i] = (R * r) | (G * g) | (B * Math.max(255 - r - g, 0));
+    }
+    channel0.render();
 }
 exports.random_colors = random_colors;
