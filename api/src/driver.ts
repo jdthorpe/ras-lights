@@ -3,7 +3,7 @@ import { rgb } from "shared/types/mode";
 // import settings from "./settings";
 
 const LEDS_0 = 8;
-const LEDS_1 = 300;
+const LEDS_1 = 339;
 
 // https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L146-L169
 const OFF = 0x00000000; // W
@@ -21,7 +21,7 @@ const driver = new Driver({
             gpio: 18,
             count: LEDS_0,
             // type: StripType.WS2812_STRIP,
-            type: StripType.WS2811_STRIP_RGB,
+            type: StripType.WS2811_STRIP_GRB,
             brightness: 64,
         },
         {
@@ -29,7 +29,7 @@ const driver = new Driver({
             count: LEDS_1,
             // type: StripType.WS2811_STRIP_RGBW,
             type: StripType.SK6812_STRIP_GRBW,
-            brightness: 55,
+            brightness: 255,
         },
     ],
 });
