@@ -6,12 +6,14 @@ const LEDS_0 = 8;
 const LEDS_1 = 300;
 
 // https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L146-L169
+const OFF = 0x00000000; // W
 const W = 0x01000000; // W
 const R = 0x00010000; // G
 const G = 0x00000100; // R
 const B = 0x00000001; // B
 
 // Create the driver. It automatically initializes the underlying components.
+// https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L266-L273
 const driver = new Driver({
     frequency: 800000,
     channels: [
@@ -66,10 +68,19 @@ export function set_colors(colors: rgb[]): void {
     channel0.render();
 }
 
-export function turn_off(): void {
-    channel1.leds.fill(0x000000);
+export function white(N = 0): void {
+    N = Math.floor(Math.min(255, Math.max(0, N))) * W;
+
+    channel1.leds.fill(N);
     channel1.render();
-    channel0.leds.fill(0x000000);
+    channel0.leds.fill(OFF);
+    channel0.render();
+}
+
+export function turn_off(): void {
+    channel1.leds.fill(OFF);
+    channel1.render();
+    channel0.leds.fill(OFF);
     channel0.render();
 }
 

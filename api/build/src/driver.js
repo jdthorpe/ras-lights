@@ -19,17 +19,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.random_colors = exports.turn_off = exports.set_colors = void 0;
+exports.random_colors = exports.turn_off = exports.white = exports.set_colors = void 0;
 const rpi_ws281x_led_1 = __importStar(require("rpi-ws281x-led"));
 // import settings from "./settings";
 const LEDS_0 = 8;
 const LEDS_1 = 300;
 // https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L146-L169
+const OFF = 0x00000000; // W
 const W = 0x01000000; // W
 const R = 0x00010000; // G
 const G = 0x00000100; // R
 const B = 0x00000001; // B
 // Create the driver. It automatically initializes the underlying components.
+// https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L266-L273
 const driver = new rpi_ws281x_led_1.default({
     frequency: 800000,
     channels: [
@@ -78,10 +80,18 @@ function set_colors(colors) {
     channel0.render();
 }
 exports.set_colors = set_colors;
-function turn_off() {
-    channel1.leds.fill(0x000000);
+function white(N = 0) {
+    N = Math.floor(Math.min(255, Math.max(0, N))) * W;
+    channel1.leds.fill(N);
     channel1.render();
-    channel0.leds.fill(0x000000);
+    channel0.leds.fill(OFF);
+    channel0.render();
+}
+exports.white = white;
+function turn_off() {
+    channel1.leds.fill(OFF);
+    channel1.render();
+    channel0.leds.fill(OFF);
     channel0.render();
 }
 exports.turn_off = turn_off;

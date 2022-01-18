@@ -7,7 +7,7 @@ import Ajv from "ajv";
 import yaml from "js-yaml";
 
 import { rgb } from "shared/types/mode";
-import { turn_off, set_colors, random_colors } from "../driver";
+import { white, turn_off, set_colors, random_colors } from "../driver";
 
 const schema: any = yaml.load(
     readFileSync(
@@ -18,6 +18,15 @@ const schema: any = yaml.load(
 const ajv = new Ajv();
 
 const router = Router();
+
+router.get("/white", (req: Request, res: Response) => {
+    const start = performance.now();
+    turn_off();
+    white(100);
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
 
 router.get("/off", (req: Request, res: Response) => {
     const start = performance.now();

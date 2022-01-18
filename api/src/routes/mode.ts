@@ -2,8 +2,6 @@ import { performance } from "perf_hooks";
 
 import { Router, Request, Response, NextFunction } from "express";
 import { setMode } from "../mode";
-import settings from "../settings";
-import { build_node } from "shared";
 import { modeStore, scheduleStore } from "../db";
 import { show } from "shared/types/mode";
 

@@ -13,6 +13,14 @@ const driver_1 = require("../driver");
 const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "schema.yaml"), "utf-8"));
 const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
+router.get("/white", (req, res) => {
+    const start = perf_hooks_1.performance.now();
+    (0, driver_1.turn_off)();
+    (0, driver_1.white)(100);
+    const end = perf_hooks_1.performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
 router.get("/off", (req, res) => {
     const start = perf_hooks_1.performance.now();
     (0, driver_1.turn_off)();
