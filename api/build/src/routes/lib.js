@@ -14,7 +14,7 @@ const watch_1 = require("../watch");
 (async () => {
     const libs = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
     for (let lib of libs) {
-        console.log(`[STARTUP] importing library ${lib}`);
+        console.log(`[STARTUP] importing library ${JSON.stringify(lib)}`);
         (0, watch_1.reimport)(lib);
     }
 })();
@@ -52,6 +52,11 @@ router.post("/", async (req, res, next) => {
         if (!fs_1.default.existsSync(body.path)) {
             res.status(500);
             res.send(`no such library ${body.path}`);
+            return;
+        }
+        if (body.name === "default") {
+            res.status(500);
+            res.send(`Invalid library name`);
             return;
         }
         console.log("[LIB/POST] upserting");

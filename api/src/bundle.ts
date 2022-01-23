@@ -75,7 +75,7 @@ export async function bundle(lib: user_library) {
 
         const lib_path = path.join(library_dir, lib.name);
         // console.log("[Webpack bundler] removing old lib: ", lib_path);
-        await fs.rm(lib_path, { force: true, recursive: true });
+        await fs.remove(lib_path); // , { force: true, recursive: true }
         // console.log("[Webpack bundler] renaming");
         await fs.rename(dir, lib_path);
         // console.log("[Webpack bundler] DONE!");
