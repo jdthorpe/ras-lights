@@ -14,7 +14,7 @@ const ajv = new Ajv();
 const schema = {
     type: "object",
     properties: {
-        type: { type: { const: "LIBRARY" } },
+        type: { const: "LIBRARY" },
         // use: { type: "boolean" },
         // watch: { type: "boolean" },
         path: { type: "string" },
