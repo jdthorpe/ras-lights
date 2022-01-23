@@ -1,6 +1,6 @@
 /* Library management routes */
 import { performance } from "perf_hooks";
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import fs from "fs";
 import Ajv from "ajv";
 import { adminStore } from "../db";
@@ -30,23 +30,26 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // CREATE + UPDATE (upsert)
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     const start = performance.now();
     try {
         const body: user_library_data = req.body;
 
+        console.log("[LIB/POST] validation");
         if (!ajv.validate(schema, body)) {
             res.status(500);
             res.send(`invalid json payload`);
             return;
         }
 
+        console.log("[LIB/POST] exists??");
         if (!fs.existsSync(body.path)) {
             res.status(500);
             res.send(`no such library ${body.path}`);
             return;
         }
 
+        console.log("[LIB/POST] upserting");
         adminStore.update({ type: "LIBRARY", name: body.name }, body, {
             upsert: true,
         });
@@ -54,9 +57,11 @@ router.post("/", async (req: Request, res: Response) => {
         // if (body.watch) watch(body);
         // else unwatch(body);
 
+        console.log("[LIB/POST] watching...");
         watch(body);
+        console.log("[LIB/POST] DONE");
     } catch (err) {
-        return err;
+        return next(err);
     }
     const end = performance.now();
     res.status(200);

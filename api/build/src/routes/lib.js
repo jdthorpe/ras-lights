@@ -30,29 +30,34 @@ router.get("/", async (req, res) => {
     res.json(results);
 });
 // CREATE + UPDATE (upsert)
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
         const body = req.body;
+        console.log("[LIB/POST] validation");
         if (!ajv.validate(schema, body)) {
             res.status(500);
             res.send(`invalid json payload`);
             return;
         }
+        console.log("[LIB/POST] exists??");
         if (!fs_1.default.existsSync(body.path)) {
             res.status(500);
             res.send(`no such library ${body.path}`);
             return;
         }
+        console.log("[LIB/POST] upserting");
         db_1.adminStore.update({ type: "LIBRARY", name: body.name }, body, {
             upsert: true,
         });
         // if (body.watch) watch(body);
         // else unwatch(body);
+        console.log("[LIB/POST] watching...");
         (0, watch_1.watch)(body);
+        console.log("[LIB/POST] DONE");
     }
     catch (err) {
-        return err;
+        return next(err);
     }
     const end = perf_hooks_1.performance.now();
     res.status(200);
