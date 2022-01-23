@@ -8,6 +8,7 @@ import { reimport, watch, unwatch } from "../watch";
 import { user_library_data } from "shared/types/admin";
 
 const router = Router();
+export default router;
 
 const ajv = new Ajv();
 const schema = {

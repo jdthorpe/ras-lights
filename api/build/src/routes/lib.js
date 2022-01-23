@@ -11,6 +11,7 @@ const ajv_1 = __importDefault(require("ajv"));
 const db_1 = require("../db");
 const watch_1 = require("../watch");
 const router = (0, express_1.Router)();
+exports.default = router;
 const ajv = new ajv_1.default();
 const schema = {
     type: "object",
