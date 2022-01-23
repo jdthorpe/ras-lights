@@ -25,7 +25,11 @@ pip install aiohttp jsonschema pyyaml
 ## dev startup
 
 ```sh
-docker run --rm -it -p 5000:80 -v $PWD/nginx-dev.conf:/etc/nginx/nginx.conf nginx
+
+docker run --rm -it -p 5000:80 \
+    -v $PWD/lib/:/www/lib \
+    -v $PWD/nginx-dev.conf:/etc/nginx/nginx.conf nginx
+
 ```
 
 reload the nginx script
