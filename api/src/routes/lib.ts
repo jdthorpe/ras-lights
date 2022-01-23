@@ -32,29 +32,32 @@ router.get("/", async (req: Request, res: Response) => {
 // CREATE + UPDATE (upsert)
 router.post("/", async (req: Request, res: Response) => {
     const start = performance.now();
-    const body: user_library_data = req.body;
+    try {
+        const body: user_library_data = req.body;
 
-    if (!ajv.validate(schema, body)) {
-        res.status(500);
-        res.send(`invalid json payload`);
-        return;
+        if (!ajv.validate(schema, body)) {
+            res.status(500);
+            res.send(`invalid json payload`);
+            return;
+        }
+
+        if (!fs.existsSync(body.path)) {
+            res.status(500);
+            res.send(`no such library ${body.path}`);
+            return;
+        }
+
+        adminStore.update({ type: "LIBRARY", name: body.name }, body, {
+            upsert: true,
+        });
+
+        // if (body.watch) watch(body);
+        // else unwatch(body);
+
+        watch(body);
+    } catch (err) {
+        return err;
     }
-
-    if (!fs.existsSync(body.path)) {
-        res.status(500);
-        res.send(`no such library ${body.path}`);
-        return;
-    }
-
-    adminStore.update({ type: "LIBRARY", name: body.name }, body, {
-        upsert: true,
-    });
-
-    // if (body.watch) watch(body);
-    // else unwatch(body);
-
-    watch(body);
-
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
