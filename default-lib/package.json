@@ -2,7 +2,7 @@
     "name": "default-lib",
     "version": "1.0.0",
     "description": "Default library of display functions",
-    "main": "build/index.js",
+    "main": "build/src/index.js",
     "scripts": {
         "build": "npx tsc && npx webpack",
         "test": "echo \"Error: no test specified\" && exit 1"
