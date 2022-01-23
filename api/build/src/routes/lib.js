@@ -10,6 +10,13 @@ const fs_1 = __importDefault(require("fs"));
 const ajv_1 = __importDefault(require("ajv"));
 const db_1 = require("../db");
 const watch_1 = require("../watch");
+// startup
+(async () => {
+    const libs = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
+    for (let lib of libs) {
+        (0, watch_1.reimport)(lib);
+    }
+})();
 const router = (0, express_1.Router)();
 exports.default = router;
 const ajv = new ajv_1.default();

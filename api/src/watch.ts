@@ -40,7 +40,9 @@ export async function reimport(lib: user_library) {
 
     try {
         setActiveLibrary(lib.name);
+        console.log(`>>> About to require lib.path: ${lib.path}`);
         require(lib.path);
+        console.log(`>>> Successfully required lib.path: ${lib.path}`);
         setActiveLibrary();
     } catch (err) {
         // TODO: document this

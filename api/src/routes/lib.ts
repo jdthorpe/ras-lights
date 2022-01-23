@@ -7,6 +7,17 @@ import { adminStore } from "../db";
 import { reimport, watch, unwatch } from "../watch";
 import { user_library_data } from "shared/types/admin";
 
+// startup
+(async () => {
+    const libs = await adminStore.find<user_library_data>(
+        { type: "LIBRARY" },
+        { _id: 0 }
+    );
+    for (let lib of libs) {
+        reimport(lib);
+    }
+})();
+
 const router = Router();
 export default router;
 
