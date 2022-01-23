@@ -14,6 +14,7 @@ const watch_1 = require("../watch");
 (async () => {
     const libs = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
     for (let lib of libs) {
+        console.log(`[STARTUP] importing library ${lib}`);
         (0, watch_1.reimport)(lib);
     }
 })();

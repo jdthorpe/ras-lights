@@ -14,6 +14,7 @@ import { user_library_data } from "shared/types/admin";
         { _id: 0 }
     );
     for (let lib of libs) {
+        console.log(`[STARTUP] importing library ${lib}`);
         reimport(lib);
     }
 })();

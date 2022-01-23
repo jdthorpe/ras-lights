@@ -6,6 +6,7 @@ import { ISchedule } from "shared/types/schedule";
 let JOBS: { [key: string]: Job } = {};
 
 // startup:
+console.log(`[STARTUP] loading cron jobs`);
 reload();
 
 export function cancel(name: string): void {
