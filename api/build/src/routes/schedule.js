@@ -30,6 +30,7 @@ const router = (0, express_1.Router)();
 // RESTART the cron jobs
 router.get("/restart", async (req, res) => {
     const start = perf_hooks_1.performance.now();
+    // TODO are cron jobs started at startup??
     await (0, cron_1.reload)();
     const end = perf_hooks_1.performance.now();
     res.status(200);

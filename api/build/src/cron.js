@@ -8,6 +8,8 @@ const node_schedule_1 = __importDefault(require("node-schedule"));
 const mode_1 = require("./mode");
 const db_1 = require("./db");
 let JOBS = {};
+// startup:
+reload();
 function cancel(name) {
     const job = JOBS[name];
     job && job.cancel();
