@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bundle = void 0;
-const promises_1 = __importDefault(require("fs/promises"));
 const webpack_1 = __importDefault(require("webpack"));
+const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const tmp_promise_1 = __importDefault(require("tmp-promise"));
 const library_dir = path_1.default.resolve(path_1.default.join(__dirname, "../../../lib"));
@@ -74,9 +74,9 @@ async function bundle(lib) {
         });
         const lib_path = path_1.default.join(library_dir, lib.name);
         // console.log("[Webpack bundler] removing old lib: ", lib_path);
-        await promises_1.default.rm(lib_path, { force: true, recursive: true });
+        await fs_extra_1.default.rm(lib_path, { force: true, recursive: true });
         // console.log("[Webpack bundler] renaming");
-        await promises_1.default.rename(dir, lib_path);
+        await fs_extra_1.default.rename(dir, lib_path);
         // console.log("[Webpack bundler] DONE!");
     }
     catch (err) {

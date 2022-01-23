@@ -1,5 +1,5 @@
-import fs from "fs/promises";
 import webpack, { Configuration } from "webpack";
+import fs from "fs-extra";
 import path from "path";
 import tmp from "tmp-promise";
 import { user_library } from "shared/types/admin";
