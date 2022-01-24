@@ -35,10 +35,10 @@ function alternate(
     return average(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
 
-register(
-    "Alternate",
-    alternate,
-    [
+register({
+    name: "Alternate",
+    func: alternate,
+    input: [
         {
             key: "a",
             type: "rgb",
@@ -68,5 +68,5 @@ register(
             max: 3600000,
         },
     ],
-    "rgb"
-);
+    output: "rgb",
+});

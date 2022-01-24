@@ -1,4 +1,4 @@
-import { register } from "../";
+import { register } from "../index";
 import { rgb } from "../../types";
 
 interface input {
@@ -15,10 +15,10 @@ function effect(x: input): rgb[] {
     ]);
 }
 
-register(
-    "Dimmer",
-    effect,
-    [
+register({
+    name: "Dimmer",
+    func: effect,
+    input: [
         {
             key: "main",
             type: "rgb[]",
@@ -38,5 +38,5 @@ register(
             max: 100,
         },
     ],
-    "rgb[]"
-);
+    output: "rgb[]",
+});

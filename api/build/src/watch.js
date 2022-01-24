@@ -54,7 +54,10 @@ async function reimport(lib) {
     try {
         (0, registry_1.setActiveLibrary)(lib.name);
         console.log(`>>> About to require lib.path: ${lib.path}`);
-        require(lib.path);
+        const library = require(lib.path);
+        console.log(`>>> library is type ${typeof library}`);
+        console.log(`>>> library has keys ${Object.keys(library)}`);
+        library.load(registry_1.register);
         console.log(`>>> Successfully required lib.path: ${lib.path}`);
         (0, registry_1.setActiveLibrary)();
     }

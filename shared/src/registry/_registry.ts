@@ -21,16 +21,24 @@ export function setActiveLibrary(name?: string) {
     activeLibrary = name;
 }
 
-export function register(
-    name: string,
-    func: func,
-    input: input[],
-    output: value // | values
-): void {
+interface args {
+    name: string;
+    func: func;
+    input: input[];
+    output: value; // | values
+}
+export function register(args: args): void {
+    let { name, func, input, output } = args;
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
 
     if (typeof activeLibrary !== "undefined") name = `${activeLibrary}/${name}`;
+
+    console.log(
+        `REGISTER: adding function (${Object.keys(registry).length}) ${
+            activeLibrary ? activeLibrary : "internal"
+        }/${name}`
+    );
 
     if (name in registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);

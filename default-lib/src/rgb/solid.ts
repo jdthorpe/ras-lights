@@ -1,4 +1,4 @@
-import { register } from "../";
+import { register } from "../index";
 import { rgb } from "../../types";
 
 interface input {
@@ -9,10 +9,10 @@ function solid(x: input): rgb[] {
     return [x.a];
 }
 
-register(
-    "Solid",
-    solid,
-    [
+register({
+    name: "Solid",
+    func: solid,
+    input: [
         {
             key: "a",
             type: "rgb",
@@ -20,5 +20,5 @@ register(
             default: [0, 255, 0],
         },
     ],
-    "rgb[]"
-);
+    output: "rgb[]",
+});

@@ -1,6 +1,5 @@
-import { register } from "../";
-import { globals } from "../../types";
-import { rgb } from "../../types";
+import { register } from "../index";
+import { rgb, globals } from "../../types";
 import { average } from "../utils";
 
 interface input {
@@ -16,10 +15,10 @@ function gradient(x: input, globals: globals): rgb[] {
     return out;
 }
 
-register(
-    "Gradient",
-    gradient,
-    [
+register({
+    name: "Gradient",
+    func: gradient,
+    input: [
         {
             key: "a",
             type: "rgb",
@@ -33,5 +32,5 @@ register(
             default: [0, 0, 255],
         },
     ],
-    "rgb[]"
-);
+    output: "rgb[]",
+});

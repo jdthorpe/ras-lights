@@ -1,7 +1,7 @@
 import chokidar from "chokidar";
 import fs from "fs";
 import { user_library } from "../../shared/types/admin";
-import { setActiveLibrary } from "shared/src/registry";
+import { register, setActiveLibrary } from "shared/src/registry";
 import path from "path";
 import debounce from "lodash.debounce";
 
@@ -56,7 +56,10 @@ export async function reimport(lib: user_library) {
     try {
         setActiveLibrary(lib.name);
         console.log(`>>> About to require lib.path: ${lib.path}`);
-        require(lib.path);
+        const library = require(lib.path);
+        console.log(`>>> library is type ${typeof library}`);
+        console.log(`>>> library has keys ${Object.keys(library)}`);
+        library.load(register);
         console.log(`>>> Successfully required lib.path: ${lib.path}`);
         setActiveLibrary();
     } catch (err) {

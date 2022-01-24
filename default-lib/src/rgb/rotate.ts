@@ -1,4 +1,4 @@
-import { register } from "../";
+import { register } from "../index";
 import { rgb } from "../../types";
 
 interface input {
@@ -17,10 +17,10 @@ function rotate(this: { starttime: number }, x: input): rgb[] {
     return x.in.slice(offset).concat(x.in.slice(0, offset));
 }
 
-register(
-    "Rotate",
-    rotate,
-    [
+register({
+    name: "Rotate",
+    func: rotate,
+    input: [
         {
             key: "in",
             type: "rgb[]",
@@ -49,5 +49,5 @@ register(
             default: false,
         },
     ],
-    "rgb[]"
-);
+    output: "rgb[]",
+});

@@ -1,4 +1,4 @@
-import { register } from "../";
+import { register } from "../index";
 import { globals } from "../../types";
 import { hsv } from "color-convert";
 
@@ -18,10 +18,10 @@ function rainbow_stripes(inputs: input, globals: globals): rgb[] {
     return out;
 }
 
-register(
-    "Rainbow Stripes",
-    rainbow_stripes,
-    [
+register({
+    name: "Rainbow Stripes",
+    func: rainbow_stripes,
+    input: [
         {
             key: "n",
             type: "integer",
@@ -31,5 +31,5 @@ register(
             max: 100,
         },
     ],
-    "rgb[]"
-);
+    output: "rgb[]",
+});

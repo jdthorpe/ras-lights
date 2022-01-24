@@ -1,3 +1,29 @@
+interface def {
+    name: string;
+    func: func;
+    input: any[]; // input[],
+    output: string; // value // | values
+}
+interface register {
+    (x: def): void;
+}
+
+const defs: def[] = [];
+
+export function register(x: def) {
+    defs.push(x);
+}
+
+export function load(cb: register): void {
+    for (let d of defs) cb(d);
+}
+
+// damn those circular imports
+import "./rgb";
+import "./rgbw";
+import "./w";
+
+/*
 const registerPromise = import("host/register");
 console.log("HI FROM THE INTERNAL LIBRARY");
 
@@ -25,7 +51,7 @@ export async function register(
     }
 }
 
-import { domainToASCII } from "url";
 // damn those circular imports
 import "./rgb";
 import "./w";
+*/

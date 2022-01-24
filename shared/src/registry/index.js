@@ -13,5 +13,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // this should come first
 __exportStar(require("./_registry"), exports);
 // this should come second
-require("./effects");
-require("./generators");
+// import "./effects";
+// import "./generators";
