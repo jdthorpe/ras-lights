@@ -33,9 +33,12 @@ import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
 import UI_Selector from "./inputs/ui-selector"
 
+import { load_remotes } from '../loader';
 import { make_loop, ILoop } from "./loop"
 import { UI } from '../ui';
+import { register } from "shared/src/registry"
 
+console.log("______ typeof register", typeof register)
 
 const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
 const ACTIVE_COLOR = "9be2fa"; //00c6fc
@@ -235,6 +238,25 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [ui_components, set_ui_components] = useState<ui[]>([])
 
     const [loop] = useState<ILoop>(() => make_loop(set_colors, { leds: 8 }))
+
+    const [loading_libraries, set_loading_libraries] = useState(true)
+    const [loading_libraries_error, set_loading_libraries_error] = useState<string>()
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await load_remotes();
+            } catch (error) {
+                set_loading_libraries_error((error as any).message || "Something went wrong")
+
+
+            } finally {
+                set_loading_libraries(false)
+
+            }
+        })()
+
+    }, [])
 
     const NameOptions: IComboBoxOption[] = free_text_option ? [
         { key: FREE_TEXT_KEY, text: free_text_option },
@@ -504,9 +526,15 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     );
 
 
-    if (loading) {
+    if (loading || loading_libraries) {
         return (<div>
             <Spinner label="I am totally loading..." size={SpinnerSize.large} />
+        </div>)
+    }
+    if (loading_libraries_error) {
+        return (<div>
+            <p>Dang, something went wrong when loading user libraries</p>
+            <p style={{ color: "red" }}>{loading_libraries_error}</p>
         </div>)
     }
     return (

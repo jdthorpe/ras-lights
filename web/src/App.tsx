@@ -1,6 +1,7 @@
 import React from "react"
 import { Pivot, PivotItem } from '@fluentui/react';
 import Manual from "./manual"
+import Admin from "./admin/admin"
 import Modes from "./modes"
 import Editor from "./editor/editor"
 import Template from "./template"
@@ -28,7 +29,7 @@ function App() {
         <Template />
       </PivotItem>
       <PivotItem headerText="Admin">
-        <Template />
+        <Admin />
       </PivotItem>
     </Pivot>
   );
