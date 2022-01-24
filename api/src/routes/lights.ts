@@ -28,6 +28,21 @@ router.get("/white", (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
+const is_digits = /^\d+$/;
+router.get("/white/:n", (req: Request, res: Response) => {
+    const start = performance.now();
+    let n = req.params.n;
+    if (!is_digits.test(n)) {
+        res.status(500);
+        return res.send("Invalid parameter");
+    }
+    turn_off();
+    white(Math.max(0, Math.min(255, Math.floor(parseInt(n)))));
+    const end = performance.now();
+    res.status(200);
+    res.send(`OK ${end - start}`);
+});
+
 router.get("/off", (req: Request, res: Response) => {
     const start = performance.now();
     turn_off();
