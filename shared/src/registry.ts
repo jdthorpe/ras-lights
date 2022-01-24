@@ -1,4 +1,4 @@
-import { input, value, signatures } from "../../types/parameters";
+import { input, value, signatures } from "../types/parameters";
 
 export interface globals {
     leds: number;
