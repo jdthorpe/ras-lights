@@ -5,7 +5,7 @@ const utils_1 = require("../utils");
 function gradient(x, globals) {
     const out = [];
     for (let i = 0; i < globals.leds; i++) {
-        out.push((0, utils_1.average)(x.b, x.b, i / Math.max(globals.leds - 1, 1)));
+        out.push((0, utils_1.average)(x.a, x.b, i / Math.max(globals.leds - 1, 1)));
     }
     return out;
 }
