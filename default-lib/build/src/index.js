@@ -29,15 +29,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
-require("./rgb");
-require("./w");
 const registerPromise = Promise.resolve().then(() => __importStar(require("host/register")));
+// @ts-ignore
+Promise.resolve().then(() => __importStar(require("host/reister"))).then((m) => console.log("host/register loaded !!!!!!!!!!!!!!!!!!!!!!!!!!!", JSON.stringify(m)))
+    .catch(() => console.log("host/register failed to load !!!!!!!!!!!!!!!!!!!!"));
+console.log("HI FROM THE INTERNAL LIBRARY");
 function register(name, func, input, // input[],
 output // value // | values
 ) {
     return __awaiter(this, void 0, void 0, function* () {
-        const register = yield registerPromise;
-        register.register(name, func, input, output);
+        try {
+            console.log("[internal register] waiting for the host/register");
+            console.log(`[internal register] registerPromise ${registerPromise}`);
+            const register = yield Promise.resolve().then(() => __importStar(require("host/register")));
+            console.log("typeof host/register.default: ", typeof register.default);
+            console.log("keys of host/register: ", JSON.stringify(Object.keys(register.default)));
+            // @ts-ignore
+            register.default(name, func, input, output);
+            console.log("register.register DONE");
+        }
+        catch (err) {
+            console.log(`dang, something went wrong when registering library ${name}`);
+            console.log(err.message);
+            console.log(err);
+        }
     });
 }
 exports.register = register;
+// damn those circular imports
+require("./rgb");
+require("./w");

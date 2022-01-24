@@ -1,7 +1,7 @@
 import chokidar from "chokidar";
+import fs from "fs";
 import { user_library } from "../../shared/types/admin";
 import { setActiveLibrary } from "shared/src/registry";
-import { bundle } from "./bundle";
 import path from "path";
 import debounce from "lodash.debounce";
 
@@ -28,15 +28,30 @@ export function watch(lib: user_library) {
 }
 
 const _reimport = debounce(reimport, 250);
+const LIBRARY_DIR = path.resolve(path.join(__dirname, "../../../lib"));
 
 export async function reimport(lib: user_library) {
-    try {
-        // try bundling the library (error out if failed)
-        await bundle(lib);
-    } catch (err) {
-        // TODO: document this
-        throw "Failed while trying to bundle the library";
+    const lib_dist = path.join(LIBRARY_DIR, lib.name);
+    const lib_dist_target = path.resolve(path.join(lib.path, "dist"));
+    if (!fs.existsSync(lib_dist_target)) {
+        console.log(
+            `[reimport] Failed to import, no such directory ${lib_dist_target}`
+        );
+        return;
     }
+
+    if (fs.existsSync(lib_dist)) {
+        // the link already exists
+        const link = path.resolve(fs.readlinkSync(lib_dist));
+        if (link !== lib_dist_target) {
+            // but it points to the wrong place
+            fs.unlinkSync(lib_dist);
+            fs.symlinkSync(lib_dist_target, lib_dist);
+        }
+    } else {
+        fs.symlinkSync(lib_dist_target, lib_dist);
+    }
+    console.log(`>>> About to require lib.path: ${lib.path}`);
 
     try {
         setActiveLibrary(lib.name);

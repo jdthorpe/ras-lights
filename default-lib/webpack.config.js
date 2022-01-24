@@ -26,7 +26,8 @@ module.exports = {
 
     plugins: [
         new ModuleFederationPlugin({
-            name: "ras_lib_default",
+            name: "internal",
+            filename: "remoteEntry.js",
             remotes: {
                 host: "host@/remoteEntry.js",
             },
