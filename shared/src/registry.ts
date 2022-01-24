@@ -32,7 +32,7 @@ export function register(args: args): void {
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
 
-    if (typeof activeLibrary !== "undefined") name = `${activeLibrary}/${name}`;
+    //if (typeof activeLibrary !== "undefined") name = `${activeLibrary}/${name}`;
 
     console.log(
         `REGISTER: adding function (${Object.keys(registry).length}) ${

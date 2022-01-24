@@ -12,8 +12,7 @@ function register(args) {
     let { name, func, input, output } = args;
     if (RESERVED_NAMES.indexOf(name) !== -1)
         throw new Error(`Reserved name ${name}`);
-    if (typeof activeLibrary !== "undefined")
-        name = `${activeLibrary}/${name}`;
+    //if (typeof activeLibrary !== "undefined") name = `${activeLibrary}/${name}`;
     console.log(`REGISTER: adding function (${Object.keys(exports.registry).length}) ${activeLibrary ? activeLibrary : "internal"}/${name}`);
     if (name in exports.registry)
         console.log(`WARNING: overwriting existing registry function ${name}`);
