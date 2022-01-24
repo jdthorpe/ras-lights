@@ -10,7 +10,7 @@ interface input {
 function gradient(x: input, globals: globals): rgb[] {
     const out: rgb[] = [];
     for (let i = 0; i < globals.leds; i++) {
-        out.push(average(x.b, x.b, i / Math.max(globals.leds - 1, 1)));
+        out.push(average(x.a, x.b, i / Math.max(globals.leds - 1, 1)));
     }
     return out;
 }
