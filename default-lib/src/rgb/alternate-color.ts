@@ -24,13 +24,13 @@ function alternate(
     const offset: number = (+new Date() - this.starttime) % this.cycletime;
 
     if (offset < x.hold) {
-        return x.a;
+        return x.b;
     }
     if (offset < x.hold + x.fade) {
         return average(x.b, x.a, (offset - x.hold) / x.fade);
     }
     if (offset < 2 * x.hold + x.fade) {
-        return x.b;
+        return x.a;
     }
     return average(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
