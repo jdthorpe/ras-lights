@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const __1 = require("../");
+const index_1 = require("../index");
 const utils_1 = require("../utils");
 function gradient(x, globals) {
     const out = [];
@@ -9,17 +9,22 @@ function gradient(x, globals) {
     }
     return out;
 }
-(0, __1.register)("Gradient", gradient, [
-    {
-        key: "a",
-        type: "rgb",
-        label: "First Color",
-        default: [255, 0, 0],
-    },
-    {
-        key: "b",
-        type: "rgb",
-        label: "Second Color",
-        default: [0, 0, 255],
-    },
-], "rgb[]");
+(0, index_1.register)({
+    name: "Gradient",
+    func: gradient,
+    input: [
+        {
+            key: "a",
+            type: "rgb",
+            label: "First Color",
+            default: [255, 0, 0],
+        },
+        {
+            key: "b",
+            type: "rgb",
+            label: "Second Color",
+            default: [0, 0, 255],
+        },
+    ],
+    output: "rgb[]",
+});

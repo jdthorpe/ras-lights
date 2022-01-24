@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const __1 = require("../");
+const index_1 = require("../index");
 function effect(x) {
     const intensity = Math.max(0, Math.min(x.intensity, 100)) / 100;
     return x.main.map((color) => [
@@ -9,23 +9,28 @@ function effect(x) {
         Math.floor(color[2] * intensity),
     ]);
 }
-(0, __1.register)("Dimmer", effect, [
-    {
-        key: "main",
-        type: "rgb[]",
-        label: "Main",
-        default: [
-            [0, 0, 255],
-            [0, 255, 255],
-            [100, 0, 255],
-        ],
-    },
-    {
-        key: "intensity",
-        type: "number",
-        label: "Brightness",
-        default: 90,
-        min: 0,
-        max: 100,
-    },
-], "rgb[]");
+(0, index_1.register)({
+    name: "Dimmer",
+    func: effect,
+    input: [
+        {
+            key: "main",
+            type: "rgb[]",
+            label: "Main",
+            default: [
+                [0, 0, 255],
+                [0, 255, 255],
+                [100, 0, 255],
+            ],
+        },
+        {
+            key: "intensity",
+            type: "number",
+            label: "Brightness",
+            default: 90,
+            min: 0,
+            max: 100,
+        },
+    ],
+    output: "rgb[]",
+});

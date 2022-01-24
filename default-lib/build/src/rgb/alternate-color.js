@@ -20,33 +20,38 @@ function alternate(x) {
     }
     return (0, utils_1.average)(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
-(0, index_1.register)("Alternate", alternate, [
-    {
-        key: "a",
-        type: "rgb",
-        label: "First Color",
-        default: [255, 0, 0],
-    },
-    {
-        key: "b",
-        type: "rgb",
-        label: "Second Color",
-        default: [0, 0, 255],
-    },
-    {
-        key: "fade",
-        type: "number",
-        label: "Fade Time (ms)",
-        default: 1000,
-        min: 1,
-        max: 3600000,
-    },
-    {
-        key: "hold",
-        type: "number",
-        label: "Hold Time (ms)",
-        default: 1000,
-        min: 1,
-        max: 3600000,
-    },
-], "rgb");
+(0, index_1.register)({
+    name: "Alternate",
+    func: alternate,
+    input: [
+        {
+            key: "a",
+            type: "rgb",
+            label: "First Color",
+            default: [255, 0, 0],
+        },
+        {
+            key: "b",
+            type: "rgb",
+            label: "Second Color",
+            default: [0, 0, 255],
+        },
+        {
+            key: "fade",
+            type: "number",
+            label: "Fade Time (ms)",
+            default: 1000,
+            min: 1,
+            max: 3600000,
+        },
+        {
+            key: "hold",
+            type: "number",
+            label: "Hold Time (ms)",
+            default: 1000,
+            min: 1,
+            max: 3600000,
+        },
+    ],
+    output: "rgb",
+});
