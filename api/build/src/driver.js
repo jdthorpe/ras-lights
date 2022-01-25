@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.random_colors = exports.turn_off = exports.white = exports.set_colors = void 0;
+exports.random_colors = exports.turn_off = exports.white = exports.w = exports.set_colors = void 0;
 const rpi_ws281x_led_1 = __importStar(require("rpi-ws281x-led"));
 // import settings from "./settings";
 const LEDS_0 = 8;
@@ -38,14 +38,12 @@ const driver = new rpi_ws281x_led_1.default({
         {
             gpio: 18,
             count: LEDS_0,
-            // type: StripType.WS2812_STRIP,
             type: rpi_ws281x_led_1.StripType.WS2811_STRIP_GRB,
             brightness: 64,
         },
         {
             gpio: 13,
             count: LEDS_1,
-            // type: StripType.WS2811_STRIP_RGBW,
             type: rpi_ws281x_led_1.StripType.SK6812_STRIP_GRBW,
             brightness: 255,
         },
@@ -60,35 +58,50 @@ const channel1 = driver.channels[1];
 channel1.leds = new Uint32Array(LEDS_1).fill(0x000000);
 channel1.brightness = 35;
 channel1.render();
-// channel1.render(); // OR driver.render();
 function set_colors(colors) {
-    for (let i = 0; i < LEDS_1; i++) {
-        channel1.leds[i] = 0;
-        channel1.leds[i] =
+    /* Render arrays of numbers to the RGBW Channels */
+    const C = [];
+    for (let i = 0; i < colors.length; i++)
+        C[i] =
             (R * colors[i % colors.length][0]) |
                 (G * colors[i % colors.length][1]) |
-                (B * colors[i % colors.length][2]);
-    }
+                (B * colors[i % colors.length][2]) |
+                (W * (colors[i % colors.length][3] || 0));
+    for (let i = 0; i < LEDS_1; i++)
+        channel1.leds[i] = C[i % C.length];
     channel1.render();
-    for (let i = 0; i < LEDS_0; i++) {
-        channel0.leds[i] = 0;
-        channel0.leds[i] =
-            (R * colors[i % colors.length][0]) |
-                (G * colors[i % colors.length][1]) |
-                (B * colors[i % colors.length][2]);
-    }
+    for (let i = 0; i < LEDS_0; i++)
+        channel0.leds[i] = C[i % C.length];
     channel0.render();
 }
 exports.set_colors = set_colors;
+function nx(x) {
+    /* transform numbers to the appropriate range */
+    return Math.min(255, Math.max(0, Math.floor(x)));
+}
+function w(N) {
+    /* Render numbers to the white channel */
+    const _N = [];
+    for (let i = 0; i < N.length; i++)
+        _N[i] = nx(N[i]) * W;
+    for (let i = 0; i < LEDS_1; i++)
+        channel1.leds[i] = _N[i % N.length];
+    channel1.render();
+    for (let i = 0; i < LEDS_0; i++)
+        channel0.leds[i] = _N[i % N.length];
+    channel0.render();
+}
+exports.w = w;
 function white(N = 0) {
     N = Math.floor(Math.min(255, Math.max(0, N))) * W;
     channel1.leds.fill(N);
     channel1.render();
-    channel0.leds.fill(OFF);
+    channel0.leds.fill(OFF); // yes this is on purpose (the second one doesn't have a white channel)
     channel0.render();
 }
 exports.white = white;
 function turn_off() {
+    /* set all the colors to 0 */
     channel1.leds.fill(OFF);
     channel1.render();
     channel0.leds.fill(OFF);
@@ -96,18 +109,12 @@ function turn_off() {
 }
 exports.turn_off = turn_off;
 function random_colors() {
-    let r, g;
-    for (let i = 0; i < LEDS_1; i++) {
-        r = Math.floor(Math.random() * 255);
-        g = Math.floor(Math.random() * 255);
-        channel1.leds[i] = (R * r) | (G * g) | (B * Math.max(255 - r - g, 0));
-    }
+    /* generate random colors */
+    for (let i = 0; i < LEDS_1; i++)
+        channel1.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
     channel1.render();
-    for (let i = 0; i < LEDS_0; i++) {
-        r = Math.floor(Math.random() * 255);
-        g = Math.floor(Math.random() * 255);
-        channel0.leds[i] = (R * r) | (G * g) | (B * Math.max(255 - r - g, 0));
-    }
+    for (let i = 0; i < LEDS_0; i++)
+        channel0.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
     channel0.render();
 }
 exports.random_colors = random_colors;

@@ -6,11 +6,14 @@ export type value =
     | "boolean"
     | "integer"
     | "number"
+    | "number[]"
+    | "rgbw"
+    | "rgbw[]"
     | "rgb"
     | "rgb[]"
     | "button";
 
-import { rgb } from "./mode";
+import { rgb, rgbw } from "./mode";
 
 export interface values {
     [key: string]: value;
@@ -46,6 +49,16 @@ export interface range_input extends generic_input {
     default: number;
     min: number;
     max: number;
+}
+
+export interface rgbw_input extends generic_input {
+    type: "rgbw";
+    default: rgbw;
+}
+
+export interface rgbw_array_input extends generic_input {
+    type: "rgbw[]";
+    default: rgbw[];
 }
 
 export interface color_input extends generic_input {

@@ -1,6 +1,6 @@
 /* Types in this file represent the data behind a show (mode)
 
-    Specifically, this is everything required to specificy a func_config
+    Specifically, this is everything required to specify a func_config
     instance
 */
 
@@ -47,10 +47,27 @@ export interface num_value extends generic_value_instance {
     ui?: ui_slider;
 }
 
+export interface num_array_value extends generic_value_instance {
+    type: "number[]";
+    value: number[];
+}
+
 export interface int_value extends generic_value_instance {
     type: "integer";
     value: number;
     ui?: ui_slider;
+}
+
+export interface rgbw_value extends generic_value_instance {
+    type: "rgbw";
+    value: rgbw;
+    // ui?: "color-picker";
+}
+
+export interface rgbw_array_value extends generic_value_instance {
+    type: "rgbw[]";
+    value: rgbw[];
+    // ui?: "color[]-picker";
 }
 
 export interface rgb_value extends generic_value_instance {

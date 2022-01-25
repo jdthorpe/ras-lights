@@ -21,7 +21,6 @@ const router = Router();
 
 router.get("/white", (req: Request, res: Response) => {
     const start = performance.now();
-    turn_off();
     white(100);
     const end = performance.now();
     res.status(200);
@@ -36,8 +35,7 @@ router.get("/white/:n", (req: Request, res: Response) => {
         res.status(500);
         return res.send("Invalid parameter");
     }
-    turn_off();
-    white(Math.max(0, Math.min(255, Math.floor(parseInt(n)))));
+    white(parseInt(n));
     const end = performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

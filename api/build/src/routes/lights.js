@@ -15,7 +15,6 @@ const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
 router.get("/white", (req, res) => {
     const start = perf_hooks_1.performance.now();
-    (0, driver_1.turn_off)();
     (0, driver_1.white)(100);
     const end = perf_hooks_1.performance.now();
     res.status(200);
@@ -29,8 +28,7 @@ router.get("/white/:n", (req, res) => {
         res.status(500);
         return res.send("Invalid parameter");
     }
-    (0, driver_1.turn_off)();
-    (0, driver_1.white)(Math.max(0, Math.min(255, Math.floor(parseInt(n)))));
+    (0, driver_1.white)(parseInt(n));
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
