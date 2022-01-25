@@ -9,7 +9,7 @@ import { value, input, button_input } from 'shared/types/parameters';
 import { Color, ColorArray } from "../editor/inputs/color-input";
 import { is_int, is_number } from "../editor/inputs/number-input";
 import { IconButton } from "../utils/icon-button";
-import equal from "fast-deep-equal"
+// import equal from "fast-deep-equal"
 
 import { faTimes, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
@@ -103,6 +103,10 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         let input: input | undefined;
 
         switch (type) {
+            case "rgbw":
+            case "rgbw[]":
+            case "number[]":
+                break
             case "number":
             case "integer":
                 if (!number || !min || !max)

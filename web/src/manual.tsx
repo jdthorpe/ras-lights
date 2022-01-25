@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 // DefaultButton, 
 import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { Slider } from '@fluentui/react/lib/Slider';
 import debounce from "lodash.debounce"
 import {
     ColorPicker,
@@ -9,8 +10,12 @@ import {
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
 import styled from "styled-components"
-import useCallback from 'react';
 
+const Col = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+`
 const Row = styled.div`
     display: flex;
     flex-direction: row;
@@ -34,6 +39,17 @@ async function setRandomColors(on: boolean) {
         console.log("/lights/random failed with error", err)
     }
 }
+
+async function setWhiteIntensity(on: boolean, intensity: number) {
+    try {
+        if (on)
+            await fetch("/api/mode/off")
+        await fetch(`/api/lights/white/${intensity}`)
+    } catch (err) {
+        console.log("/lights/white failed with error", err)
+    }
+}
+
 
 async function update_color(x: IColor, on: boolean) {
     try {
@@ -68,12 +84,28 @@ const Manual: React.FC = () => {
         setRandomColors(on)
     }, 25), [on]);
 
+    const slider_cb = React.useCallback(debounce((n: number) => {
+        set_on(false)
+        setWhiteIntensity(on, n)
+    }, 25), [on]);
+
     return (
         <div style={{ margin: "1.5rem" }}>
-            <Row>
-                <PrimaryButton onClick={set_random} text="Random Colors" />
-                <PrimaryButton onClick={turnOff} text="Off" />
-            </Row>
+            <Col>
+                <Row>
+                    <PrimaryButton onClick={set_random} text="Random Colors" />
+                    <PrimaryButton onClick={turnOff} text="Off" />
+                </Row>
+                <Row>
+                    <div style={{ width: "400px" }}>
+                        <Slider
+                            label="White Lights Only"
+                            min={10} max={255}
+                            defaultValue={255}
+                            onChange={slider_cb} />
+                    </div>
+                </Row>
+            </Col>
             <h3>Click to pick a single color</h3>
             <ColorPicker
                 color={color}
