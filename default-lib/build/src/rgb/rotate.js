@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const register_1 = require("../../register");
 function rotate(x) {
     if (typeof this.starttime === "undefined")
         this.starttime = +new Date();
@@ -10,7 +10,7 @@ function rotate(x) {
         offset *= -1;
     return x.in.slice(offset).concat(x.in.slice(0, offset));
 }
-(0, index_1.register)({
+(0, register_1.register)({
     name: "Rotate",
     func: rotate,
     input: [

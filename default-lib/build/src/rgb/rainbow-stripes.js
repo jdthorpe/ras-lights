@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const register_1 = require("../../register");
 const color_convert_1 = require("color-convert");
 function rainbow_stripes(inputs, globals) {
     const { n } = inputs;
@@ -9,7 +9,7 @@ function rainbow_stripes(inputs, globals) {
         out.push(color_convert_1.hsv.rgb([(360 * Math.floor((i * n) / globals.leds)) / n, 100, 100]));
     return out;
 }
-(0, index_1.register)({
+(0, register_1.register)({
     name: "Rainbow Stripes",
     func: rainbow_stripes,
     input: [

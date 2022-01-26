@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const register_1 = require("../../register");
 function effect(x) {
     const intensity = Math.max(0, Math.min(x.intensity, 100)) / 100;
     return x.main.map((color) => [
@@ -9,7 +9,7 @@ function effect(x) {
         Math.floor(color[2] * intensity),
     ]);
 }
-(0, index_1.register)({
+(0, register_1.register)({
     name: "Dimmer",
     func: effect,
     input: [

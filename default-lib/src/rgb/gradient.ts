@@ -1,5 +1,5 @@
-import { register } from "../index";
-import { rgb, globals } from "../../types";
+import { register } from "../../register";
+import { globals } from "../../types";
 import { average } from "../utils";
 
 interface input {

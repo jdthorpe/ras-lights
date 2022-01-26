@@ -1,4 +1,4 @@
-import { register } from "../index";
+import { register } from "../../register";
 import { globals } from "../../types";
 import { hsv } from "color-convert";
 

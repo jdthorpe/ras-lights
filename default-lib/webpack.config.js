@@ -1,7 +1,7 @@
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = {
-    entry: "./src/index",
+    entry: "./bootstrap",
     target: "web",
     mode: "production",
     output: {
@@ -32,7 +32,7 @@ module.exports = {
             //     host: "host@/remoteEntry.js",
             // },
             exposes: {
-                "./lib": "./src/index",
+                "./lib": "./bootstrap",
             },
         }),
     ],

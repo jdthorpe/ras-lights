@@ -2,9 +2,9 @@
     "name": "default-lib",
     "version": "1.0.0",
     "description": "Default library of display functions",
-    "main": "build/src/index.js",
+    "main": "build/bootstrap.js",
     "scripts": {
-        "build": "npx tsc && npx webpack",
+        "build": "npx rimraf ./dist && npx webpack && npx rimraf ../lib/internal && cp -r ./dist ../lib/internal && npx tsc",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {

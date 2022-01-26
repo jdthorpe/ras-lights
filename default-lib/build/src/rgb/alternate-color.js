@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const register_1 = require("../../register");
 const utils_1 = require("../utils");
 function alternate(x) {
     if (typeof this.starttime === "undefined" ||
@@ -20,7 +20,7 @@ function alternate(x) {
     }
     return (0, utils_1.average)(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
-(0, index_1.register)({
+(0, register_1.register)({
     name: "Alternate",
     func: alternate,
     input: [

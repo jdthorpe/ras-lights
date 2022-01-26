@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const register_1 = require("../../register");
 const utils_1 = require("../utils");
 function gradient(x, globals) {
     const out = [];
@@ -9,7 +9,7 @@ function gradient(x, globals) {
     }
     return out;
 }
-(0, index_1.register)({
+(0, register_1.register)({
     name: "Gradient",
     func: gradient,
     input: [
