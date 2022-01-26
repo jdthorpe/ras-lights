@@ -91,10 +91,10 @@ function validateInputs(x: input[]): string[] {
 
 const Template: React.FC = () => {
 
-    const [name, setName] = useState<string>("")
+    const [name, setName] = useState<string>("My Awesome Effect")
     const [code, setCode] = useState<string>("")
     const [inputs, setInputs] = useState<(input)[]>([])
-    const [output, setOutput] = useState<value>()
+    const [output, setOutput] = useState<value>("rgb[]")
     const [activeInput, setActiveInput] = useState<number>(0)
     const [errors, set_errors] = useState<string[]>([])
 

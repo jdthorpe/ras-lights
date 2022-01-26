@@ -299,7 +299,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             ui: ui_components
         })
         init()
-    }, [show, free_text_option, nameKey])
+    }, [show, free_text_option, nameKey, ui_components])
 
     const deleteShow = useCallback(async () => {
         await delete_mode(
@@ -362,7 +362,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(show)
+                body: JSON.stringify({ name: "editor", def: show })
             });
         } else {
             if (!Array.isArray(show.value))
@@ -610,7 +610,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                     {show_raw_input &&
                         <div>
                             <Label>Raw Data:</Label>
-                            {/* <pre>{JSON.stringify({ def: show, ui: ui_components }, null, 4)}</pre> */}
+                            <pre>{JSON.stringify({ def: show, ui: ui_components }, null, 4)}</pre>
                         </div>
                     }
                 </WorkArea>

@@ -86,14 +86,22 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
         if (typeof el === "undefined" || typeof spec === "undefined")
             return
         if (el !== _el || spec !== _spec) {
-            // console.log("Updating from the << OUTSIDE >>")
-            set_el(el)
-            set_spec(spec)
-            set_ui_type_options(get_ui_type_options(el))
-            set_slider_options(default_slider_config(spec, el))
+            try {
 
-            _set_label((el.ui && el.ui.label) || spec?.label || "")
-            set_dropdown_key((el.ui && el.ui.type) || "none")
+                set_el(el)
+                set_spec(spec)
+                set_ui_type_options(get_ui_type_options(el))
+                set_slider_options(default_slider_config(spec, el))
+
+                _set_label((el.ui && el.ui.label) || spec?.label || "")
+                _set_key((el.ui && el.ui.key) || spec.key || makeid(8))
+                set_dropdown_key((el.ui && el.ui.type) || "none")
+            } catch (err) {
+                console.log("something went wrong when updating from the outside", err)
+                throw err
+
+
+            }
         } else {
             // console.log("Updating from the >> INSIDE <<")
 

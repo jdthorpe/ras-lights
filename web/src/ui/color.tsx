@@ -9,22 +9,23 @@ import { set_update } from "./utils"
 export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
 
     const [color, setColor] = useState<rgb>(ui.default)
-    const updateColor = (c: rgb) => {
-        set_update(ui.key, c)
-        setColor(c)
-    }
 
     const control = useContext(ToolContext);
     const setControl = useCallback((ev: React.MouseEvent<HTMLElement>) => {
         ev.stopPropagation()
         // @ts-ignore
         control.setPreview(() => () => {
-            return <ColorValuePicker
-                color={color}
-                onChange={updateColor}
-            />
+            return <>
+                <ColorValuePicker
+                    color={color}
+                    onChange={(c: rgb) => {
+                        set_update(ui.key, c)
+                        setColor(c)
+                    }}
+                />
+            </>
         })
-    }, [color])
+    }, [ui, color])
 
     return (
         <div onClick={setControl}>
