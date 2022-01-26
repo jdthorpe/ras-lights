@@ -5,27 +5,6 @@ Infrastructure (as opposed to setting up a new Rasperry pi or working with a
 user library )
 
 ## Local Dev Machine Setup
-
-### Initializing the git repo
-
-to aid in pushing to the raspberry pi, consider adding the pi as a remote with:
-
-```sh
-git remote add pi ssh://192.168.4.64/home/pi/ras-lights/
-```
-
-so that later you can push your updates directly to the pi with 
-
-```sh
-git push pi main
-```
-
-which bash users might want to alias via
-
-```sh
-alias ppi="git push pi main"
-```
-
 ### Start the builders
 
 Start the shared library transpiler in watch mode:
@@ -128,3 +107,34 @@ sudo nginx -s reload
 ```sh
 ssh pi@168.192.4.64
 ```
+
+### Initializing a bare git repo
+
+It's handy to have a bare repo on the pi so that you can push updates from your
+dev machine to the pi.  On the pi, use: 
+
+```sh
+cd /hom/pi/
+mkdir ras-lights-bare
+cd ras-lights-bare
+git init --bare
+```
+
+to aid in pushing to the raspberry pi, consider adding the pi as a remote with:
+
+```sh
+git remote add pi ssh://192.168.4.64/home/pi/ras-lights-bare/
+```
+
+so that later you can push your updates directly to the pi with 
+
+```sh
+git push pi main
+```
+
+which bash users might want to alias via
+
+```sh
+alias ppi="git push pi main"
+```
+
