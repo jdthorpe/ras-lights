@@ -56,6 +56,10 @@ let loop: ReturnType<typeof setTimeout>;
 let current_mode: string = "off";
 let updates: { [key: string]: string } = {};
 
+export function get_updates() {
+    return updates;
+}
+
 interface ui_index {
     [k: string]: ui;
 }
@@ -99,7 +103,8 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
             // console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
 
             s = s.params[inp.key] as func_config;
-            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key)!.get as mode;
+            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key)!
+                .get as mode;
             // console.log("[NEXT]  s =>", s);
             // console.log("[NEXT]  f =>", f);
         }
@@ -118,17 +123,19 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
 export function set_updates(x: { [key: string]: any }) {
     for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
-
+export function stop() {
+    loop && clearTimeout(loop);
+}
 export async function setMode(new_mode: string | show): Promise<void> {
     let show: show;
 
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
-            loop && clearTimeout(loop);
+            stop();
             return;
         }
         if (new_mode == "off") {
-            loop && clearTimeout(loop);
+            stop();
             turn_off();
             return;
         }
@@ -155,7 +162,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
         after = unset;
     }
 
-    if (typeof loop !== "undefined") clearTimeout(loop);
+    stop();
     // reset the updates before restarting the loop
     updates = {};
     loop = setTimeout(create_loop(mode, before, after), 0);

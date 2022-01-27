@@ -3,14 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const mode_1 = require("../mode");
+const mode_2 = require("./mode");
 const router = (0, express_1.Router)();
-const patches = {};
 router.post("/", async (req, res, next) => {
     /* inject parameters into the running show (mode) */
     const start = perf_hooks_1.performance.now();
     try {
         // console.log("body:", JSON.stringify(req.body));
-        patches[req.body.key] = req.body;
         (0, mode_1.set_updates)(req.body);
     }
     catch (err) {
@@ -24,6 +23,6 @@ router.post("/", async (req, res, next) => {
 router.get("/", async (req, res) => {
     /* get the injected parameters  */
     res.status(200);
-    res.json(patches);
+    res.json({ mode: (0, mode_2.get_mode)(), updates: (0, mode_1.get_updates)() });
 });
 exports.default = router;

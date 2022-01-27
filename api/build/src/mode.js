@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMode = exports.set_updates = void 0;
+exports.setMode = exports.stop = exports.set_updates = exports.get_updates = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const shared_1 = require("shared");
 // import { turn_off, set_colors } from "./ws681x";
@@ -51,6 +51,10 @@ async function get_mode(show) {
 let loop;
 let current_mode = "off";
 let updates = {};
+function get_updates() {
+    return updates;
+}
+exports.get_updates = get_updates;
 let unset_values = [];
 function unset() {
     for (let [f, key, value] of unset_values) {
@@ -84,7 +88,8 @@ function apply_update(mode, show, indx) {
             // console.log("[NEXT]  s.params =>", s.params);
             // console.log("[NEXT]  ui.path[i] =>", ui.path[i]);
             s = s.params[inp.key];
-            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key).get;
+            f = Object.getOwnPropertyDescriptor(f.__args__, inp.key)
+                .get;
             // console.log("[NEXT]  s =>", s);
             // console.log("[NEXT]  f =>", f);
         }
@@ -104,15 +109,19 @@ function set_updates(x) {
         updates[key] = value;
 }
 exports.set_updates = set_updates;
+function stop() {
+    loop && clearTimeout(loop);
+}
+exports.stop = stop;
 async function setMode(new_mode) {
     let show;
     if (typeof new_mode == "string") {
         if (new_mode == "none") {
-            loop && clearTimeout(loop);
+            stop();
             return;
         }
         if (new_mode == "off") {
-            loop && clearTimeout(loop);
+            stop();
             (0, driver_1.turn_off)();
             return;
         }
@@ -133,8 +142,7 @@ async function setMode(new_mode) {
         before = () => apply_update(mode, show, indx);
         after = unset;
     }
-    if (typeof loop !== "undefined")
-        clearTimeout(loop);
+    stop();
     // reset the updates before restarting the loop
     updates = {};
     loop = setTimeout(create_loop(mode, before, after), 0);

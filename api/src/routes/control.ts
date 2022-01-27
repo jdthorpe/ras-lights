@@ -1,17 +1,15 @@
 import { performance } from "perf_hooks";
 import { Router, Request, Response, NextFunction } from "express";
-import { set_updates } from "../mode";
+import { set_updates, get_updates } from "../mode";
+import { get_mode } from "./mode";
 
 const router = Router();
-
-const patches: { [key: string]: any } = {};
 
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     /* inject parameters into the running show (mode) */
     const start = performance.now();
     try {
         // console.log("body:", JSON.stringify(req.body));
-        patches[req.body.key] = req.body;
         set_updates(req.body);
     } catch (err) {
         next(err);
@@ -25,7 +23,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 router.get("/", async (req: Request, res: Response) => {
     /* get the injected parameters  */
     res.status(200);
-    res.json(patches);
+    res.json({ mode: get_mode(), updates: get_updates() });
 });
 
 export default router;

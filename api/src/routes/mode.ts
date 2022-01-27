@@ -7,7 +7,7 @@ import { show } from "shared/types/mode";
 
 const router = Router();
 
-// DELETE
+// DELETE an existing mode
 router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
     const body: { name: string } = req.body;
     const start = performance.now();
@@ -28,7 +28,11 @@ router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
 // current mode
 let mode: string | show | undefined = undefined;
 
-// activeate a named mode
+export function get_mode() {
+    return mode;
+}
+
+// activate a named mode
 router.get(
     "/:mode",
     async (req: Request, res: Response, next: NextFunction) => {
@@ -46,6 +50,7 @@ router.get(
     }
 );
 
+// activate a mode object
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     const start = performance.now();
     mode = req.params.mode;

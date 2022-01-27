@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.get_mode = void 0;
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const mode_1 = require("../mode");
 const db_1 = require("../db");
 const router = (0, express_1.Router)();
-// DELETE
+// DELETE an existing mode
 router.delete("/", async (req, res, next) => {
     const body = req.body;
     const start = perf_hooks_1.performance.now();
@@ -26,7 +27,11 @@ router.delete("/", async (req, res, next) => {
 });
 // current mode
 let mode = undefined;
-// activeate a named mode
+function get_mode() {
+    return mode;
+}
+exports.get_mode = get_mode;
+// activate a named mode
 router.get("/:mode", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
@@ -41,6 +46,7 @@ router.get("/:mode", async (req, res, next) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
+// activate a mode object
 router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     mode = req.params.mode;

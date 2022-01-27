@@ -10,7 +10,6 @@ import yaml from "js-yaml";
 
 import { rgb } from "shared/types/mode";
 import { white, turn_off, set_colors, random_colors } from "../driver";
-import { parse } from "path/posix";
 
 const schema: any = yaml.load(
     readFileSync(
