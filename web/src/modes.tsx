@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { UI } from './ui';
+import { show, func_config, rgb } from "shared/types/mode";
+import { copyFile } from 'fs';
 
 const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },
@@ -8,10 +10,13 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 
 const Modes: React.FC = () => {
 
-    const [item, set_item] = useState<IDropdownOption>();
-    const [mode_number, set_mode_number] = useState<number>();
+    // dropdown sate
     const [item_list, set_item_list] = useState<IDropdownOption[]>([]);
-    const [mode_config, set_mode_config] = useState<any>();
+    const [active_key, set_active_key] = useState<string>();
+    // available modes
+    const [mode_config, set_mode_config] = useState<show[]>();
+    // active mode
+    const [mode, set_mode] = useState<show>();
 
     useEffect(() => {
         (async () => {
@@ -20,11 +25,34 @@ const Modes: React.FC = () => {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 });
+                const mode_res = await fetch("/api/ctl/")
+
                 try {
-                    const config: any[] = await response.json();
+                    const mode = await mode_res.json()
+                    const config: show[] = await response.json();
                     set_mode_config(config)
                     const il: IDropdownOption[] = config.map(x => ({ key: x.name, text: x.name }))
                     set_item_list(il)
+                    if (typeof mode.mode === "string") {
+                        const indx = config.findIndex(x => x.name === mode.mode)
+                        if (indx >= 0) {
+                            const conf: show = { ...config[indx] }
+                            if (conf.ui) {
+                                conf.ui = [...conf.ui]
+                                for (let [key, value] of Object.entries(mode.updates)) {
+                                    let i = conf.ui.findIndex(u => u.key === key)
+                                    if (typeof i !== undefined)
+                                        // @ts-ignore
+                                        conf.ui[i] = { ...conf.ui[i], "default": value }
+                                }
+                            }
+                            set_mode(conf)
+                            set_active_key(il[indx].key as string)
+                        } else {
+                            console.log(`unknown mode ${mode.mode}`)
+
+                        }
+                    }
 
                 } catch (err) {
                     console.log(`fetch("/api/mode/").json() failed with`, err)
@@ -34,37 +62,28 @@ const Modes: React.FC = () => {
         })()
     }, [mode_config, set_mode_config])
 
-    useEffect(() => {
-        (async () => {
-            try {
-                item?.key &&
-                    await fetch(`/api/mode/${item.key}`)
-            } catch (err) {
-                console.log("failed to set mode with error", err)
 
-            }
-
-        })()
-    }, [item])
-
+    const cb = useCallback(async (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
+        if (mode_config && option && typeof index === "number") {
+            fetch(`/api/mode/${option.key}`)
+            // set_mode_number(index)
+            set_mode(mode_config[index])
+            set_active_key(option.key as string)
+        }
+    }, [mode_config])
 
     return (
         <div style={{ margin: "1.5rem" }}>
             <Dropdown
                 placeholder="Select a Light Mode"
                 label="Light Mode"
+                selectedKey={active_key}
                 options={item_list}
                 styles={dropdownStyles}
-                onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
-                    if (option) {
-                        set_item(option);
-                        set_mode_number(index)
-                    }
-                }
-                } />
+                onChange={cb} />
 
-            {mode_config && typeof mode_number !== "undefined" && mode_config[mode_number] && mode_config[mode_number].ui && (
-                <UI ui={mode_config[mode_number].ui} />
+            {mode && mode.ui && (
+                <UI ui={mode.ui} />
                 // mode_config[i].ui.map((data: any) =>
                 //     <div key={i} style={{ margin: 10 }}>
                 //         <UI_instance ui={data} />

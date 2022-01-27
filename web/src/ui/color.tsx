@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { Color, ColorArray, ColorValuePicker, ColorArrayPicker } from '../editor/inputs/color-input';
 import { Label } from '@fluentui/react/lib/Label';
 import { rgb } from 'shared/types/mode';
@@ -9,6 +9,10 @@ import { set_update } from "./utils"
 export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
 
     const [color, setColor] = useState<rgb>(ui.default)
+
+    useEffect(() => {
+        setColor(ui.default)
+    }, [ui])
 
     const control = useContext(ToolContext);
     const setControl = useCallback((ev: React.MouseEvent<HTMLElement>) => {

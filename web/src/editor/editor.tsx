@@ -36,9 +36,6 @@ import UI_Selector from "./inputs/ui-selector"
 import { load_remotes } from '../loader';
 import { make_loop, ILoop } from "./loop"
 import { UI } from '../ui';
-import { register } from "shared/src/registry"
-
-console.log("______ typeof register", typeof register)
 
 const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
 const ACTIVE_COLOR = "9be2fa"; //00c6fc

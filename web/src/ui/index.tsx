@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components"
 import { Button } from "./button";
 import { ToggleInput } from "./toggle"
@@ -22,6 +22,7 @@ const OptionsPanel = styled.div`
 export const UI: React.FC<{ ui: ui[] }> = ({ ui }) => {
 
     const [Preview, SetPreview] = useState<null | React.FC>(null)
+
     return <ToolContext.Provider value={{
         setPreview: (x) => {
             SetPreview(x)
@@ -33,7 +34,7 @@ export const UI: React.FC<{ ui: ui[] }> = ({ ui }) => {
                 <div key={i} style={{ margin: 10 }} onClick={() => {
                     SetPreview(null)
                 }}>
-                    <UI_instance ui={data} />
+                    <UI_instance ui={{ ...data }} />
                 </div>
             )}
             <OptionsPanel>
