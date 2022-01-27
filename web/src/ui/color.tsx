@@ -9,8 +9,13 @@ import { set_update } from "./utils"
 export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
 
     const [color, setColor] = useState<rgb>(ui.default)
+    const [curr, set_curr] = useState(ui)
 
     useEffect(() => {
+        console.log(Object.is(ui, curr))
+        if (Object.is(ui, curr))
+            return
+        set_curr(ui)
         setColor(ui.default)
     }, [ui])
 

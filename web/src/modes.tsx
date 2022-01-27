@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { UI } from './ui';
-import { show, func_config, rgb } from "shared/types/mode";
-import { copyFile } from 'fs';
+import { show } from "shared/types/mode";
 
 const dropdownStyles: Partial<IDropdownStyles> = {
     dropdown: { width: 300 },

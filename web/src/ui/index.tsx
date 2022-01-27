@@ -34,7 +34,7 @@ export const UI: React.FC<{ ui: ui[] }> = ({ ui }) => {
                 <div key={i} style={{ margin: 10 }} onClick={() => {
                     SetPreview(null)
                 }}>
-                    <UI_instance ui={{ ...data }} />
+                    <UI_instance ui={data} />
                 </div>
             )}
             <OptionsPanel>
