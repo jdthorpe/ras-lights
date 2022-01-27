@@ -24,9 +24,13 @@ router.delete("/", async (req, res, next) => {
     res.status(200);
     res.send(`OK ${end - start}`);
 });
+// current mode
+let mode = undefined;
+// activeate a named mode
 router.get("/:mode", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
+        mode = req.params.mode;
         await (0, mode_1.setMode)(req.params.mode);
     }
     catch (err) {
@@ -39,6 +43,7 @@ router.get("/:mode", async (req, res, next) => {
 });
 router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
+    mode = req.params.mode;
     await (0, mode_1.setMode)(req.body);
     const end = perf_hooks_1.performance.now();
     res.status(200);

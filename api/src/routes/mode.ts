@@ -25,11 +25,16 @@ router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
     res.send(`OK ${end - start}`);
 });
 
+// current mode
+let mode: string | show | undefined = undefined;
+
+// activeate a named mode
 router.get(
     "/:mode",
     async (req: Request, res: Response, next: NextFunction) => {
         const start = performance.now();
         try {
+            mode = req.params.mode;
             await setMode(req.params.mode);
         } catch (err) {
             next(err);
@@ -43,6 +48,7 @@ router.get(
 
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     const start = performance.now();
+    mode = req.params.mode;
     await setMode(req.body);
     const end = performance.now();
     res.status(200);

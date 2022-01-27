@@ -1,3 +1,5 @@
+/* basic (manual) controls */
+
 import { join } from "path";
 import { readFileSync } from "fs";
 import { performance } from "perf_hooks";
@@ -8,6 +10,7 @@ import yaml from "js-yaml";
 
 import { rgb } from "shared/types/mode";
 import { white, turn_off, set_colors, random_colors } from "../driver";
+import { parse } from "path/posix";
 
 const schema: any = yaml.load(
     readFileSync(
@@ -18,6 +21,23 @@ const schema: any = yaml.load(
 const ajv = new Ajv();
 
 const router = Router();
+
+interface ICurrentSettings {
+    mode: "white" | "off" | "random" | "rgb";
+    intensity: number;
+    color: rgb[];
+}
+
+const current: ICurrentSettings = {
+    mode: "off",
+    intensity: 255,
+    color: [[255, 0, 0]],
+};
+
+router.get("/", (req: Request, res: Response) => {
+    res.status(200);
+    res.json(current);
+});
 
 router.get("/white", (req: Request, res: Response) => {
     const start = performance.now();
@@ -35,6 +55,8 @@ router.get("/white/:n", (req: Request, res: Response) => {
         res.status(500);
         return res.send("Invalid parameter");
     }
+    current.mode = "white";
+    current.intensity = Math.min(0, Math.max(255, parseInt(n)));
     white(parseInt(n));
     const end = performance.now();
     res.status(200);
@@ -43,6 +65,7 @@ router.get("/white/:n", (req: Request, res: Response) => {
 
 router.get("/off", (req: Request, res: Response) => {
     const start = performance.now();
+    current.mode = "off";
     turn_off();
     const end = performance.now();
     res.status(200);
@@ -51,6 +74,7 @@ router.get("/off", (req: Request, res: Response) => {
 
 router.get("/random", (req: Request, res: Response) => {
     const start = performance.now();
+    current.mode = "random";
     random_colors();
     const end = performance.now();
     console.log("Got body:", req.body);
@@ -73,6 +97,8 @@ router.post("/set-colors", (req: Request, res: Response) => {
     }
 
     const start = performance.now();
+    current.mode = "rgb";
+    current.color = body as rgb[];
     set_colors(body as rgb[]);
     const end = performance.now();
     res.status(200);

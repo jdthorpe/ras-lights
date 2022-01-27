@@ -1,4 +1,5 @@
 "use strict";
+/* basic (manual) controls */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,6 +14,15 @@ const driver_1 = require("../driver");
 const schema = js_yaml_1.default.load((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "..", "schema.yaml"), "utf-8"));
 const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
+const current = {
+    mode: "off",
+    intensity: 255,
+    color: [[255, 0, 0]],
+};
+router.get("/", (req, res) => {
+    res.status(200);
+    res.json(current);
+});
 router.get("/white", (req, res) => {
     const start = perf_hooks_1.performance.now();
     (0, driver_1.white)(100);
@@ -28,6 +38,8 @@ router.get("/white/:n", (req, res) => {
         res.status(500);
         return res.send("Invalid parameter");
     }
+    current.mode = "white";
+    current.intensity = Math.min(0, Math.max(255, parseInt(n)));
     (0, driver_1.white)(parseInt(n));
     const end = perf_hooks_1.performance.now();
     res.status(200);
@@ -35,6 +47,7 @@ router.get("/white/:n", (req, res) => {
 });
 router.get("/off", (req, res) => {
     const start = perf_hooks_1.performance.now();
+    current.mode = "off";
     (0, driver_1.turn_off)();
     const end = perf_hooks_1.performance.now();
     res.status(200);
@@ -42,6 +55,7 @@ router.get("/off", (req, res) => {
 });
 router.get("/random", (req, res) => {
     const start = perf_hooks_1.performance.now();
+    current.mode = "random";
     (0, driver_1.random_colors)();
     const end = perf_hooks_1.performance.now();
     console.log("Got body:", req.body);
@@ -56,6 +70,8 @@ router.post("/set-colors", (req, res) => {
         return;
     }
     const start = perf_hooks_1.performance.now();
+    current.mode = "rgb";
+    current.color = body;
     (0, driver_1.set_colors)(body);
     const end = perf_hooks_1.performance.now();
     res.status(200);
