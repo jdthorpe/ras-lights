@@ -40,8 +40,12 @@ const schema = {
                         type: {
                             anyOf: STRIP_TYPE.map((s) => ({ const: s })),
                         },
-                        count: { type: "number", min: 0 },
-                        brightness: { type: "number", min: 0, max: 255 },
+                        count: { type: "number", minimum: 0 },
+                        brightness: {
+                            type: "number",
+                            minimum: 0,
+                            maximum: 255,
+                        },
                         gpio: {
                             anyOf: [
                                 { const: 12 },
