@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from "styled-components"
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { DefaultButton } from '@fluentui/react/lib/Button';
+import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { channel, ISTRIP_TYPE } from 'shared/types/admin';
 import { Driver as IDriver } from 'shared/types/admin';
 import { IconButton } from '../utils/icon-button';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
+import equal from "fast-deep-equal"
 
 const Row = styled.div`
     display: flex;
@@ -41,12 +42,15 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 const res = await fetch("/api/driver/")
                 const driver = await res.json()
                 console.log("DB driver: ", driver)
+                set_driver(driver)
             } catch (err) {
                 console.log("dB driver error: ", err)
             }
         })()
     }, [])
 
+    const [driver, set_driver] = useState<IDriver>()
+    const [modified, set_modified] = useState(false)
     const [frequency, set_freq] = useState<number>(800000)
     const [channels, set_channels] = useState<channel[]>(default_driver.channels)
 
@@ -58,6 +62,13 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         ])
 
     }, [channels])
+
+    useEffect(() => {
+        console.log("driver:", driver)
+        console.log("equal:", equal(driver, { frequency, channels }))
+        set_modified(!equal(driver, { frequency, channels }))
+    }, [driver, frequency, channels])
+
     const save = useCallback(() => {
         const driver: IDriver = { frequency, channels }
         fetch("/api/driver/", {
@@ -72,9 +83,12 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         <h2>Strip Settings</h2>
         <Row>
             <Number label="Frequency" min={0} value={frequency} onChange={set_freq} />
-            <DefaultButton
+            <PrimaryButton
+                label="Save"
                 onClick={save}
-                style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</DefaultButton>
+                disabled={!modified}
+                style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
+
         </Row>
         {channels && channels.map((ch, i) => (
             <>
