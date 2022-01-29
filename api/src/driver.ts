@@ -37,12 +37,12 @@ const driver = new Driver({
 const channel0 = driver.channels[0];
 channel0.leds = new Uint32Array(LEDS_0).fill(0x000000);
 channel0.brightness = 35;
-channel0.render();
+// channel0.render();
 
 const channel1 = driver.channels[1];
 channel1.leds = new Uint32Array(LEDS_1).fill(0x000000);
 channel1.brightness = 35;
-channel1.render();
+// channel1.render();
 
 export function set_colors(colors: (rgb | rgbw)[]): void {
     /* Render arrays of numbers to the RGBW Channels */
