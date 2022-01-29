@@ -30,15 +30,13 @@ const schema = {
     type: "object",
     properties: {
         type: { const: "DRIVER" },
-        // use: { type: "boolean" },
-        // watch: { type: "boolean" },
         frequency: { type: "number" },
         channels: {
             type: "array",
             items: [
                 {
                     type: "object",
-                    attributes: {
+                    properties: {
                         type: {
                             anyOf: STRIP_TYPE.map((s) => ({ const: s })),
                         },
@@ -56,7 +54,7 @@ const schema = {
                 },
                 {
                     type: "object",
-                    attributes: {
+                    properties: {
                         type: {
                             anyOf: STRIP_TYPE.map((s) => ({ const: s })),
                         },
