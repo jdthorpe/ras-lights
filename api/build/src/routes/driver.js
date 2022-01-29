@@ -84,7 +84,7 @@ const schema = {
     },
 };
 router.get("/", async (req, res) => {
-    const results = await db_1.adminStore.findOne({ type: "DRIVER" }, { _id: 0 });
+    const results = await db_1.adminStore.findOne({ type: "DRIVER" }, { _id: 0, type: 0 });
     console.log("found driver:", results);
     res.status(200);
     res.json(results);
