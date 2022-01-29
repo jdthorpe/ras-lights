@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 // import { Toggle } from '@fluentui/react/lib/Toggle';
@@ -7,20 +9,21 @@ import * as API from "./lib-api"
 import styled from "styled-components"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useBoolean } from '@fluentui/react-hooks';
+
+const dialogStyles = { main: { maxWidth: 450 } };
 
 const Row = styled.div`
     display: flex;
     flex-directio: row;
     gap: 1rem;
     align-items: flex-end;
-    margin: 1rem;
 `
 
 const Table = styled.table`
     border-collapse: collapse;
     tr:nth-child(even) {background: #DDD};
     tr:nth-child(odd) {background: #FFF};
-    margin: 2rem;
 `
 const Th = styled.th`
     border: 1px solid #999;
@@ -32,6 +35,13 @@ const Td = styled.td`
     padding: 0.5rem;
     text-align: left;
 `
+
+const dialogContentProps = {
+    type: DialogType.normal,
+    title: 'Are you sure?',
+    closeButtonAriaLabel: 'Close',
+    subText: 'Are you sure you want to delete this library?',
+}
 
 const LibraryList: React.FC = ({ }) => {
 
@@ -54,7 +64,7 @@ const LibraryList: React.FC = ({ }) => {
 
     return (
         <div>
-
+            <h2>Library Folders</h2>
             <Table>
                 <colgroup>
                     <col style={{ minWidth: "6rem" }} />
@@ -72,10 +82,7 @@ const LibraryList: React.FC = ({ }) => {
                     {libraries.map((lib, i) => <LibRow lib={lib} key={i} update={fetchLibraries} />)}
                     <AddLibrary update={fetchLibraries} />
                 </tbody>
-
             </Table>
-
-
         </div>
     )
 }
@@ -90,6 +97,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
     const [path_error, set_path_error] = useState<string>()
 
     const [saveError, set_save_error] = useState<string>()
+
 
     const onPathChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         set_path(newValue)
@@ -154,6 +162,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
                 </Td>
             </tr>
             {saveError && <p style={{ color: "red" }}>Somethig went wrong while saving: {saveError}</p>}
+
         </>
 
     )
@@ -162,6 +171,9 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
 const LibRow: React.FC<{ lib: user_library_data, key: number, update: { (): void } }> = ({ lib, key, update }) => {
 
     const [active, set_active] = useState(true)
+
+    // are you sure dialog
+    const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
 
     useEffect(() => {
         return () => set_active(true)
@@ -185,9 +197,20 @@ const LibRow: React.FC<{ lib: user_library_data, key: number, update: { (): void
                     style={{ margin: "0 7px", color: (active ? "black" : "grey") }}
                     icon={faTrashAlt}
                     title="Delete"
-                    onClick={onDelete}
+                    onClick={toggleHideDialog}
                 />
             </Td>
+            <Dialog
+                hidden={hideDialog}
+                onDismiss={toggleHideDialog}
+                dialogContentProps={dialogContentProps}
+                modalProps={{ isBlocking: false, styles: dialogStyles, }}
+            >
+                <DialogFooter>
+                    <PrimaryButton onClick={() => { toggleHideDialog(); onDelete() }} text="Delete" />
+                    <DefaultButton onClick={toggleHideDialog} text="Cancel" />
+                </DialogFooter>
+            </Dialog>
         </tr>
 
     )

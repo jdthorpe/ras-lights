@@ -36,7 +36,8 @@ export const NumberOptions: React.FC<props> = ({ spec, value, path }) => {
     const onChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
 
         if (typeof newValue === "undefined") {
-            //setValue('');
+            editor.update_value({ value: min }, path)
+            setErrorMessage(`Required`)
             return;
         }
 
