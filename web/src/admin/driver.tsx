@@ -43,13 +43,11 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 console.log("DB driver: ", driver)
             } catch (err) {
                 console.log("dB driver error: ", err)
-
             }
         })()
-
     }, [])
 
-    const [freq, set_freq] = useState<number>(800000)
+    const [frequency, set_freq] = useState<number>(800000)
     const [channels, set_channels] = useState<channel[]>(default_driver.channels)
 
     const update_channel = useCallback((ch: channel, i: number) => {
@@ -60,13 +58,22 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         ])
 
     }, [channels])
+    const save = useCallback(() => {
+        const driver: IDriver = { frequency, channels }
+        fetch("/api/driver/", {
+            method: "POST",
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(driver)
+        })
+    }, [frequency, channels])
 
     return <div>
         <h2>Strip Settings</h2>
         <Row>
-            <Number label="Frequency" min={0} value={freq} onChange={set_freq} />
+            <Number label="Frequency" min={0} value={frequency} onChange={set_freq} />
             <DefaultButton
-                onClick={() => alert("save")}
+                onClick={save}
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</DefaultButton>
         </Row>
         {channels && channels.map((ch, i) => (
