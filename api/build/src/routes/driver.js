@@ -101,9 +101,7 @@ router.post("/", async (req, res, next) => {
             return;
         }
         console.log("[DRIVER/POST] upserting");
-        db_1.adminStore.update({ type: "DRIVER" }, body, {
-            upsert: true,
-        });
+        db_1.adminStore.update({ type: "DRIVER" }, { ...body, type: "DRIVER" }, { upsert: true });
         console.log("[DRIVER/POST] DONE");
     }
     catch (err) {
