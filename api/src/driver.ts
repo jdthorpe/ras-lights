@@ -50,7 +50,16 @@ export async function reload_driver() {
     );
 
     // FAST PATH
-    if (results === null || equal(driver_spec, results)) return;
+    if (results === null) {
+        console.log("fetched driver spec was null");
+        return;
+    }
+    if (equal(driver_spec, results)) {
+        console.log(
+            "fetched driver spec was not different from the previous spec"
+        );
+        return;
+    }
     driver_spec = results;
 
     console.log("[init from settings]: Finalizing");

@@ -64,8 +64,14 @@ let driver_spec;
 async function reload_driver() {
     const results = await db_1.adminStore.findOne({ type: "DRIVER" }, { _id: 0 });
     // FAST PATH
-    if (results === null || (0, fast_deep_equal_1.default)(driver_spec, results))
+    if (results === null) {
+        console.log("fetched driver spec was null");
         return;
+    }
+    if ((0, fast_deep_equal_1.default)(driver_spec, results)) {
+        console.log("fetched driver spec was not different from the previous spec");
+        return;
+    }
     driver_spec = results;
     console.log("[init from settings]: Finalizing");
     if (_Driver) {
