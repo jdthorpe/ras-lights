@@ -131,7 +131,7 @@ function set_updates(x) {
 exports.set_updates = set_updates;
 function stop() {
     running = false;
-    next.cancel();
+    next && next.cancel();
 }
 exports.stop = stop;
 async function setMode(new_mode) {

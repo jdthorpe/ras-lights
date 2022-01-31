@@ -127,7 +127,7 @@ export function set_updates(x: { [key: string]: any }) {
 
 export function stop() {
     running = false;
-    next.cancel();
+    next && next.cancel();
 }
 
 export async function setMode(new_mode: string | show): Promise<void> {
