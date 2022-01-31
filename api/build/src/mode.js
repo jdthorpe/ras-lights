@@ -171,7 +171,6 @@ async function setMode(new_mode) {
 }
 exports.setMode = setMode;
 let next;
- > ;
 function create_loop(mode, before, after) {
     const run = () => {
         const delay = new Promise((resolve) => {
