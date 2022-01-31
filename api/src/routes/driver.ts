@@ -1,5 +1,6 @@
 /* Library management routes */
 import { performance } from "perf_hooks";
+import { reload_driver } from "../driver";
 import { Router, Request, Response, NextFunction } from "express";
 import Ajv from "ajv";
 import { adminStore } from "../db";
@@ -88,6 +89,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
             { upsert: true }
         );
 
+        console.log("[DRIVER/POST] reloading driver");
+        reload_driver();
         console.log("[DRIVER/POST] DONE");
     } catch (err) {
         return next(err);

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 /* Library management routes */
 const perf_hooks_1 = require("perf_hooks");
+const driver_1 = require("../driver");
 const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
 const db_1 = require("../db");
@@ -74,6 +75,8 @@ router.post("/", async (req, res, next) => {
         }
         console.log("[DRIVER/POST] upserting");
         db_1.adminStore.update({ type: "DRIVER" }, { ...body, type: "DRIVER" }, { upsert: true });
+        console.log("[DRIVER/POST] reloading driver");
+        (0, driver_1.reload_driver)();
         console.log("[DRIVER/POST] DONE");
     }
     catch (err) {

@@ -43,32 +43,32 @@ const default_driver: IDriver = {
 
 const Driver: React.FC<{ driver?: IDriver }> = () => {
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const res = await fetch("/api/driver/")
-                const driver = await res.json()
-                console.log("DB driver: ", driver)
-                set_driver(driver)
-            } catch (err) {
-                console.log("dB driver error: ", err)
-            }
-        })()
-    }, [])
-
     const [driver, set_driver] = useState<IDriver>()
     const [modified, set_modified] = useState(false)
     const [frequency, set_freq] = useState<number>(800000)
     const [channels, set_channels] = useState<channel[]>(default_driver.channels)
     const [dma, set_dma] = useState<number>(10)
 
-    const update_channel = useCallback((ch: channel, i: number) => {
-        set_channels([
-            ...channels!.slice(0, i),
-            ch,
-            ...channels!.slice(i + 1),
-        ])
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch("/api/driver/")
+                const driver: IDriver = await res.json()
+                console.log("DB driver: ", driver)
+                set_driver(driver)
+                set_freq(driver.frequency)
+                set_channels(driver.channels)
+                set_dma(driver.dma)
+                console.log("successfully set driver")
+            } catch (err) {
+                console.log("dB driver error: ", err)
+            }
+        })()
+    }, [])
 
+    const update_channel = useCallback((ch: channel, i: number) => {
+        set_channels([...channels!.slice(0, i), ch, ...channels!.slice(i + 1),
+        ])
     }, [channels])
 
     useEffect(() => {
@@ -77,14 +77,15 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         set_modified(!equal(driver, { frequency, dma, channels }))
     }, [driver, frequency, dma, channels])
 
-    const save = useCallback(() => {
+    const save = useCallback(async () => {
         const driver: IDriver = { frequency, dma, channels }
-        fetch("/api/driver/", {
+        await fetch("/api/driver/", {
             method: "POST",
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(driver)
         })
+        set_driver(driver)
     }, [frequency, dma, channels])
 
     const add = useCallback(() => {
