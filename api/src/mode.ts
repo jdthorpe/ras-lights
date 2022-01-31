@@ -127,6 +127,7 @@ export function set_updates(x: { [key: string]: any }) {
 
 export function stop() {
     running = false;
+    console.log("[STOP] typeof next", typeof next)
     next && next.cancel();
 }
 
@@ -173,7 +174,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
 }
 
 type cb = () => void;
-let next: ReturnType<typeof bluebird.Promise.all>;
+let next: ReturnType<typeof bluebird.Promise.all<undefined[]>>;
 
 function create_loop(mode: mode, before?: cb, after?: cb): void {
     const run = () => {

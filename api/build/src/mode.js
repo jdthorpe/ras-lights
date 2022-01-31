@@ -131,6 +131,7 @@ function set_updates(x) {
 exports.set_updates = set_updates;
 function stop() {
     running = false;
+    console.log("[STOP] typeof next", typeof next);
     next && next.cancel();
 }
 exports.stop = stop;
@@ -170,6 +171,7 @@ async function setMode(new_mode) {
 }
 exports.setMode = setMode;
 let next;
+ > ;
 function create_loop(mode, before, after) {
     const run = () => {
         const delay = new Promise((resolve) => {
