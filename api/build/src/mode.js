@@ -186,6 +186,8 @@ function create_loop(mode, before, after) {
         });
         // @ts-ignore
         next = bluebird.Promise.all([delay, render]).then(() => {
+            if (!running)
+                console.log("[LOOP] stoping b/c not running");
             running && run();
         });
     };
