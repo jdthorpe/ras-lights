@@ -61,6 +61,10 @@ export async function reload_driver() {
         return;
     }
     driver_spec = results;
+    console.log(
+        "using driver settings: ",
+        JSON.stringify(driver_spec, null, 2)
+    );
 
     console.log("[init from settings]: Finalizing");
     if (_Driver) {
@@ -73,9 +77,11 @@ export async function reload_driver() {
     });
 
     console.log("[init from settings]: re-initializing channels");
-    for (let ch of results.channels) {
-        const channel0 = _Driver.channels[0];
+    for (let i in results.channels) {
+        let ch = results.channels[i];
+        const channel0 = _Driver.channels[i];
         channel0.leds = new Uint32Array(ch.count).fill(0x000000);
+        console.log("brightness: ", ch.brightness);
         channel0.brightness = ch.brightness;
     }
     console.log("[init from settings]: DONE!!");
