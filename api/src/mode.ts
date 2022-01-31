@@ -8,6 +8,7 @@ import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
 import { mode } from "shared/types/mode";
 import { ui } from "shared/types/user-input";
+import * as bluebird from "bluebird";
 
 const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
 
@@ -123,9 +124,12 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
 export function set_updates(x: { [key: string]: any }) {
     for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
+
 export function stop() {
     running = false;
+    next.cancel();
 }
+
 export async function setMode(new_mode: string | show): Promise<void> {
     let show: show;
 
@@ -169,6 +173,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
 }
 
 type cb = () => void;
+let next: ReturnType<typeof bluebird.Promise.all>;
 
 function create_loop(mode: mode, before?: cb, after?: cb): void {
     const run = () => {
@@ -184,7 +189,8 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             resolve();
         });
 
-        Promise.all([delay, render]).then(() => {
+        // @ts-ignore
+        next = bluebird.Promise.all([delay, render]).then(() => {
             running && run();
         });
     };
