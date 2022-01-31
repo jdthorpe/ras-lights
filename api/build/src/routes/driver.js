@@ -11,6 +11,13 @@ const db_1 = require("../db");
 const router = (0, express_1.Router)();
 exports.default = router;
 // TODO: move to shared
+const PINS = [
+    [12, 18, 40, 52],
+    [13, 19, 41, 45, 53],
+    [21, 31],
+    [10, 38],
+];
+// TODO: move to shared
 const STRIP_TYPE = [
     "WS2811_STRIP_RGB",
     "WS2811_STRIP_RBG",
@@ -25,61 +32,26 @@ const STRIP_TYPE = [
     "SK6812_STRIP_BRGW",
     "SK6812_STRIP_BGRW",
 ];
+const channelSchema = (pins) => ({
+    type: "object",
+    properties: {
+        type: { anyOf: STRIP_TYPE.map((s) => ({ const: s })) },
+        count: { type: "number", minimum: 0 },
+        brightness: { type: "number", minimum: 0, maximum: 255 },
+        invert: { type: "boolean" },
+        gpio: { anyOf: pins.map((p) => ({ const: p })) },
+    },
+});
 const ajv = new ajv_1.default();
 const schema = {
     type: "object",
     properties: {
         type: { const: "DRIVER" },
         frequency: { type: "number" },
+        dma: { type: "number", minimum: 0 },
         channels: {
             type: "array",
-            items: [
-                {
-                    type: "object",
-                    properties: {
-                        type: {
-                            anyOf: STRIP_TYPE.map((s) => ({ const: s })),
-                        },
-                        count: { type: "number", minimum: 0 },
-                        brightness: {
-                            type: "number",
-                            minimum: 0,
-                            maximum: 255,
-                        },
-                        gpio: {
-                            anyOf: [
-                                { const: 12 },
-                                { const: 18 },
-                                { const: 40 },
-                                { const: 52 },
-                            ],
-                        },
-                    },
-                },
-                {
-                    type: "object",
-                    properties: {
-                        type: {
-                            anyOf: STRIP_TYPE.map((s) => ({ const: s })),
-                        },
-                        count: { type: "number", minimum: 0 },
-                        brightness: {
-                            type: "number",
-                            minimum: 0,
-                            maximum: 255,
-                        },
-                        gpio: {
-                            anyOf: [
-                                { const: 13 },
-                                { const: 19 },
-                                { const: 41 },
-                                { const: 55 },
-                                { const: 53 },
-                            ],
-                        },
-                    },
-                },
-            ],
+            items: PINS.map((p) => channelSchema(p)),
         },
     },
 };

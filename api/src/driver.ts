@@ -1,7 +1,15 @@
-import Driver, { StripType } from "rpi-ws281x-led";
+import Driver, { StripType, ChannelConfiguration } from "rpi-ws281x-led";
 import { rgb, rgbw } from "shared/types/mode";
-// import settings from "./settings";
+import { adminStore } from "./db";
+import { channel, IDriver } from "shared/types/admin";
+import equal from "fast-deep-equal";
 
+function asChannel(ch: channel): ChannelConfiguration {
+    return {
+        ...ch,
+        type: StripType[ch.type as keyof typeof StripType],
+    };
+}
 const LEDS_0 = 8;
 const LEDS_1 = 339;
 
@@ -32,6 +40,39 @@ const driver = new Driver({
     ],
 });
 
+let _Driver: Driver = driver;
+let driver_spec: IDriver;
+
+export async function reload_driver() {
+    const results = await adminStore.findOne<IDriver>(
+        { type: "DRIVER" },
+        { _id: 0 }
+    );
+
+    // FAST PATH
+    if (results === null || equal(driver_spec, results)) return;
+    driver_spec = results;
+
+    console.log("[init from settings]: Finalizing");
+    if (_Driver) {
+        _Driver.finalize();
+    }
+    console.log("[init from settings]: re-initializing Driver");
+    _Driver = new Driver({
+        frequency: results.frequency,
+        channels: results.channels.map((ch) => asChannel(ch)),
+    });
+
+    console.log("[init from settings]: re-initializing channels");
+    for (let ch of results.channels) {
+        const channel0 = driver.channels[0];
+        channel0.leds = new Uint32Array(ch.count).fill(0x000000);
+        channel0.brightness = ch.brightness;
+    }
+    console.log("[init from settings]: DONE!!");
+}
+reload_driver();
+
 // Create the driver. It automatically initializes the underlying components.
 
 const channel0 = driver.channels[0];
@@ -56,11 +97,17 @@ export function set_colors(colors: (rgb | rgbw)[]): void {
             (B * colors[i % colors.length][2]) |
             (W * (colors[i % colors.length][3] || 0));
 
-    for (let i = 0; i < LEDS_1; i++) channel1.leds[i] = C[i % C.length];
-    channel1.render();
+    for (let ch = 0; ch < driver.channels.length; ch++) {
+        let channel = driver.channels[ch];
+        for (let i = 0; i < channel.leds.length; i++)
+            channel.leds[i] = C[i % C.length];
+        channel.render();
+    }
+    // for (let i = 0; i < LEDS_1; i++) channel1.leds[i] = C[i % C.length];
+    // channel1.render();
 
-    for (let i = 0; i < LEDS_0; i++) channel0.leds[i] = C[i % C.length];
-    channel0.render();
+    // for (let i = 0; i < LEDS_0; i++) channel0.leds[i] = C[i % C.length];
+    // channel0.render();
 }
 
 function nx(x: number): number {
@@ -74,36 +121,62 @@ export function w(N: number[]): void {
     const _N: number[] = [];
     for (let i = 0; i < N.length; i++) _N[i] = nx(N[i]) * W;
 
-    for (let i = 0; i < LEDS_1; i++) channel1.leds[i] = _N[i % N.length];
-    channel1.render();
+    for (let ch = 0; ch < driver.channels.length; ch++) {
+        let channel = driver.channels[ch];
+        for (let i = 0; i < channel.leds.length; i++)
+            channel.leds[i] = _N[i % N.length];
+        channel.render();
+    }
+    // for (let i = 0; i < LEDS_1; i++) channel1.leds[i] = _N[i % N.length];
+    // channel1.render();
 
-    for (let i = 0; i < LEDS_0; i++) channel0.leds[i] = _N[i % N.length];
-    channel0.render();
+    // for (let i = 0; i < LEDS_0; i++) channel0.leds[i] = _N[i % N.length];
+    // channel0.render();
 }
 
 export function white(N = 0): void {
     N = Math.floor(Math.min(255, Math.max(0, N))) * W;
-    channel1.leds.fill(N);
-    channel1.render();
-    channel0.leds.fill(OFF); // yes this is on purpose (the second one doesn't have a white channel)
-    channel0.render();
+
+    for (let ch = 0; ch < driver.channels.length; ch++) {
+        let channel = driver.channels[ch];
+        channel.leds.fill(N);
+        channel.render();
+    }
+
+    // channel1.leds.fill(N);
+    // channel1.render();
+    // channel0.leds.fill(OFF); // yes this is on purpose (the second one doesn't have a white channel)
+    // channel0.render();
 }
 
 export function turn_off(): void {
     /* set all the colors to 0 */
-    channel1.leds.fill(OFF);
-    channel1.render();
-    channel0.leds.fill(OFF);
-    channel0.render();
+    for (let ch = 0; ch < driver.channels.length; ch++) {
+        let channel = driver.channels[ch];
+        channel.leds.fill(OFF);
+        channel.render();
+    }
+    // channel1.leds.fill(OFF);
+    // channel1.render();
+    // channel0.leds.fill(OFF);
+    // channel0.render();
 }
 
 export function random_colors(): void {
     /* generate random colors */
-    for (let i = 0; i < LEDS_1; i++)
-        channel1.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
-    channel1.render();
 
-    for (let i = 0; i < LEDS_0; i++)
-        channel0.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
-    channel0.render();
+    for (let ch = 0; ch < driver.channels.length; ch++) {
+        let channel = driver.channels[ch];
+        for (let i = 0; i < channel.leds.length; i++)
+            channel.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
+        channel.render();
+    }
+
+    // for (let i = 0; i < LEDS_1; i++)
+    //     channel1.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
+    // channel1.render();
+
+    // for (let i = 0; i < LEDS_0; i++)
+    //     channel0.leds[i] = Math.floor(Math.random() * ((1 << 24) - 1));
+    // channel0.render();
 }

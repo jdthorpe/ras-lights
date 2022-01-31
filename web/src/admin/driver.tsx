@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from "styled-components"
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
-import { TextField } from '@fluentui/react/lib/TextField';
-import { channel, ISTRIP_TYPE } from 'shared/types/admin';
-import { Driver as IDriver } from 'shared/types/admin';
+import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { Toggle } from '@fluentui/react/lib/Toggle';
+import { Label } from '@fluentui/react/lib/Label';
+import { channel } from 'shared/types/admin';
+import { IDriver } from 'shared/types/admin';
 import { IconButton } from '../utils/icon-button';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
 import equal from "fast-deep-equal"
+import { Number } from "../utils/NumberInput"
 
 const Row = styled.div`
     display: flex;
@@ -15,20 +17,25 @@ const Row = styled.div`
     gap: 1rem;
 `
 
+const PIN_MODE = ["PWM0", "PWM1", "PCM_DOUT", "SPI0-MOSI"];
+
 const default_driver: IDriver = {
     frequency: 800000,
+    dma: 10,
     channels: [
         {
             gpio: 18,
             count: 8,
             type: "WS2811_STRIP_GRB",
             brightness: 64,
+            invert: false,
         },
         {
             gpio: 13,
             count: 339,
             type: "SK6812_STRIP_GRBW",
             brightness: 255,
+            invert: false,
         },
     ],
 }
@@ -53,6 +60,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     const [modified, set_modified] = useState(false)
     const [frequency, set_freq] = useState<number>(800000)
     const [channels, set_channels] = useState<channel[]>(default_driver.channels)
+    const [dma, set_dma] = useState<number>(10)
 
     const update_channel = useCallback((ch: channel, i: number) => {
         set_channels([
@@ -66,60 +74,85 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     useEffect(() => {
         console.log("driver:", driver)
         console.log("equal:", equal(driver, { frequency, channels }))
-        set_modified(!equal(driver, { frequency, channels }))
-    }, [driver, frequency, channels])
+        set_modified(!equal(driver, { frequency, dma, channels }))
+    }, [driver, frequency, dma, channels])
 
     const save = useCallback(() => {
-        const driver: IDriver = { frequency, channels }
+        const driver: IDriver = { frequency, dma, channels }
         fetch("/api/driver/", {
             method: "POST",
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(driver)
         })
-    }, [frequency, channels])
+    }, [frequency, dma, channels])
+
+    const add = useCallback(() => {
+        const ch: channel = {
+            gpio: PINS[channels.length][0],
+            count: 1,
+            brightness: 255,
+            type: STRIP_TYPE[0],
+            invert: false,
+        }
+        set_channels([...channels, ch])
+    }, [channels])
+
+
+    const del = useCallback(() => {
+        set_channels(channels.slice(0, -1))
+    }, [channels])
+
 
     return <div>
-        <h2>Strip Settings</h2>
+        <Row style={{ alignItems: "flex-end" }}>
+            <h2>Driver Settings</h2>
+            <p style={{ color: "grey" }} ><a href="https://github.com/dsyomichev/rpi-ws281x-led#driver-configuration">See the <span style={{ fontFamily: "monospace" }}>rpi-ws281x-led</span> library for details</a></p>
+        </Row>
         <Row>
             <Number label="Frequency" min={0} value={frequency} onChange={set_freq} />
+            <Number label="dma" value={dma} min={0} onChange={set_dma} />
             <PrimaryButton
                 label="Save"
                 onClick={save}
                 disabled={!modified}
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
-
         </Row>
-        {channels && channels.map((ch, i) => (
-            <>
-                <Row>
-                    <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
+        {
+            channels && channels.map((ch, i) => (
+                <>
+                    <Row>
+                        <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
+                        <div>
+                            <Label>Pin&nbsp;Mode</Label>
+                            <p>{PIN_MODE[i]}</p>
+                        </div>
+                        <div style={{ alignSelf: "flex-end" }}>
+                            {i === (channels.length - 1) && i < 3 &&
+                                <IconButton
+                                    onClick={add}
+                                    title="Add Strand"
+                                    // style={{ color: disableSave ? "#dddddd" : "black" }}
+                                    icon={faPlus}
+                                />
+                            }
+                        </div>
+                        <div style={{ alignSelf: "flex-end" }}>
+                            {i === (channels.length - 1) && i > 0 &&
+                                <IconButton
+                                    onClick={del}
+                                    title="Delete strand"
+                                    // style={{ color: disableSave ? "#dddddd" : "black" }}
+                                    icon={faTrashAlt}
+                                />
+                            }
+                        </div>
+                    </Row>
+                </>
+            ))
+        }
 
-                    <div style={{ alignSelf: "flex-end" }}>
-                        {i === (channels.length - 1) && i < 3 &&
-                            <IconButton
-                                onClick={() => alert("plus")}
-                                title="Add Strand"
-                                // style={{ color: disableSave ? "#dddddd" : "black" }}
-                                icon={faPlus}
-                            />
-                        }
-                    </div>
-                    <div style={{ alignSelf: "flex-end" }}>
-                        {i === (channels.length - 1) && i > 0 &&
-                            <IconButton
-                                onClick={() => alert("trash")}
-                                title="Delete strand"
-                                // style={{ color: disableSave ? "#dddddd" : "black" }}
-                                icon={faTrashAlt}
-                            />
-                        }
-                    </div>
-                </Row>
-            </>
-        ))}
-
-    </div>
+    </div >
 }
 
 interface IChannel {
@@ -133,11 +166,12 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
     const [brightness, set_brightness] = useState<number>(channel.brightness)
     const [count, set_count] = useState<number>(channel.count)
     const [gpio, set_gpio] = useState<number>(channel.gpio)
-    const [type, set_type] = useState<ISTRIP_TYPE>(channel.type)
+    const [type, set_type] = useState(channel.type)
+    const [invert, set_invert] = useState<boolean>(channel.invert)
 
     useEffect(() => {
         console.log("updated channel values")
-        onChange({ brightness, count, gpio, type })
+        onChange({ brightness, count, gpio, type, invert })
     }, [brightness, count, gpio, type])
 
     useEffect(() => {
@@ -159,27 +193,17 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
                 }
             }
         />
-        <Number
-            label="Brightness"
-            value={brightness}
-            min={0}
-            max={255}
-            onChange={set_brightness}
-        />
-        <Number
-            label="Count"
-            value={count}
-            min={0}
-            onChange={set_count}
-        />
+        <Number label="Brightness" value={brightness} min={0} max={255} onChange={set_brightness} />
+        <Number label="Count" value={count} min={0} onChange={set_count} />
+        <Toggle label="invert" checked={invert} onChanged={set_invert} />
         <Dropdown
             label="Strip Type"
-            styles={{ root: { minWidth: "15rem", maxWidth: "20rem" } }}
+            styles={{ root: { minWidth: "15rem", maxWidth: "15rem" } }}
             options={STRIP_TYPE.map(m => ({ key: m, text: m }))}
-            selectedKey={type}
+            selectedKey={type as string}
             onChange={
                 (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
-                    option && set_type(option.key as ISTRIP_TYPE)
+                    option && set_type(option.key)
                 }
             }
         />
@@ -203,54 +227,12 @@ const STRIP_TYPE = [
     "SK6812_STRIP_BGRW",
 ];
 
-
-interface NumberProps {
-    label: string;
-    min?: number;
-    max?: number;
-    value?: number;
-    onChange: { (x: number): void };
-}
-const Number: React.FC<NumberProps> = ({ label, min, max, value, onChange }) => {
-
-    const [_value, set_value] = React.useState(`${value}`);
-    const [error, set_error] = React.useState<string | undefined>();
-
-    useEffect(() => {
-        set_value((typeof value === "undefined" || isNaN(value)) ? "" : `${value}`)
-    }, [value])
-
-    const _onChange = React.useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            set_value(newValue || '');
-            let val = newValue ? parseInt(newValue) : NaN
-            onChange(val)
-            if (newValue) {
-                if (isNaN(val)) return set_error(`Not an integer`)
-                if (typeof min === "number" && val < min) return set_error(`Minimum: ${min}`)
-                else if (typeof max === "number" && val > max) return set_error(`Maximum: ${max}`)
-                else set_error(undefined)
-            }
-        },
-        [],
-    );
-
-    return <TextField
-        styles={{ root: { maxWidth: "5rem" } }}
-        label={label}
-        value={_value}
-        onChange={_onChange}
-        errorMessage={error}
-    />
-}
-
 const PINS = [
     [12, 18, 40, 52],
     [13, 19, 41, 45, 53],
     [21, 31],
     [10, 38],
 ]
-
 
 const pin_map = {
     12: "PWM0",

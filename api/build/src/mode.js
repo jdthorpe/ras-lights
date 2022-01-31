@@ -48,7 +48,7 @@ async function get_mode(show) {
 // ----------------------------------------
 // loop
 // ----------------------------------------
-let loop;
+let running = false;
 let current_mode = "off";
 let updates = {};
 function get_updates() {
@@ -110,7 +110,7 @@ function set_updates(x) {
 }
 exports.set_updates = set_updates;
 function stop() {
-    loop && clearTimeout(loop);
+    running = false;
 }
 exports.stop = stop;
 async function setMode(new_mode) {
@@ -145,21 +145,26 @@ async function setMode(new_mode) {
     stop();
     // reset the updates before restarting the loop
     updates = {};
-    loop = setTimeout(create_loop(mode, before, after), 0);
+    create_loop(mode, before, after);
 }
 exports.setMode = setMode;
 function create_loop(mode, before, after) {
-    const fun = () => {
-        before && before();
-        const colors = mode();
-        after && after();
-        if (ajv.validate(schema, colors)) {
-            (0, driver_1.set_colors)(colors);
-        }
-        else {
-            return;
-        }
-        loop = setTimeout(fun, DELAY_MS);
+    const run = () => {
+        const delay = new Promise((resolve) => {
+            setTimeout(() => resolve(), DELAY_MS);
+        });
+        const render = new Promise((resolve) => {
+            before && before();
+            const colors = mode();
+            after && after();
+            if (ajv.validate(schema, colors))
+                (0, driver_1.set_colors)(colors);
+            resolve();
+        });
+        Promise.all([delay, render]).then(() => {
+            running && run();
+        });
     };
-    return fun;
+    running = true;
+    run();
 }

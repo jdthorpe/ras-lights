@@ -9,11 +9,12 @@ export interface user_library_data extends user_library {
     // watch: boolean;
 }
 
-export interface DriverData extends Driver {
+export interface DriverData extends IDriver {
     type: "DRIVER";
 }
 
-export interface Driver {
+export interface IDriver {
+    dma: numbmer;
     frequency: number;
     channels: channel[];
 }
@@ -21,7 +22,8 @@ export interface Driver {
 export interface channel {
     gpio: number;
     count: number;
-    type: STRIP_TYPE;
+    invert: boolean;
+    type: keyof typeof StripType;
     brightness: number;
 }
 

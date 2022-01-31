@@ -58,9 +58,7 @@ async function update_color(x: IColor, on: boolean) {
         await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify([[x.r, x.g, x.b]])
         });
     } catch (err) {

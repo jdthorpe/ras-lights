@@ -52,7 +52,7 @@ async function get_mode(show: show): Promise<mode> {
 // ----------------------------------------
 // loop
 // ----------------------------------------
-let loop: ReturnType<typeof setTimeout>;
+let running: boolean = false;
 let current_mode: string = "off";
 let updates: { [key: string]: string } = {};
 
@@ -124,7 +124,7 @@ export function set_updates(x: { [key: string]: any }) {
     for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
 export function stop() {
-    loop && clearTimeout(loop);
+    running = false;
 }
 export async function setMode(new_mode: string | show): Promise<void> {
     let show: show;
@@ -165,22 +165,30 @@ export async function setMode(new_mode: string | show): Promise<void> {
     stop();
     // reset the updates before restarting the loop
     updates = {};
-    loop = setTimeout(create_loop(mode, before, after), 0);
+    create_loop(mode, before, after);
 }
 
 type cb = () => void;
 
-function create_loop(mode: mode, before?: cb, after?: cb): { (): void } {
-    const fun = () => {
-        before && before();
-        const colors = mode();
-        after && after();
-        if (ajv.validate(schema, colors)) {
-            set_colors(colors);
-        } else {
-            return;
-        }
-        loop = setTimeout(fun, DELAY_MS);
+function create_loop(mode: mode, before?: cb, after?: cb): void {
+    const run = () => {
+        const delay = new Promise<void>((resolve) => {
+            setTimeout(() => resolve(), DELAY_MS);
+        });
+
+        const render = new Promise<void>((resolve) => {
+            before && before();
+            const colors = mode();
+            after && after();
+            if (ajv.validate(schema, colors)) set_colors(colors);
+            resolve();
+        });
+
+        Promise.all([delay, render]).then(() => {
+            running && run();
+        });
     };
-    return fun;
+
+    running = true;
+    run();
 }
