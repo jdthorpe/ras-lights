@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -29,7 +10,6 @@ const shared_1 = require("shared");
 const driver_1 = require("./driver");
 const settings_1 = __importDefault(require("./settings"));
 const db_1 = require("./db");
-const bluebird = __importStar(require("bluebird"));
 const DELAY_MS = (settings_1.default.api && settings_1.default.api.loop_delay_ms) || 50;
 const ajv = new ajv_1.default();
 const schema = {
@@ -68,7 +48,6 @@ async function get_mode(show) {
 // ----------------------------------------
 // loop
 // ----------------------------------------
-let running = false;
 let current_mode = "off";
 let updates = {};
 function get_updates() {
@@ -129,10 +108,9 @@ function set_updates(x) {
         updates[key] = value;
 }
 exports.set_updates = set_updates;
+let current_show = 0;
 function stop() {
-    running = false;
-    console.log("[STOP] typeof next", typeof next);
-    next && next.cancel();
+    current_show++;
 }
 exports.stop = stop;
 async function setMode(new_mode) {
@@ -170,8 +148,8 @@ async function setMode(new_mode) {
     create_loop(mode, before, after);
 }
 exports.setMode = setMode;
-let next;
 function create_loop(mode, before, after) {
+    const this_show = current_show++;
     const run = () => {
         const delay = new Promise((resolve) => {
             setTimeout(() => resolve(), DELAY_MS);
@@ -184,13 +162,9 @@ function create_loop(mode, before, after) {
                 (0, driver_1.set_colors)(colors);
             resolve();
         });
-        // @ts-ignore
-        next = bluebird.Promise.all([delay, render]).then(() => {
-            if (!running)
-                console.log("[LOOP] stoping b/c not running");
-            running && run();
+        Promise.all([delay, render]).then(() => {
+            this_show === current_show && run();
         });
     };
-    running = true;
     run();
 }

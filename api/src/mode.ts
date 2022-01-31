@@ -8,7 +8,6 @@ import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
 import { mode } from "shared/types/mode";
 import { ui } from "shared/types/user-input";
-import * as bluebird from "bluebird";
 
 const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
 
@@ -53,7 +52,6 @@ async function get_mode(show: show): Promise<mode> {
 // ----------------------------------------
 // loop
 // ----------------------------------------
-let running: boolean = false;
 let current_mode: string = "off";
 let updates: { [key: string]: string } = {};
 
@@ -125,10 +123,9 @@ export function set_updates(x: { [key: string]: any }) {
     for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
 
+let current_show = 0;
 export function stop() {
-    running = false;
-    console.log("[STOP] typeof next", typeof next);
-    next && next.cancel();
+    current_show++;
 }
 
 export async function setMode(new_mode: string | show): Promise<void> {
@@ -174,9 +171,9 @@ export async function setMode(new_mode: string | show): Promise<void> {
 }
 
 type cb = () => void;
-let next: ReturnType<typeof bluebird.Promise.all>;
 
 function create_loop(mode: mode, before?: cb, after?: cb): void {
+    const this_show = current_show++;
     const run = () => {
         const delay = new Promise<void>((resolve) => {
             setTimeout(() => resolve(), DELAY_MS);
@@ -190,13 +187,10 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             resolve();
         });
 
-        // @ts-ignore
-        next = bluebird.Promise.all([delay, render]).then(() => {
-            if (!running) console.log("[LOOP] stoping b/c not running");
-            running && run();
+        Promise.all([delay, render]).then(() => {
+            this_show === current_show && run();
         });
     };
 
-    running = true;
     run();
 }
