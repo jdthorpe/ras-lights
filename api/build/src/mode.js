@@ -149,7 +149,7 @@ async function setMode(new_mode) {
 }
 exports.setMode = setMode;
 function create_loop(mode, before, after) {
-    const this_show = current_show++;
+    const this_show = ++current_show;
     const run = () => {
         const delay = new Promise((resolve) => {
             setTimeout(() => resolve(), DELAY_MS);

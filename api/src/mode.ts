@@ -173,7 +173,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
 type cb = () => void;
 
 function create_loop(mode: mode, before?: cb, after?: cb): void {
-    const this_show = current_show++;
+    const this_show = ++current_show;
     const run = () => {
         const delay = new Promise<void>((resolve) => {
             setTimeout(() => resolve(), DELAY_MS);
