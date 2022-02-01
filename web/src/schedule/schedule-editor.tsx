@@ -26,8 +26,6 @@ const defaultValue = '* * * * *'
 
 interface EditScheduleProps {
     modes: string[];
-    // name?: string;
-    // mode?: string;
     schedule?: ISchedule;
     save: (s: ISchedule) => void;
 }
@@ -49,7 +47,6 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
         setCronError(undefined)
     }
 
-    // const [value, setValue] = useState(defaultValue);
     const disabled = (
         typeof mode === "undefined" ||
         typeof name === "undefined" ||
@@ -79,12 +76,10 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
                         value={name}
                         onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => setName(newValue)}
                         styles={textboxStyle}
-                    // errorMessage={errorMessage}
                     />
                     <Dropdown
                         label="Mode"
                         selectedKey={mode}
-                        // eslint-disable-next-line react/jsx-no-bind
                         onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<any>, index?: number | undefined) => option && setMode(option.key as string)}
                         placeholder="Select mode"
                         options={modes.sort().map(s => ({ key: s, text: s }))}

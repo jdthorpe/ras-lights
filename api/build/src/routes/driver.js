@@ -67,17 +67,13 @@ router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
         const body = req.body;
-        console.log("[DRIVER/POST] validation");
         if (!ajv.validate(schema, body)) {
             res.status(500);
             res.send(`invalid json payload`);
             return;
         }
-        console.log("[DRIVER/POST] upserting");
         db_1.adminStore.update({ type: "DRIVER" }, { ...body, type: "DRIVER" }, { upsert: true });
-        console.log("[DRIVER/POST] reloading driver");
         (0, driver_1.reload_driver)();
-        console.log("[DRIVER/POST] DONE");
     }
     catch (err) {
         return next(err);

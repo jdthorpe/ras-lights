@@ -208,6 +208,7 @@ const STRIP_TYPE = [
     "SK6812_STRIP_BGRW",
 ];
 
+// https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L266-L273
 const PINS = [
     [12, 18, 40, 52],
     [13, 19, 41, 45, 53],

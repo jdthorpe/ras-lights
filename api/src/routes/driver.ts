@@ -75,23 +75,19 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
         const body: user_library_data = req.body;
 
-        console.log("[DRIVER/POST] validation");
         if (!ajv.validate(schema, body)) {
             res.status(500);
             res.send(`invalid json payload`);
             return;
         }
 
-        console.log("[DRIVER/POST] upserting");
         adminStore.update(
             { type: "DRIVER" },
             { ...body, type: "DRIVER" },
             { upsert: true }
         );
 
-        console.log("[DRIVER/POST] reloading driver");
         reload_driver();
-        console.log("[DRIVER/POST] DONE");
     } catch (err) {
         return next(err);
     }

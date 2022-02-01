@@ -1,8 +1,7 @@
 import Ajv from "ajv";
 import { build_node, registry } from "shared";
-// import { turn_off, set_colors } from "./ws681x";
 import { turn_off, set_colors } from "./driver";
-import { show, func_config, rgb } from "shared/types/mode";
+import { show, func_config } from "shared/types/mode";
 import settings from "./settings";
 import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
@@ -25,11 +24,6 @@ const schema = {
 // ----------------------------------------
 // registry
 // ----------------------------------------
-// const modes: { [key: string]: { (): any } } = {};
-
-// export function create_node(name: string, x: func_config) {
-//     modes[name] = build_node(x, { leds: settings.ws281x.leds });
-// }
 
 async function get_show(name: string): Promise<show> {
     // if (name in modes) return modes[name];
@@ -183,7 +177,8 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             before && before();
             const colors = mode();
             after && after();
-            if (ajv.validate(schema, colors)) set_colors(colors);
+            if (this_show === current_show && ajv.validate(schema, colors))
+                set_colors(colors);
             resolve();
         });
 

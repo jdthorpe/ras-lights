@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMode = exports.stop = exports.set_updates = exports.get_updates = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const shared_1 = require("shared");
-// import { turn_off, set_colors } from "./ws681x";
 const driver_1 = require("./driver");
 const settings_1 = __importDefault(require("./settings"));
 const db_1 = require("./db");
@@ -24,10 +23,6 @@ const schema = {
 // ----------------------------------------
 // registry
 // ----------------------------------------
-// const modes: { [key: string]: { (): any } } = {};
-// export function create_node(name: string, x: func_config) {
-//     modes[name] = build_node(x, { leds: settings.ws281x.leds });
-// }
 async function get_show(name) {
     // if (name in modes) return modes[name];
     try {
@@ -158,7 +153,7 @@ function create_loop(mode, before, after) {
             before && before();
             const colors = mode();
             after && after();
-            if (ajv.validate(schema, colors))
+            if (this_show === current_show && ajv.validate(schema, colors))
                 (0, driver_1.set_colors)(colors);
             resolve();
         });

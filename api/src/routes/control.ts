@@ -9,7 +9,6 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     /* inject parameters into the running show (mode) */
     const start = performance.now();
     try {
-        // console.log("body:", JSON.stringify(req.body));
         set_updates(req.body);
     } catch (err) {
         next(err);

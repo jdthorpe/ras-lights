@@ -19,12 +19,9 @@ export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
             <Slider
                 min={ui!.min}
                 max={ui!.max}
-                // step={ ui!.min - ui!.max + 1 : undefined}
-                // value={value.value}
                 defaultValue={ui.default}
                 showValue={false}
                 onChange={onChange}
-            // snapToStep={value.type === "integer"}
             />
         </div>
     )
@@ -64,25 +61,18 @@ export const SliderConfig: React.FC<ConfigProps> = ({ el, spec, onChange }) => {
     }, [el, spec])
 
     return (
-        <>
-            <Slider
-                ranged
-                label="Input Range"
-                min={spec.min}
-                max={spec.max}
-                value={(el.ui && typeof el.ui.max !== "undefined") ? el.ui.max : spec.max}
-                lowerValue={(el.ui && typeof el.ui.min !== "undefined") ? el.ui.min : spec.min}
-                // defaultValue={spec.max}
-                // defaultLowerValue={spec.min}
-                onChange={(_: unknown, range?: [number, number]) => {
-                    if (range)
-                        onChange({ min: range[0], max: range[1] })
-                }}
-            />
-            {/* <pre>{JSON.stringify(el, null, 2)}</pre> */}
-        </>
-
-    )
+        <Slider
+            ranged
+            label="Input Range"
+            min={spec.min}
+            max={spec.max}
+            value={(el.ui && typeof el.ui.max !== "undefined") ? el.ui.max : spec.max}
+            lowerValue={(el.ui && typeof el.ui.min !== "undefined") ? el.ui.min : spec.min}
+            onChange={(_: unknown, range?: [number, number]) => {
+                if (range)
+                    onChange({ min: range[0], max: range[1] })
+            }}
+        />)
 }
 
 
