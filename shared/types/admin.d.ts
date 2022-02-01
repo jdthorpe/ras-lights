@@ -25,6 +25,7 @@ export interface channel {
     invert: boolean;
     type: keyof typeof StripType;
     brightness: number;
+    reverse: boolean;
 }
 
 // replaced with "keyof typoof StripType"

@@ -19,47 +19,28 @@ const Row = styled.div`
 
 const PIN_MODE = ["PWM0", "PWM1", "PCM_DOUT", "SPI0-MOSI"];
 
-const default_driver: IDriver = {
-    frequency: 800000,
-    dma: 10,
-    channels: [
-        {
-            gpio: 18,
-            count: 8,
-            type: "WS2811_STRIP_GRB",
-            brightness: 64,
-            invert: false,
-        },
-        {
-            gpio: 13,
-            count: 339,
-            type: "SK6812_STRIP_GRBW",
-            brightness: 255,
-            invert: false,
-        },
-    ],
-}
-
-
 const Driver: React.FC<{ driver?: IDriver }> = () => {
 
     const [driver, set_driver] = useState<IDriver>()
     const [modified, set_modified] = useState(false)
-    const [frequency, set_freq] = useState<number>(800000)
-    const [channels, set_channels] = useState<channel[]>(default_driver.channels)
+    // sensible(?) defaults
     const [dma, set_dma] = useState<number>(10)
+    const [frequency, set_freq] = useState<number>(800000)
+    const [channels, set_channels] = useState<channel[]>([])
 
     useEffect(() => {
         (async () => {
             try {
                 const res = await fetch("/api/driver/")
                 const driver: IDriver = await res.json()
-                console.log("DB driver: ", driver)
+                if (driver === null) {
+                    set_driver({ frequency: 800000, dma: 10, channels: [] })
+                    return
+                }
                 set_driver(driver)
                 set_freq(driver.frequency)
                 set_channels(driver.channels)
                 set_dma(driver.dma)
-                console.log("successfully set driver")
             } catch (err) {
                 console.log("dB driver error: ", err)
             }
@@ -72,8 +53,6 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     }, [channels])
 
     useEffect(() => {
-        console.log("driver:", driver)
-        console.log("equal:", equal(driver, { frequency, channels }))
         set_modified(!equal(driver, { frequency, dma, channels }))
     }, [driver, frequency, dma, channels])
 
@@ -95,15 +74,17 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
             brightness: 255,
             type: STRIP_TYPE[0],
             invert: false,
+            reverse: false,
         }
         set_channels([...channels, ch])
     }, [channels])
-
 
     const del = useCallback(() => {
         set_channels(channels.slice(0, -1))
     }, [channels])
 
+    if (!driver)
+        return (<div><p>Loading...</p></div>)
 
     return <div>
         <Row style={{ alignItems: "flex-end" }}>
@@ -121,35 +102,33 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         </Row>
         {
             channels && channels.map((ch, i) => (
-                <>
-                    <Row>
-                        <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
-                        <div>
-                            <Label>Pin&nbsp;Mode</Label>
-                            <p>{PIN_MODE[i]}</p>
-                        </div>
-                        <div style={{ alignSelf: "flex-end" }}>
-                            {i === (channels.length - 1) && i < 3 &&
-                                <IconButton
-                                    onClick={add}
-                                    title="Add Strand"
-                                    // style={{ color: disableSave ? "#dddddd" : "black" }}
-                                    icon={faPlus}
-                                />
-                            }
-                        </div>
-                        <div style={{ alignSelf: "flex-end" }}>
-                            {i === (channels.length - 1) && i > 0 &&
-                                <IconButton
-                                    onClick={del}
-                                    title="Delete strand"
-                                    // style={{ color: disableSave ? "#dddddd" : "black" }}
-                                    icon={faTrashAlt}
-                                />
-                            }
-                        </div>
-                    </Row>
-                </>
+                <Row key={i}>
+                    <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
+                    <div>
+                        <Label>Pin&nbsp;Mode</Label>
+                        <p>{PIN_MODE[i]}</p>
+                    </div>
+                    <div style={{ alignSelf: "flex-end" }}>
+                        {i === (channels.length - 1) && i < 3 &&
+                            <IconButton
+                                onClick={add}
+                                title="Add Strand"
+                                // style={{ color: disableSave ? "#dddddd" : "black" }}
+                                icon={faPlus}
+                            />
+                        }
+                    </div>
+                    <div style={{ alignSelf: "flex-end" }}>
+                        {i === (channels.length - 1) && i > 0 &&
+                            <IconButton
+                                onClick={del}
+                                title="Delete strand"
+                                // style={{ color: disableSave ? "#dddddd" : "black" }}
+                                icon={faTrashAlt}
+                            />
+                        }
+                    </div>
+                </Row>
             ))
         }
 
@@ -169,11 +148,11 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
     const [gpio, set_gpio] = useState<number>(channel.gpio)
     const [type, set_type] = useState(channel.type)
     const [invert, set_invert] = useState<boolean>(channel.invert)
+    const [reverse, set_reverse] = useState<boolean>(channel.reverse)
 
     useEffect(() => {
-        console.log("updated channel values")
-        onChange({ brightness, count, gpio, type, invert })
-    }, [brightness, count, gpio, type])
+        onChange({ brightness, count, gpio, type, invert, reverse })
+    }, [brightness, count, gpio, type, invert, reverse])
 
     useEffect(() => {
         set_brightness(channel.brightness)
@@ -196,10 +175,11 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
         />
         <Number label="Brightness" value={brightness} min={0} max={255} onChange={set_brightness} />
         <Number label="Count" value={count} min={0} onChange={set_count} />
-        <Toggle label="invert" checked={invert} onChanged={set_invert} />
+        <Toggle label="Invert" checked={invert} onChange={(e: any, checked?: boolean) => typeof checked !== "undefined" && set_invert(checked)} />
+        <Toggle label="Reverse" checked={reverse} onChange={(e: any, checked?: boolean) => typeof checked !== "undefined" && set_reverse(checked)} />
         <Dropdown
             label="Strip Type"
-            styles={{ root: { minWidth: "15rem", maxWidth: "15rem" } }}
+            styles={{ root: { minWidth: "11rem", maxWidth: "11rem" } }}
             options={STRIP_TYPE.map(m => ({ key: m, text: m }))}
             selectedKey={type as string}
             onChange={

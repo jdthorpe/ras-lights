@@ -79,7 +79,7 @@ const LibraryList: React.FC = ({ }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {libraries.map((lib, i) => <LibRow lib={lib} key={i} update={fetchLibraries} />)}
+                    {libraries.map((lib, i) => <LibRow lib={lib} key={i} rowkey={i} update={fetchLibraries} />)}
                     <AddLibrary update={fetchLibraries} />
                 </tbody>
             </Table>
@@ -168,7 +168,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
     )
 }
 
-const LibRow: React.FC<{ lib: user_library_data, key: number, update: { (): void } }> = ({ lib, key, update }) => {
+const LibRow: React.FC<{ lib: user_library_data, rowkey: number, update: { (): void } }> = ({ lib, rowkey, update }) => {
 
     const [active, set_active] = useState(true)
 
@@ -189,7 +189,7 @@ const LibRow: React.FC<{ lib: user_library_data, key: number, update: { (): void
 
 
     return (
-        <tr key={key}>
+        <tr key={rowkey}>
             <Td>{lib.name}</Td>
             <Td>{lib.path}</Td>
             <Td>
