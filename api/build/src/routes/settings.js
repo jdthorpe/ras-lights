@@ -15,6 +15,7 @@ const schemata = {
     GENERAL: {
         type: "object",
         properties: {
+            type: { const: " GENERAL" },
             delay_ms: { type: "number" },
             series: { type: "boolean" },
             leds: { type: "boolean" },

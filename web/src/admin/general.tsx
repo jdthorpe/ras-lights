@@ -44,15 +44,23 @@ const GeneralSettings: React.FC = () => {
         (async () => {
             try {
                 const res = await fetch("/api/settings/GENERAL")
-                const settings: general_settings = await res.json()
+                let settings: general_settings = await res.json()
                 console.log("DB settings: ", settings)
                 // previous state
                 set_initial_settings(settings)
-                set_modified(false)
-                // current state
-                set_delay_ms(settings.delay_ms)
-                set_tabs(settings.tabs)
-                set_series(settings.series)
+                if (settings === null) {
+                    console.log("USING DEFAULT SETTINGS")
+                    // current state
+                    set_delay_ms(default_settings.delay_ms)
+                    set_tabs(default_settings.tabs)
+                    set_series(default_settings.series)
+                } else {
+
+                    // current state
+                    set_delay_ms(settings.delay_ms)
+                    set_tabs(settings.tabs)
+                    set_series(settings.series)
+                }
             } catch (err) {
                 console.log("dB driver error: ", err)
             }
@@ -78,20 +86,19 @@ const GeneralSettings: React.FC = () => {
             body: JSON.stringify(next)
         })
         set_initial_settings(next)
-    }, [delay_ms])
+    }, [tabs, series, delay_ms])
 
     if (typeof tabs === "undefined" || typeof series === "undefined")
         return <div>Loading...</div>
     return <div>
         <Row>
-            <h1>General Settings</h1>
+            <h3>General Settings</h3>
             <PrimaryButton
                 label="Save"
                 onClick={save}
                 disabled={!modified}
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
         </Row>
-        <h2>Rendering</h2>
         <Row style={{ alignItems: "flex-end" }}>
             <Number
                 value={delay_ms}
@@ -107,21 +114,20 @@ const GeneralSettings: React.FC = () => {
             />
         </Row>
         <h3>Tab visibility</h3>
-        <Row>
-            {surfaces.map((s, i) =>
-                <DataRow
-                    key={i}
-                    style={{ backgroundColor: (i % 2 ? "none" : "#dddddd") }}>
-                    <Tabs
-                        tabs={tabs[s]}
-                        onChange={(t: tab_lookup) => {
-                            const out: surface_tabs = { ...tabs };
-                            out[s] = t
-                            set_tabs(out)
-                        }}
-                    />
-                </DataRow>)}
-        </Row>
+        {surfaces.map((s, i) =>
+            <DataRow
+                key={i}
+                style={{ backgroundColor: (i % 2 ? "none" : "#dddddd") }}>
+                <h4 style={{ minWidth: "5rem" }}>{s}</h4>
+                <Tabs
+                    tabs={tabs[s]}
+                    onChange={(t: tab_lookup) => {
+                        const out: surface_tabs = { ...tabs };
+                        out[s] = t
+                        set_tabs(out)
+                    }}
+                />
+            </DataRow>)}
     </div >
 }
 
@@ -144,7 +150,7 @@ const Tabs: React.FC<TabProps> = ({ tabs, onChange }) => {
         const out = { ...tabs }
         out[t] = !out[t];
         onChange(out)
-    }, [tabs])
+    }, [tabs, onChange])
 
     return <>
         {TABS.map((t, i) => <Toggle
