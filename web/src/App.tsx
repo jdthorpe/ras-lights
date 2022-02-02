@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react"
-import { Pivot, PivotItem } from '@fluentui/react';
+import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import Manual from "./manual"
 import Admin from "./admin/admin"
 import Modes from "./modes"
@@ -9,9 +9,8 @@ import Schedule from "./schedule/schedule";
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { BrowserRouter, useNavigate, useLocation } from "react-router-dom"
 
-
+// gotta do it somewhere...
 initializeIcons();
-
 
 function Nav() {
 
@@ -36,7 +35,7 @@ function Nav() {
       <PivotItem itemKey="/modes" headerText="Modes">
         <Modes />
       </PivotItem>
-      <PivotItem itemKey="/header" headerText="Editor">
+      <PivotItem itemKey="/editor" headerText="Editor">
         <Editor />
       </PivotItem>
       <PivotItem itemKey="/schedule" headerText="Schedule">

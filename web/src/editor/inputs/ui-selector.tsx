@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ui_type, ui, ui_slider } from "shared/types/user-input";
 import { num_value, value_instance } from 'shared/types/mode';
 import { input, integer_input } from 'shared/types/parameters';
 import { SliderConfig, default_slider_config } from '../../ui/slider';
 
-import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
+import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import equal from "fast-deep-equal"
 

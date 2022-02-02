@@ -17,6 +17,15 @@ const Row = styled.div`
     gap: 1rem;
 `
 
+
+const DataRow = styled.div`
+    display: flex;
+    flex-direction: Row;
+    gap: 1rem;
+    padding-left: 12px;
+    padding-right: 12px;
+`
+
 const PIN_MODE = ["PWM0", "PWM1", "PCM_DOUT", "SPI0-MOSI"];
 
 const Driver: React.FC<{ driver?: IDriver }> = () => {
@@ -91,7 +100,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
             <h2>Driver Settings</h2>
             <p style={{ color: "grey" }} ><a href="https://github.com/dsyomichev/rpi-ws281x-led#driver-configuration">See the <span style={{ fontFamily: "monospace" }}>rpi-ws281x-led</span> library for details</a></p>
         </Row>
-        <Row>
+        <DataRow>
             <Number label="Frequency" min={0} value={frequency} onChange={set_freq} />
             <Number label="dma" value={dma} min={0} onChange={set_dma} />
             <PrimaryButton
@@ -99,16 +108,17 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 onClick={save}
                 disabled={!modified}
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
-        </Row>
+        </DataRow>
+        <h3 style={{ marginTop: "1.5rem" }}>Light Strips</h3>
         {
             channels && channels.map((ch, i) => (
-                <Row key={i}>
+                <DataRow key={i} style={{ backgroundColor: (i % 2 ? "#dddddd" : "none") }}>
                     <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
                     <div>
                         <Label>Pin&nbsp;Mode</Label>
                         <p>{PIN_MODE[i]}</p>
                     </div>
-                    <div style={{ alignSelf: "flex-end" }}>
+                    <div style={{ alignSelf: "center", marginLeft: "auto" }}>
                         {i === (channels.length - 1) && i < 3 &&
                             <IconButton
                                 onClick={add}
@@ -118,7 +128,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                             />
                         }
                     </div>
-                    <div style={{ alignSelf: "flex-end" }}>
+                    <div style={{ alignSelf: "center" }}>
                         {i === (channels.length - 1) && i > 0 &&
                             <IconButton
                                 onClick={del}
@@ -128,7 +138,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                             />
                         }
                     </div>
-                </Row>
+                </DataRow>
             ))
         }
 

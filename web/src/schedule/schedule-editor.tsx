@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import styled from "styled-components"
 import Cron, { CronError } from "react-js-cron"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
-import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
+import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { ISchedule } from 'shared/types/schedule';
 import cronstrue from 'cronstrue';
 
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+// import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 const Row = styled.div`
     display: flex;

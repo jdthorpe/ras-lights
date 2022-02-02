@@ -10,15 +10,13 @@ function asChannel(ch: channel): ChannelConfiguration {
         type: StripType[ch.type as keyof typeof StripType],
     };
 }
-// const LEDS_0 = 8;
-// const LEDS_1 = 339;
 
 // https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L146-L169
-const OFF = 0x00000000; // W
-const W = 0x01000000; // W
-const R = 0x00010000; // G
-const G = 0x00000100; // R
-const B = 0x00000001; // B
+const OFF = 0x00000000;
+const W = 0x01000000;
+const R = 0x00010000;
+const G = 0x00000100;
+const B = 0x00000001;
 
 // Create the driver. It automatically initializes the underlying components.
 // https://github.com/jgarff/rpi_ws281x/blob/ee7522e3b053950af33bc7e4364742cd3aeaf594/main.c#L266-L273
@@ -130,32 +128,15 @@ export function w(N: number[]): void {
     for (let i = 0; i < N.length; i++) _N[i] = nx(N[i]) * W;
 
     render(_N);
-    // for (let ch = 0; ch < _Driver.channels.length; ch++) {
-    //     let channel = _Driver.channels[ch];
-    //     for (let i = 0; i < channel.leds.length; i++)
-    //         channel.leds[i] = _N[i % N.length];
-    //     channel.render();
-    // }
 }
 
 export function white(N = 0): void {
     render([Math.floor(Math.min(255, Math.max(0, N))) * W]);
-    // N = Math.floor(Math.min(255, Math.max(0, N))) * W;
-    // for (let ch = 0; ch < _Driver.channels.length; ch++) {
-    //     let channel = _Driver.channels[ch];
-    //     channel.leds.fill(N);
-    //     channel.render();
-    // }
 }
 
 export function turn_off(): void {
     /* set all the colors to 0 */
     render([OFF]);
-    // for (let ch = 0; ch < _Driver.channels.length; ch++) {
-    //     let channel = _Driver.channels[ch];
-    //     channel.leds.fill(OFF);
-    //     channel.render();
-    // }
 }
 
 export function random_colors(): void {
@@ -166,8 +147,6 @@ export function random_colors(): void {
         let channel = driver.channels[ch];
         for (let i = 0; i < channel.leds.length; i++)
             C.push(Math.floor(Math.random() * ((1 << 24) - 1)));
-        // channel.leds[i] =
-        // channel.render();
     }
     render(C);
 }
