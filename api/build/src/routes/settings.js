@@ -12,7 +12,7 @@ const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
 exports.default = router;
 const schemata = {
-    GENERAL_SETTINGS: {
+    GENERAL: {
         type: "object",
         properties: {
             delay_ms: { type: "number" },
@@ -48,7 +48,7 @@ const schemata = {
 router.get("/:type", async (req, res) => {
     if (!(req.params.type in schemata)) {
         res.status(500);
-        return res.send(`invalid type attribute "${req.params.type}"`);
+        return res.send(`invalid type attribute "${req.params.type}". known types: ${Object.keys(schemata)}`);
     }
     const results = await db_1.adminStore.findOne({ type: req.params.type }, { _id: 0, type: 0 });
     console.log(`found settings of type "${req.params.type}":`, results);

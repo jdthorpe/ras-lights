@@ -10,7 +10,7 @@ const router = Router();
 export default router;
 
 const schemata: { [x: string]: any } = {
-    GENERAL_SETTINGS: {
+    GENERAL: {
         type: "object",
         properties: {
             delay_ms: { type: "number" },
@@ -47,7 +47,11 @@ const schemata: { [x: string]: any } = {
 router.get("/:type", async (req: Request, res: Response) => {
     if (!(req.params.type in schemata)) {
         res.status(500);
-        return res.send(`invalid type attribute "${req.params.type}"`);
+        return res.send(
+            `invalid type attribute "${
+                req.params.type
+            }". known types: ${Object.keys(schemata)}`
+        );
     }
 
     const results = await adminStore.findOne(
