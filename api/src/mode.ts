@@ -218,9 +218,13 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             if (this_show === current_show && ajv.validate(schema, colors))
                 set_colors(colors);
             const end = performance.now();
-            const d = 
-            if(end - start)
-                console.log(`duration: ${(d).toFixed(1)} since: ${ (start - prev_start ).toFixed(1)}`);
+            const d = end - start;
+            if (d > 100)
+                console.log(
+                    `duration: ${d.toFixed(1)} since: ${(
+                        start - prev_start
+                    ).toFixed(1)}`
+                );
             prev_start = start;
             resolve();
         });
