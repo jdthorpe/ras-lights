@@ -1,14 +1,10 @@
-import { register } from "../register";
-
-interface input {
-    a: rgb;
-}
-
-function solid(x: input): rgb[] {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const register_1 = require("../register");
+function solid(x) {
     return [x.a];
 }
-
-register({
+(0, register_1.register)({
     name: "Solid",
     func: solid,
     input: [

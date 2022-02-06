@@ -1,40 +1,26 @@
-import { register } from "../register";
-import { average } from "./utils";
-
-interface input {
-    a: rgb;
-    b: rgb;
-    fade: number;
-    hold: number;
-}
-
-function alternate(
-    this: { start_time: number; cycle_time: number },
-    x: input
-): rgb {
-    if (
-        typeof this.start_time === "undefined" ||
-        typeof this.cycle_time === "undefined"
-    ) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const register_1 = require("../register");
+const utils_1 = require("./utils");
+function alternate(x) {
+    if (typeof this.start_time === "undefined" ||
+        typeof this.cycle_time === "undefined") {
         this.start_time = +new Date();
         this.cycle_time = 2 * (x.fade + x.hold);
     }
-
-    const offset: number = (+new Date() - this.start_time) % this.cycle_time;
-
+    const offset = (+new Date() - this.start_time) % this.cycle_time;
     if (offset < x.hold) {
         return x.b;
     }
     if (offset < x.hold + x.fade) {
-        return average(x.b, x.a, (offset - x.hold) / x.fade);
+        return (0, utils_1.average)(x.b, x.a, (offset - x.hold) / x.fade);
     }
     if (offset < 2 * x.hold + x.fade) {
         return x.a;
     }
-    return average(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
+    return (0, utils_1.average)(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
 }
-
-register({
+(0, register_1.register)({
     name: "Alternate",
     func: alternate,
     input: [
