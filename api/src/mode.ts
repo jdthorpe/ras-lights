@@ -12,6 +12,12 @@ import { adminStore } from "./db";
 import { general_settings } from "shared/types/admin";
 import { performance } from "perf_hooks";
 
+// sudo systemctl stop bluetooth.service && sudo systemctl disable bluetooth.service
+// sudo systemctl stop cups.service && sudo systemctl disable cups.service
+// sudo systemctl stop alsa-state.service && sudo systemctl disable alsa-state.service
+// sudo systemctl stop hciuart.service && sudo systemctl disable hciuart.service
+// sudo systemctl stop cups-browsed.service && sudo systemctl disable cups-browsed.service
+
 let DELAY_MS = 50;
 let leds: number;
 
@@ -211,22 +217,28 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
         });
 
         const render = new Promise<void>((resolve) => {
-            const start = performance.now();
+            const A = performance.now();
             before && before();
+            const B = performance.now();
             const colors = mode();
+            const C = performance.now();
             after && after();
+            const D = performance.now();
             if (this_show === current_show && ajv.validate(schema, colors))
                 set_colors(colors);
             const end = performance.now();
-            const d = end - start;
+            const d = D - A;
+            // // THIS WAY MADNESS LIES:
             if (d > 100) {
                 console.log(
-                    `duration: ${d.toFixed(1)} since: ${(
-                        start - prev_error
-                    ).toFixed(1)}`
+                    ` total:
+                    total: ${d.toFixed(1)} before: ${(B - A).toFixed(
+                        1
+                    )} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(
+                        1
+                    )} since: ${(A - prev_error).toFixed(1)}`
                 );
-
-                prev_error = start;
+                prev_error = A;
             }
             resolve();
         });

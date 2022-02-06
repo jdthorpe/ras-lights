@@ -11,6 +11,11 @@ const driver_1 = require("./driver");
 const db_1 = require("./db");
 const db_2 = require("./db");
 const perf_hooks_1 = require("perf_hooks");
+// sudo systemctl stop bluetooth.service && sudo systemctl disable bluetooth.service
+// sudo systemctl stop cups.service && sudo systemctl disable cups.service
+// sudo systemctl stop alsa-state.service && sudo systemctl disable alsa-state.service
+// sudo systemctl stop hciuart.service && sudo systemctl disable hciuart.service
+// sudo systemctl stop cups-browsed.service && sudo systemctl disable cups-browsed.service
 let DELAY_MS = 50;
 let leds;
 async function reset_delay() {
@@ -173,17 +178,22 @@ function create_loop(mode, before, after) {
             setTimeout(() => resolve(), DELAY_MS);
         });
         const render = new Promise((resolve) => {
-            const start = perf_hooks_1.performance.now();
+            const A = perf_hooks_1.performance.now();
             before && before();
+            const B = perf_hooks_1.performance.now();
             const colors = mode();
+            const C = perf_hooks_1.performance.now();
             after && after();
+            const D = perf_hooks_1.performance.now();
             if (this_show === current_show && ajv.validate(schema, colors))
                 (0, driver_1.set_colors)(colors);
             const end = perf_hooks_1.performance.now();
-            const d = end - start;
+            const d = D - A;
+            // // THIS WAY MADNESS LIES:
             if (d > 100) {
-                console.log(`duration: ${d.toFixed(1)} since: ${(start - prev_error).toFixed(1)}`);
-                prev_error = start;
+                console.log(` total:
+                    total: ${d.toFixed(1)} before: ${(B - A).toFixed(1)} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(1)} since: ${(A - prev_error).toFixed(1)}`);
+                prev_error = A;
             }
             resolve();
         });
