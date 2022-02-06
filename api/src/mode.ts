@@ -10,6 +10,7 @@ import { mode } from "shared/types/mode";
 import { ui } from "shared/types/user-input";
 import { adminStore } from "./db";
 import { general_settings } from "shared/types/admin";
+import { performance } from "perf_hooks";
 
 let DELAY_MS = 50;
 let leds: number;
@@ -201,6 +202,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
 
 type cb = () => void;
 
+let prev_start = 0;
 function create_loop(mode: mode, before?: cb, after?: cb): void {
     const this_show = ++current_show;
     const run = () => {
@@ -209,11 +211,15 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
         });
 
         const render = new Promise<void>((resolve) => {
+            const start = performance.now();
             before && before();
             const colors = mode();
             after && after();
             if (this_show === current_show && ajv.validate(schema, colors))
                 set_colors(colors);
+            const end = performance.now();
+            console.log(`duration ${(end - start).toFixed(1)}`);
+            prev_start = start;
             resolve();
         });
 

@@ -10,6 +10,7 @@ const driver_1 = require("./driver");
 // import settings from "./settings";
 const db_1 = require("./db");
 const db_2 = require("./db");
+const perf_hooks_1 = require("perf_hooks");
 let DELAY_MS = 50;
 let leds;
 async function reset_delay() {
@@ -164,6 +165,7 @@ async function setMode(new_mode) {
     create_loop(mode, before, after);
 }
 exports.setMode = setMode;
+let prev_start = 0;
 function create_loop(mode, before, after) {
     const this_show = ++current_show;
     const run = () => {
@@ -171,11 +173,15 @@ function create_loop(mode, before, after) {
             setTimeout(() => resolve(), DELAY_MS);
         });
         const render = new Promise((resolve) => {
+            const start = perf_hooks_1.performance.now();
             before && before();
             const colors = mode();
             after && after();
             if (this_show === current_show && ajv.validate(schema, colors))
                 (0, driver_1.set_colors)(colors);
+            const end = perf_hooks_1.performance.now();
+            console.log(`duration ${(end - start).toFixed(1)}`);
+            prev_start = start;
             resolve();
         });
         Promise.all([delay, render]).then(() => {

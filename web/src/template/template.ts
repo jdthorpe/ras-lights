@@ -12,22 +12,22 @@ function templateBuilder(args: templateParams): string {
         return str;
     };
 
-    return builder`import { register } from "../../register";
+    return builder`import { register } from "../register";
 ${interfaces}
 function effect(this: any, x: input, globals: globals): ${output_type} {
     // Your code goes here...
 }
 
-register(
+register({
     /* Effect Name */
-    "${(args: templateParams) => args.effectName}",
+    name: "${(args: templateParams) => args.effectName}",
     /* Effect Function */
-    effect,
+    func: effect,
     /* Effect Inputs */
-    ${inputs},
+    input: ${inputs},
     /* Effect Output Type */
-    "${output_type}"
-);
+    output: "${output_type}"
+});
 `;
 }
 
