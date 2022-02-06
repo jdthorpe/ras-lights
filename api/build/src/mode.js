@@ -15,7 +15,7 @@ let leds;
 async function reset_delay() {
     const settings = await db_2.adminStore.findOne({ type: "GENERAL" }, { _id: 0 });
     if (settings !== null) {
-        settings.delay_ms && (DELAY_MS = settings?.delay_ms);
+        settings.delay_ms && (DELAY_MS = settings.delay_ms);
     }
     const series = settings && typeof settings.series !== undefined
         ? settings.series

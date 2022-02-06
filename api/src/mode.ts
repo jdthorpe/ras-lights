@@ -21,7 +21,7 @@ export async function reset_delay() {
     );
 
     if (settings !== null) {
-        settings.delay_ms && (DELAY_MS = settings?.delay_ms);
+        settings.delay_ms && (DELAY_MS = settings.delay_ms);
     }
 
     const series =
