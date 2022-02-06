@@ -208,6 +208,8 @@ export async function setMode(new_mode: string | show): Promise<void> {
 
 type cb = () => void;
 
+const drive_yourself_crazy_trying_to_debug_periodic_delays = false;
+
 let prev_error = performance.now();
 function create_loop(mode: mode, before?: cb, after?: cb): void {
     const this_show = ++current_show;
@@ -229,7 +231,10 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             const E = performance.now();
             const d = E - A;
             // // THIS WAY MADNESS LIES:
-            if (d > 100) {
+            if (
+                drive_yourself_crazy_trying_to_debug_periodic_delays &&
+                d > 100
+            ) {
                 console.log(
                     `total: ${d.toFixed(1)} before: ${(B - A).toFixed(
                         1

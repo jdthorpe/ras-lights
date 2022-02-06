@@ -170,6 +170,7 @@ async function setMode(new_mode) {
     create_loop(mode, before, after);
 }
 exports.setMode = setMode;
+const drive_yourself_crazy_trying_to_debug_periodic_delays = false;
 let prev_error = perf_hooks_1.performance.now();
 function create_loop(mode, before, after) {
     const this_show = ++current_show;
@@ -190,7 +191,8 @@ function create_loop(mode, before, after) {
             const E = perf_hooks_1.performance.now();
             const d = E - A;
             // // THIS WAY MADNESS LIES:
-            if (d > 100) {
+            if (drive_yourself_crazy_trying_to_debug_periodic_delays &&
+                d > 100) {
                 console.log(`total: ${d.toFixed(1)} before: ${(B - A).toFixed(1)} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(1)} render: ${(E - D).toFixed(1)} since: ${(A - prev_error).toFixed(1)}`);
                 prev_error = A;
             }
