@@ -202,7 +202,7 @@ export async function setMode(new_mode: string | show): Promise<void> {
 
 type cb = () => void;
 
-let prev_start = 0;
+let prev_error = performance.now();
 function create_loop(mode: mode, before?: cb, after?: cb): void {
     const this_show = ++current_show;
     const run = () => {
@@ -219,13 +219,15 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
                 set_colors(colors);
             const end = performance.now();
             const d = end - start;
-            if (d > 100)
+            if (d > 100) {
                 console.log(
                     `duration: ${d.toFixed(1)} since: ${(
-                        start - prev_start
+                        start - prev_error
                     ).toFixed(1)}`
                 );
-            prev_start = start;
+
+                prev_error = start;
+            }
             resolve();
         });
 

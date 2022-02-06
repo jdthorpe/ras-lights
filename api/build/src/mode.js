@@ -165,7 +165,7 @@ async function setMode(new_mode) {
     create_loop(mode, before, after);
 }
 exports.setMode = setMode;
-let prev_start = 0;
+let prev_error = perf_hooks_1.performance.now();
 function create_loop(mode, before, after) {
     const this_show = ++current_show;
     const run = () => {
@@ -181,9 +181,10 @@ function create_loop(mode, before, after) {
                 (0, driver_1.set_colors)(colors);
             const end = perf_hooks_1.performance.now();
             const d = end - start;
-            if (d > 100)
-                console.log(`duration: ${d.toFixed(1)} since: ${(start - prev_start).toFixed(1)}`);
-            prev_start = start;
+            if (d > 100) {
+                console.log(`duration: ${d.toFixed(1)} since: ${(start - prev_error).toFixed(1)}`);
+                prev_error = start;
+            }
             resolve();
         });
         Promise.all([delay, render]).then(() => {
