@@ -6,3 +6,4 @@ require("./gradient");
 require("./rainbow-stripes");
 require("./rotate");
 require("./solid");
+require("./unzip");
