@@ -12,26 +12,29 @@ function alternate(
     this: { start_time: number; cycle_time: number },
     x: input
 ): rgb {
+    // convert seconds to milliseconds
+    const hold = x.hold * 1000;
+    const fade = x.fade * 1000;
     if (
         typeof this.start_time === "undefined" ||
         typeof this.cycle_time === "undefined"
     ) {
         this.start_time = +new Date();
-        this.cycle_time = 2 * (x.fade + x.hold);
+        this.cycle_time = 2 * (fade + hold);
     }
 
     const offset: number = (+new Date() - this.start_time) % this.cycle_time;
 
-    if (offset < x.hold) {
+    if (offset < hold) {
         return x.b;
     }
-    if (offset < x.hold + x.fade) {
-        return average(x.b, x.a, (offset - x.hold) / x.fade);
+    if (offset < hold + fade) {
+        return average(x.b, x.a, (offset - hold) / fade);
     }
-    if (offset < 2 * x.hold + x.fade) {
+    if (offset < 2 * hold + fade) {
         return x.a;
     }
-    return average(x.a, x.b, (offset - (2 * x.hold + x.fade)) / x.fade);
+    return average(x.a, x.b, (offset - (2 * hold + fade)) / fade);
 }
 
 register({
@@ -53,16 +56,16 @@ register({
         {
             key: "fade",
             type: "number",
-            label: "Fade Time (ms)",
-            default: 1000,
+            label: "Fade Time (seconds)",
+            default: 1.5,
             min: 1,
             max: 3600000,
         },
         {
             key: "hold",
             type: "number",
-            label: "Hold Time (ms)",
-            default: 1000,
+            label: "Hold Time (seconds)",
+            default: 1.5,
             min: 1,
             max: 3600000,
         },
