@@ -187,12 +187,11 @@ function create_loop(mode, before, after) {
             const D = perf_hooks_1.performance.now();
             if (this_show === current_show && ajv.validate(schema, colors))
                 (0, driver_1.set_colors)(colors);
-            const end = perf_hooks_1.performance.now();
-            const d = D - A;
+            const E = perf_hooks_1.performance.now();
+            const d = E - A;
             // // THIS WAY MADNESS LIES:
             if (d > 100) {
-                console.log(` total:
-                    total: ${d.toFixed(1)} before: ${(B - A).toFixed(1)} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(1)} since: ${(A - prev_error).toFixed(1)}`);
+                console.log(`total: ${d.toFixed(1)} before: ${(B - A).toFixed(1)} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(1)} render: ${(E - D).toFixed(1)} since: ${(A - prev_error).toFixed(1)}`);
                 prev_error = A;
             }
             resolve();

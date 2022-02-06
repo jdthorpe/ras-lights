@@ -226,17 +226,18 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             const D = performance.now();
             if (this_show === current_show && ajv.validate(schema, colors))
                 set_colors(colors);
-            const end = performance.now();
-            const d = D - A;
+            const E = performance.now();
+            const d = E - A;
             // // THIS WAY MADNESS LIES:
             if (d > 100) {
                 console.log(
-                    ` total:
-                    total: ${d.toFixed(1)} before: ${(B - A).toFixed(
+                    `total: ${d.toFixed(1)} before: ${(B - A).toFixed(
                         1
                     )} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(
                         1
-                    )} since: ${(A - prev_error).toFixed(1)}`
+                    )} render: ${(E - D).toFixed(1)} since: ${(
+                        A - prev_error
+                    ).toFixed(1)}`
                 );
                 prev_error = A;
             }
