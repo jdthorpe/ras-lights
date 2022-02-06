@@ -1,5 +1,4 @@
 import express from "express";
-// import bodyParser from "body-parser";
 import lights from "./src/routes/lights";
 import mode from "./src/routes/mode";
 import lib from "./src/routes/lib";
@@ -8,10 +7,9 @@ import registry from "./src/routes/registry";
 import schedule from "./src/routes/schedule";
 import controller from "./src/routes/control";
 import settingsRoute from "./src/routes/settings";
-import settings from "./src/settings";
 
 const app = express();
-const port = (settings.api && settings.api.port) || 5000;
+const port = 5000; // this has to match the nginx config!!
 
 app.use(express.json());
 app.use("/lights", lights);

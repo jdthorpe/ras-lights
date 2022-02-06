@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const db_1 = require("../db");
+const mode_1 = require("../mode");
 const ajv_1 = __importDefault(require("ajv"));
 const ajv = new ajv_1.default();
 const router = (0, express_1.Router)();
@@ -69,7 +70,8 @@ router.post("/", async (req, res, next) => {
             res.status(500);
             return res.send(`invalid json payload`);
         }
-        db_1.adminStore.update({ type: body.type }, body, { upsert: true });
+        await db_1.adminStore.update({ type: body.type }, body, { upsert: true });
+        await (0, mode_1.reset_delay)();
     }
     catch (err) {
         return next(err);

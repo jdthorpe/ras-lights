@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
-import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import { TextField } from '@fluentui/react/lib/TextField';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 // import { Toggle } from '@fluentui/react/lib/Toggle';
 import { user_library_data } from 'shared/types/admin';
@@ -13,12 +13,6 @@ import { useBoolean } from '@fluentui/react-hooks';
 
 const dialogStyles = { main: { maxWidth: 450 } };
 
-const Row = styled.div`
-    display: flex;
-    flex-directio: row;
-    gap: 1rem;
-    align-items: flex-end;
-`
 
 const Table = styled.table`
     border-collapse: collapse;
@@ -43,11 +37,9 @@ const dialogContentProps = {
     subText: 'Are you sure you want to delete this library?',
 }
 
-const LibraryList: React.FC = ({ }) => {
-
+const LibraryList: React.FC = () => {
 
     const [libraries, set_libraries] = useState<user_library_data[]>()
-
 
     const fetchLibraries = async () => {
         const libs = await API.fetch_libraries()
@@ -57,7 +49,7 @@ const LibraryList: React.FC = ({ }) => {
     useEffect(() => {
         if (typeof libraries === "undefined")
             fetchLibraries()
-    }, [])
+    }, [libraries])
 
     if (typeof libraries === "undefined")
         return (<div><Spinner label="Loading Libraries..." size={SpinnerSize.large} /></div>)
@@ -104,7 +96,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
         set_active(true)
         if (path_error === REQUIRED && newValue && newValue.length)
             set_path_error(undefined)
-    }, [set_path])
+    }, [set_path, path_error])
 
     const onNameChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         set_name(newValue)
@@ -112,7 +104,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
         if (name_error === REQUIRED && newValue && newValue.length)
             set_name_error(undefined)
 
-    }, [set_path])
+    }, [name_error])
 
     const onAddLibrary = useCallback(async () => {
         if (!active) { return }
@@ -139,7 +131,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
             set_save_error(((error as any).message || "Something went wrong"))
         }
         update()
-    }, [name, path, active, set_active])
+    }, [name, path, active, set_active, update])
 
     return (
         <>
@@ -185,7 +177,7 @@ const LibRow: React.FC<{ lib: user_library_data, rowkey: number, update: { (): v
         set_active(false)
         await API.delete_library(lib.name)
         update()
-    }, [lib, active])
+    }, [lib, active, update])
 
 
     return (

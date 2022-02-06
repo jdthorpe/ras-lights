@@ -4,7 +4,8 @@ import useSize from '@react-hook/size'
 import { BooleanValue } from './boolean-input';
 import { ButtonValue } from './button-input';
 // import { ButtonInput } from "./button-input"
-import { ColorArrayValue, ColorValue } from './color-input';
+import { ColorArrayValue, ColorValue, WArrayValue } from './color-input';
+import { RGBWArrayValue, RGBWValue } from './rgbw-input';
 
 import {
     input,
@@ -13,6 +14,9 @@ import {
     range_input,
     color_input,
     color_array_input,
+    rgbw_array_input,
+    rgbw_input,
+    number_array_input,
     button_input,
     signatures,
 } from "shared/types/parameters"
@@ -20,7 +24,8 @@ import { NumberValue } from './number-input';
 import { Label } from '@fluentui/react/lib/Label';
 import {
     bool_value, func_config, mode_param,
-    num_value, rgb_array_value, rgb_value, button_value
+    num_value, rgb_array_value, rgbw_array_value,
+    rgbw_value, rgb_value, button_value, num_array_value
 } from "shared/types/mode";
 import { EditorContext, pathEquals } from '../editor';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -198,6 +203,22 @@ const Parameter: React.FC<parameterProps> = ({ config, value, path }) => {
                 spec={config as color_array_input}
                 value={(value as rgb_array_value).value}
             />
+        case "rgbw":
+            return <RGBWValue
+                spec={config as rgbw_input}
+                value={(value as rgbw_value).value}
+            />
+        case "rgbw[]":
+            return <RGBWArrayValue
+                spec={config as rgbw_array_input}
+                value={(value as rgbw_array_value).value}
+            />
+        case "number[]":
+            return <WArrayValue
+                spec={config as number_array_input}
+                value={(value as num_array_value).value}
+            />
+
         case "button":
             return <ButtonValue
                 spec={config as button_input}

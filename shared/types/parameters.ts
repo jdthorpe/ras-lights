@@ -51,6 +51,11 @@ export interface range_input extends generic_input {
     max: number;
 }
 
+export interface number_array_input extends generic_input {
+    type: "number[]";
+    default: number[];
+}
+
 export interface rgbw_input extends generic_input {
     type: "rgbw";
     default: rgbw;
@@ -71,13 +76,21 @@ export interface color_array_input extends generic_input {
     default: rgb[];
 }
 
+export interface rgbw_array_input extends generic_input {
+    type: "rgbw[]";
+    default: rgbw[];
+}
+
 export type input =
     | boolean_input
     | button_input
     | integer_input
+    | number_array_input
     | range_input
     | color_input
-    | color_array_input;
+    | color_array_input
+    | rgbw_input
+    | rgbw_array_input;
 
 export interface signature {
     input: input[];

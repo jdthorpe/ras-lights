@@ -58,7 +58,7 @@ export const SliderConfig: React.FC<ConfigProps> = ({ el, spec, onChange }) => {
             set_el(el)
             set_spec(spec)
         }
-    }, [el, spec])
+    }, [el, spec, _el, _spec])
 
     return (
         <Slider

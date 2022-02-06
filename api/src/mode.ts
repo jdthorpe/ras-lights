@@ -2,13 +2,50 @@ import Ajv from "ajv";
 import { build_node, registry } from "shared";
 import { turn_off, set_colors } from "./driver";
 import { show, func_config } from "shared/types/mode";
-import settings from "./settings";
+import { channel, IDriver } from "shared/types/admin";
+// import settings from "./settings";
 import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
 import { mode } from "shared/types/mode";
 import { ui } from "shared/types/user-input";
+import { adminStore } from "./db";
+import { general_settings } from "shared/types/admin";
 
-const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
+let DELAY_MS = 50;
+let leds: number;
+
+export async function reset_delay() {
+    const settings = await adminStore.findOne<general_settings>(
+        { type: "GENERAL" },
+        { _id: 0 }
+    );
+
+    if (settings !== null) {
+        settings.delay_ms && (DELAY_MS = settings?.delay_ms);
+    }
+
+    const series =
+        settings && typeof settings.series !== undefined
+            ? settings.series
+            : true;
+
+    const driver_spec = await adminStore.findOne<IDriver>(
+        { type: "DRIVER" },
+        { _id: 0 }
+    );
+
+    if (driver_spec === null) {
+        console.log("fetched driver spec was null");
+        return;
+    }
+
+    leds = 0;
+    for (let i in driver_spec.channels) {
+        let ch = driver_spec.channels[i];
+        leds = series ? leds + ch.count : Math.max(leds, ch.count);
+    }
+}
+reset_delay();
 
 const ajv = new Ajv();
 const schema = {
@@ -35,11 +72,9 @@ async function get_show(name: string): Promise<show> {
 }
 
 async function get_mode(show: show): Promise<mode> {
-    // if (name in modes) return modes[name];
     const func = build_node(show.def as func_config, {
-        leds: settings.ws281x.leds,
+        leds, // : settings.ws281x.leds,
     });
-    // modes[name] = func;
     return func;
 }
 

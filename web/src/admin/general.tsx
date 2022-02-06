@@ -20,7 +20,7 @@ const DataRow = styled.div`
     padding-right: 12px;
 `
 
-const default_settings: general_settings = {
+export const default_settings: general_settings = {
     delay_ms: 50,
     series: false,
     tabs: {
@@ -41,10 +41,13 @@ const GeneralSettings: React.FC = () => {
     const [modified, set_modified] = useState(false)
 
     useEffect(() => {
+        let canceled = false;
         (async () => {
             try {
                 const res = await fetch("/api/settings/GENERAL")
+                if (canceled) return
                 let settings: general_settings = await res.json()
+                if (canceled) return
                 console.log("DB settings: ", settings)
                 // previous state
                 set_initial_settings(settings)
@@ -65,6 +68,7 @@ const GeneralSettings: React.FC = () => {
                 console.log("dB driver error: ", err)
             }
         })()
+        return () => { canceled = true }
     }, [])
 
     useEffect(() => {
@@ -78,6 +82,7 @@ const GeneralSettings: React.FC = () => {
             return
         }
 
+        let canceled = false;
         const next = { "type": "GENERAL", tabs, series, delay_ms }
         await fetch("/api/settings/", {
             method: "POST",
@@ -85,14 +90,16 @@ const GeneralSettings: React.FC = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(next)
         })
-        set_initial_settings(next)
+        if (canceled) return
+        set_initial_settings({ tabs, series, delay_ms })
+        return () => canceled = true;
     }, [tabs, series, delay_ms])
 
     if (typeof tabs === "undefined" || typeof series === "undefined")
         return <div>Loading...</div>
     return <div>
         <Row>
-            <h3>General Settings</h3>
+            <h2>General Settings</h2>
             <PrimaryButton
                 label="Save"
                 onClick={save}
@@ -113,12 +120,12 @@ const GeneralSettings: React.FC = () => {
                 checked={series}
             />
         </Row>
-        <h3>Tab visibility</h3>
+        <h3 style={{ marginTop: "1rem" }}>Tab visibility *</h3>
         {surfaces.map((s, i) =>
             <DataRow
                 key={i}
                 style={{ backgroundColor: (i % 2 ? "none" : "#dddddd") }}>
-                <h4 style={{ minWidth: "5rem" }}>{s}</h4>
+                <h3 style={{ minWidth: "5rem", alignSelf: "center" }}>{s}</h3>
                 <Tabs
                     tabs={tabs[s]}
                     onChange={(t: tab_lookup) => {
@@ -128,6 +135,7 @@ const GeneralSettings: React.FC = () => {
                     }}
                 />
             </DataRow>)}
+        <p>*These settings only affect the tabs which appear at the top of he page. Each page can still be navigated to directly via it's URL, such as <span style={{ fontFamily: "monospace" }}>{window.location.href}</span></p>
     </div >
 }
 

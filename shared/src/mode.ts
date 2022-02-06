@@ -59,74 +59,19 @@ function _build_node(
                 }
                 break;
             }
-            case "integer": {
-                switch (param.type) {
-                    case "integer": {
-                        args[param.key] = input_value.value;
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
-            case "button": {
-                switch (param.type) {
-                    case "button": {
-                        args[param.key] = input_value.value;
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
-            case "rgb": {
-                switch (param.type) {
-                    case "rgb": {
-                        args[param.key] = input_value.value;
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
+            case "boolean":
+            case "integer":
+            case "button":
+            case "number[]":
+            case "rgbw":
+            case "rgbw[]":
+            case "rgb":
             case "rgb[]": {
-                switch (param.type) {
-                    case "rgb[]": {
-                        args[param.key] = input_value.value;
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
-                break;
-            }
-            case "boolean": {
-                switch (param.type) {
-                    case "boolean": {
-                        args[param.key] = input_value.value;
-                        break;
-                    }
-                    default: {
-                        throw new Error(
-                            `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
-                        );
-                    }
-                }
+                if (param.type !== input_value.type)
+                    throw new Error(
+                        `Parameter type ${input_value.type} is not compatible with input type ${param.type}`
+                    );
+                args[param.key] = input_value.value;
                 break;
             }
             default: {

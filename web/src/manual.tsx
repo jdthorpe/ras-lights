@@ -74,17 +74,22 @@ const Manual: React.FC = () => {
         set_on(false)
         setColor(colorObj)
         update_color(colorObj, on)
-    }, 25), [setColor, update_color, on]);
+    }, 25), [setColor, update_color, set_on, on]);
 
     const set_random = React.useCallback(debounce(() => {
         set_on(false)
         setRandomColors(on)
-    }, 25), [on]);
+    }, 25),
+
+        // @ts-ignore
+        [on, set_on]);
 
     const slider_cb = React.useCallback(debounce((n: number) => {
         set_on(false)
         setWhiteIntensity(on, n)
-    }, 25), [on]);
+    }, 25),
+        // @ts-ignore
+        [on, set_on]);
 
     return (
         <div style={{ margin: "1.5rem" }}>

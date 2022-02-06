@@ -1,3 +1,4 @@
+/*
 import { readFileSync } from "fs";
 import { join } from "path";
 import ini from "ini";
@@ -21,3 +22,5 @@ const settings: Isettings = ini.parse(
 ) as Isettings;
 
 export default settings;
+
+*/

@@ -1,27 +1,29 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
 import styled from "styled-components"
-import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
+import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Label } from '@fluentui/react/lib/Label';
 import { Toggle } from '@fluentui/react/lib/Toggle';
-import { rgb } from "shared/types/mode"
-import { value, input, button_input } from 'shared/types/parameters';
+import { rgb, rgbw } from "shared/types/mode"
+import { value, input } from 'shared/types/parameters';
 import { Color, ColorArray } from "../editor/inputs/color-input";
 import { is_int, is_number } from "../editor/inputs/number-input";
 import { IconButton } from "../utils/icon-button";
-// import equal from "fast-deep-equal"
 
 import { faTimes, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
-const VALUE_TYPES: value[] = ["button", "boolean", "integer", "number", "rgb", "rgb[]"]
-const VALUE_LABELS: { [key: string]: string } = {
+const VALUE_LABELS: Record<value, string> = {
     "button": "Button",
     "boolean": "Boolean",
     "integer": "Integer",
     "number": "Number",
     "rgb": "Color",
+    "rgbw": "RGB+W",
     "rgb[]": "Color Array",
+    "rgbw[]": "RGB+W Array",
+    "number[]": "W Array",
 }
+const VALUE_TYPES: value[] = Object.keys(VALUE_LABELS) as value[]
 const VALUE_ITEMS = VALUE_TYPES.map(t => ({ key: t, text: VALUE_LABELS[t] }))
 
 const descriptionTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "10rem" } };
@@ -37,13 +39,15 @@ const Row = styled.div`
 
 const is_js_identifier = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
 
-interface props {
-    input: input;// | undefined;
+interface cb {
     onChange: (x: input) => void;
     onRemove: () => void;
     onActivate?: () => void;
     onUp?: () => void;
     onDown?: () => void;
+}
+interface props extends cb {
+    input: input;// | undefined;
 }
 
 const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, onUp, onDown }) => {
@@ -55,22 +59,39 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
     const [key_error, set_key_error] = useState<string | undefined>("");
     const [label, set_label] = useState<string>(input ? input.label : "");
 
+    // DEFAULT VALUES
     const [bool, set_bool] = useState<boolean>(false);
     const [color, set_color] = useState<rgb>((input && input.type === "rgb") ? input.default : [0, 0, 255]);
     const [color_array, set_color_array] = useState<rgb[]>([[0, 0, 255], [0, 255, 255], [100, 0, 255],]);
+    // const [rgbw, set_rgbw] = useState<rgbw>([0, 0, 255, 127]);
+    // const [rgbw_array, set_rgbw_array] = useState<rgbw[]>([[0, 0, 255, 0], [0, 255, 255, 127], [100, 0, 255, 255],]);
+    // const [w_array, set_w_array] = useState<number[]>([0, 63, 127, 191, 255]);
     const [button_label, set_button_label] = useState<string>("My Button");
     const [number, set_number] = useState<string>("5");
     const [min, set_min] = useState<string>("1");
     const [max, set_max] = useState<string>("10");
+    // since there aren't pickers for these, we don't need setters
+    const rgbw: rgbw = [0, 0, 255, 127];
+    const rgbw_array: rgbw[] = [[0, 0, 255, 0], [0, 255, 255, 127], [100, 0, 255, 255],];
+    const w_array: number[] = [0, 63, 127, 191, 255];
+
+    const cb = useRef<cb>({ onChange, onRemove, onActivate, onUp, onDown })
+    cb.current = { onChange, onRemove, onActivate, onUp, onDown }
+
+    // useEffect(() => console.log("[A]input did change"), [input])
+    // useEffect(() => console.log("[A]_input did change"), [_input])
 
     useEffect(() => {
+        /* respond to changes from the outside world */
         if (input === _input)
             return
         if (typeof input === "undefined")
             return
+
         set_key(input.key)
         set_value_type(input.type)
         set_label(input.label)
+
         switch (input.type) {
             case "boolean":
                 set_bool(input.default)
@@ -81,6 +102,9 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
             case "rgb[]":
                 set_color_array(input.default)
                 break
+            case "number[]":
+            case "rgbw":
+            case "rgbw[]":
             case "button":
                 break
             case "integer":
@@ -93,19 +117,34 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
                 const checker: never = input
                 console.log(checker)
         }
-    }, [input])
+    }, [input, _input])
+
+    // useEffect(() => console.log("[B]type DID change"), [type])
+    // useEffect(() => console.log("[B]key DID change"), [key])
+    // useEffect(() => console.log("[B]label DID change"), [label])
+    // useEffect(() => console.log("[B]bool DID change"), [bool])
+    // useEffect(() => console.log("[B]color DID change"), [color])
+    // useEffect(() => console.log("[B]color_array DID change"), [color_array])
+    // useEffect(() => console.log("[B]number DID change"), [number])
+    // useEffect(() => console.log("[B]min DID change"), [min])
+    // useEffect(() => console.log("[B]max DID change"), [max])
+    // useEffect(() => console.log("[B]button_label DID change"), [button_label])
+    // useEffect(() => console.log("[B]onChange DID change"), [onChange])
 
     useEffect(() => {
-        // if (typeof type === "undefined")
-        //     return onChange()
-        // if (!key || !label || !type)
-        //     return onChange()
+        /* send updates to the outside world */
         let input: input | undefined;
 
         switch (type) {
             case "rgbw":
+                input = { type, key, label, default: rgbw }
+                break
             case "rgbw[]":
+                input = { type, key, label, default: rgbw_array }
+                break
             case "number[]":
+                input = { type, key, label, default: w_array }
+
                 break
             case "number":
             case "integer":
@@ -135,11 +174,12 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         }
         if (typeof input !== "undefined") {
             set_input(input)
-            onChange(input)
+            cb.current.onChange(input)
         }
-    }, [type, key, label, bool, color, color_array, number, min, max, button_label,])
+    }, [type, key, label, bool, color, color_array, number, min, max, button_label])
 
     useEffect(() => {
+        /* validation for the key field */
         if (typeof key === "undefined") {
             set_key_error(undefined)
             return
@@ -154,6 +194,9 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         }
         set_key_error(undefined)
     }, [key, set_key_error])
+
+    // useEffect(() => console.log("[C] key did change"), [key])
+    // useEffect(() => console.log("[C] set_key_error did change"), [set_key_error])
 
     return <Row onClick={onActivate}>
         <Dropdown
@@ -228,17 +271,17 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
             buttonStyle={{ marginTop: "2rem" }}
             title="Move Up"
             icon={faChevronUp}
-            onClick={onUp} />
+            onClick={cb.current.onUp} />
         < IconButton
             buttonStyle={{ marginTop: "2rem" }}
             title="Move Down"
             icon={faChevronDown}
-            onClick={onDown} />
+            onClick={cb.current.onDown} />
         < IconButton
             buttonStyle={{ marginTop: "2rem" }}
             title="Remove Input"
             icon={faTimes}
-            onClick={onRemove} />
+            onClick={cb.current.onRemove} />
     </Row>
 }
 
@@ -276,7 +319,7 @@ const NumField: React.FC<numProps> = ({ label, value, set_value, styles, type })
             return
         }
         set_error(undefined)
-    }, [value, set_error])
+    }, [value, set_error, type])
 
     return <TextField
         label={label}

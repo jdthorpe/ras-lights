@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect } from "react"
 import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { value } from "shared/types/parameters"
 
-const VALUE_TYPES: value[] = ["boolean", "integer", "number", "rgb", "rgb[]"]
+const VALUE_TYPES: value[] = ["boolean", "integer", "number", "number[]", "rgb", "rgb[]", "rgbw[]"]
 const VALUE_LABELS: { [key: string]: string } = {
     "button": "Button",
     "boolean": "Boolean",
     "integer": "Integer",
     "number": "Number",
+    "number[]": "W Array",
     "rgb": "Color",
     "rgb[]": "Color Array",
+    "rgbw[]": "RGB+W Array",
 }
 const VALUE_ITEMS = VALUE_TYPES.map(t => ({ key: t, text: VALUE_LABELS[t] }))
 
@@ -24,7 +26,7 @@ interface ValuePickerProps {
     label?: string;
 }
 const ValuePicker: React.FC<ValuePickerProps> = ({ value, onChange, placeholder, label }) => {
-    const [_value, _set_value] = useState<value | undefined>(value)
+    const [_value, _set_value] = useState<value | undefined>(value || "rgb[]")
     useEffect(() => _set_value(value), [value])
     useEffect(() => {
         _value && onChange(_value)

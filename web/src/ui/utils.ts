@@ -22,10 +22,12 @@ interface ItoolContextProps {
     clear: () => void;
 }
 
-let Tool: FC = () => null;
+// let Tool: FC = () => null;
 
 export const ToolContext = createContext<ItoolContextProps>({
     // get: () => Tool,
-    setPreview: (x: FC) => (Tool = x),
+    setPreview: (x: FC) => {
+        /* pass */
+    }, // (Tool = x),
     clear: () => () => null,
 });

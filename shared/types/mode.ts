@@ -64,10 +64,13 @@ export interface rgbw_value extends generic_value_instance {
     // ui?: "color-picker";
 }
 
+export interface num_array_value extends generic_value_instance {
+    type: "number[]";
+    value: number[];
+}
 export interface rgbw_array_value extends generic_value_instance {
     type: "rgbw[]";
     value: rgbw[];
-    // ui?: "color[]-picker";
 }
 
 export interface rgb_value extends generic_value_instance {
@@ -100,7 +103,10 @@ export interface button_value extends generic_value_instance {
 export type value_instance =
     | button_value
     | bool_value
+    | rgbw_array_value
+    | num_array_value
     | rgb_array_value
     | rgb_value
+    | rgbw_value
     | int_value
     | num_value;

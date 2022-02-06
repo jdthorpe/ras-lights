@@ -3,13 +3,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMode = exports.stop = exports.set_updates = exports.get_updates = void 0;
+exports.setMode = exports.stop = exports.set_updates = exports.get_updates = exports.reset_delay = void 0;
 const ajv_1 = __importDefault(require("ajv"));
 const shared_1 = require("shared");
 const driver_1 = require("./driver");
-const settings_1 = __importDefault(require("./settings"));
+// import settings from "./settings";
 const db_1 = require("./db");
-const DELAY_MS = (settings_1.default.api && settings_1.default.api.loop_delay_ms) || 50;
+const db_2 = require("./db");
+let DELAY_MS = 50;
+let leds;
+async function reset_delay() {
+    const settings = await db_2.adminStore.findOne({ type: "GENERAL" }, { _id: 0 });
+    if (settings !== null) {
+        settings.delay_ms && (DELAY_MS = settings?.delay_ms);
+    }
+    const series = settings && typeof settings.series !== undefined
+        ? settings.series
+        : true;
+    const driver_spec = await db_2.adminStore.findOne({ type: "DRIVER" }, { _id: 0 });
+    if (driver_spec === null) {
+        console.log("fetched driver spec was null");
+        return;
+    }
+    leds = 0;
+    for (let i in driver_spec.channels) {
+        let ch = driver_spec.channels[i];
+        leds = series ? leds + ch.count : Math.max(leds, ch.count);
+    }
+}
+exports.reset_delay = reset_delay;
+reset_delay();
 const ajv = new ajv_1.default();
 const schema = {
     type: "array",
@@ -33,11 +56,9 @@ async function get_show(name) {
     }
 }
 async function get_mode(show) {
-    // if (name in modes) return modes[name];
     const func = (0, shared_1.build_node)(show.def, {
-        leds: settings_1.default.ws281x.leds,
+        leds, // : settings.ws281x.leds,
     });
-    // modes[name] = func;
     return func;
 }
 // ----------------------------------------

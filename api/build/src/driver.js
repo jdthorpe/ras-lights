@@ -59,7 +59,16 @@ const B = 0x00000001;
 // });
 let driver;
 let driver_spec;
+let render_in_series = true;
 async function reload_driver() {
+    try {
+        const settings = await db_1.adminStore.findOne({ type: "GENERAL" }, { _id: 0 });
+        if (settings && typeof settings.series !== undefined)
+            render_in_series = settings.series;
+    }
+    catch (err) {
+        console.log("something went wrong when fetching the general settings", err);
+    }
     const results = await db_1.adminStore.findOne({ type: "DRIVER" }, { _id: 0 });
     // FAST PATH
     if (results === null) {
@@ -94,17 +103,24 @@ async function reload_driver() {
 exports.reload_driver = reload_driver;
 reload_driver();
 function render(C) {
+    let j = 0;
     for (let ch = 0; ch < driver.channels.length; ch++) {
         let channel = driver.channels[ch];
         let spec = driver_spec.channels[ch];
         if (spec.reverse) {
-            for (let i = 0; i < channel.leds.length; i++)
-                channel.leds[channel.leds.length - i - 1] = C[i % C.length];
+            for (let i = 0; i < channel.leds.length; i++) {
+                channel.leds[channel.leds.length - i - 1] = C[j % C.length];
+                j++;
+            }
         }
         else {
-            for (let i = 0; i < channel.leds.length; i++)
-                channel.leds[i] = C[i % C.length];
+            for (let i = 0; i < channel.leds.length; i++) {
+                channel.leds[i] = C[j % C.length];
+                j++;
+            }
         }
+        if (!render_in_series)
+            j = 0;
         channel.render();
     }
 }

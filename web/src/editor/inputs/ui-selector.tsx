@@ -17,6 +17,12 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 const NoneOption: IDropdownOption = { key: "none", text: "None" }
 function get_ui_type_options(el: value_instance): IDropdownOption[] {
     switch (el.type) {
+        case "rgbw":
+        case "rgbw[]":
+        case "number[]":
+            // no pickers for these...
+            return []
+        case "boolean":
         case "boolean":
             return [
                 NoneOption,
@@ -44,7 +50,7 @@ function get_ui_type_options(el: value_instance): IDropdownOption[] {
             ]
         default:
             const checker: never = el
-            console.log("something went wrong with checker get_ui_options()", el)
+            console.log("something went wrong with checker get_ui_options()", checker)
             return []
     }
 
@@ -114,7 +120,7 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
             if (!equal(val, el.ui))
                 onChange(val)
         }
-    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options, path])
+    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options, path, onChange])
 
 
     return (

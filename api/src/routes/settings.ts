@@ -2,6 +2,7 @@
 import { performance } from "perf_hooks";
 import { Router, Request, Response, NextFunction } from "express";
 import { adminStore } from "../db";
+import { reset_delay } from "../mode";
 import Ajv from "ajv";
 
 const ajv = new Ajv();
@@ -82,7 +83,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
             return res.send(`invalid json payload`);
         }
 
-        adminStore.update({ type: body.type }, body, { upsert: true });
+        await adminStore.update({ type: body.type }, body, { upsert: true });
+        await reset_delay();
     } catch (err) {
         return next(err);
     }

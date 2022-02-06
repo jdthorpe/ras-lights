@@ -18,17 +18,22 @@ const Modes: React.FC = () => {
     const [mode, set_mode] = useState<show>();
 
     useEffect(() => {
+        let canceled = false;
         (async () => {
             if (typeof mode_config === "undefined") {
                 const response = await fetch("/api/mode/", {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 });
+                if (canceled) return
                 const mode_res = await fetch("/api/ctl/")
+                if (canceled) return
 
                 try {
                     const mode = await mode_res.json()
+                    if (canceled) return
                     const config: show[] = await response.json();
+                    if (canceled) return
                     set_mode_config(config)
                     const il: IDropdownOption[] = config.map(x => ({ key: x.name, text: x.name }))
                     set_item_list(il)
@@ -59,6 +64,7 @@ const Modes: React.FC = () => {
                 }
             }
         })()
+        return () => { canceled = true }
     }, [mode_config, set_mode_config])
 
 

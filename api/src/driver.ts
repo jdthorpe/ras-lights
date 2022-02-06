@@ -3,6 +3,7 @@ import { rgb, rgbw } from "shared/types/mode";
 import { adminStore } from "./db";
 import { channel, IDriver } from "shared/types/admin";
 import equal from "fast-deep-equal";
+import { general_settings } from "shared/types/admin";
 
 function asChannel(ch: channel): ChannelConfiguration {
     return {
@@ -40,8 +41,24 @@ const B = 0x00000001;
 
 let driver: Driver;
 let driver_spec: IDriver;
+let render_in_series: boolean = true;
 
 export async function reload_driver() {
+    try {
+        const settings = await adminStore.findOne<general_settings>(
+            { type: "GENERAL" },
+            { _id: 0 }
+        );
+
+        if (settings && typeof settings.series !== undefined)
+            render_in_series = settings.series;
+    } catch (err) {
+        console.log(
+            "something went wrong when fetching the general settings",
+            err
+        );
+    }
+
     const results = await adminStore.findOne<IDriver>(
         { type: "DRIVER" },
         { _id: 0 }
@@ -87,16 +104,22 @@ export async function reload_driver() {
 reload_driver();
 
 function render(C: number[]) {
+    let j = 0;
     for (let ch = 0; ch < driver.channels.length; ch++) {
         let channel = driver.channels[ch];
         let spec = driver_spec.channels[ch];
         if (spec.reverse) {
-            for (let i = 0; i < channel.leds.length; i++)
-                channel.leds[channel.leds.length - i - 1] = C[i % C.length];
+            for (let i = 0; i < channel.leds.length; i++) {
+                channel.leds[channel.leds.length - i - 1] = C[j % C.length];
+                j++;
+            }
         } else {
-            for (let i = 0; i < channel.leds.length; i++)
-                channel.leds[i] = C[i % C.length];
+            for (let i = 0; i < channel.leds.length; i++) {
+                channel.leds[i] = C[j % C.length];
+                j++;
+            }
         }
+        if (!render_in_series) j = 0;
         channel.render();
     }
 }

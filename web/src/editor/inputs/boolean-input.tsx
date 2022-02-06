@@ -15,7 +15,7 @@ export const BooleanOptions: React.FC<props> = ({ spec, value, path }) => {
     const editor = useContext(EditorContext);
     const onChange = useCallback((val: boolean) => {
         editor.update_value({ value: val }, path)
-    }, [editor])
+    }, [editor, path])
 
     return <Toggle
         label={spec.label}

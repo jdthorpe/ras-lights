@@ -19,25 +19,27 @@ import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
 import { ui } from "shared/types/user-input";
 
-import { func_config, mode_param, rgb_array_value, rgb, mode, value_instance } from 'shared/types/mode';
+import { func_config, mode_param, rgb_array_value, rgb, rgbw, mode, value_instance } from 'shared/types/mode';
 import {
-    value, signature, signatures, input,
+    value, signature, signatures, input, number_array_input,
     color_array_input, color_input,
     range_input, integer_input, boolean_input
 } from "shared/types/parameters"
 import { FuncValue } from './inputs/func-input';
 import { ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
+import { RGBWArray, RGBW } from './inputs/rgbw-input';
 import { BooleanOptions } from './inputs/boolean-input';
 import { NumberOptions } from './inputs/number-input';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
-import UI_Selector from "./inputs/ui-selector"
+import UISelector from "./inputs/ui-selector"
 
 import { load_remotes } from '../loader';
 import { make_loop, ILoop } from "./loop"
 import { UI } from '../ui';
 
 const VALUE_NAMES: value[] = ["boolean", "number", "integer", "rgb", "rgb[]", "button"]
+const ROOT_TYPES: value[] = ["rgb[]", "rgbw[]", "number[]"]
 const ACTIVE_COLOR = "9be2fa"; //00c6fc
 const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
 const dialogStyles = { main: { maxWidth: 450 } };
@@ -55,11 +57,6 @@ const Header = styled.div`
     background-color: #cccccc;
     margin-top: 1rem;
     padding: 1rem;
-`
-
-const Row = styled.div`
-    display: flex;
-    flex-direction: row;
 `
 
 const Container = styled.div`
@@ -82,7 +79,7 @@ export interface descriptor_menu {
     [key: string]: { name: string, in: input[] }[]
 }
 
-const rainbow: rgb[] = [0, 1, 2, 3, 4, 5].map(i => cc.rgb.hsv([60 * i, 100, 100,]))
+const rainbow: rgb[] = [0, 1, 2, 3, 4, 5].map(i => cc.hsv.rgb([60 * i, 100, 100,]))
 const default_show: rgb_array_value = {
     type: "rgb[]",
     value: rainbow,
@@ -99,10 +96,10 @@ function get_preview_at_path(
     mode: mode,
     item: mode_param,
     path: number[],
-    signatures: signatures): [number | boolean | rgb | rgb[], input] {
+    signatures: signatures): [number | boolean | rgb | rgb[] | number[] | rgbw[], input] {
 
     if (item.type !== "func")
-        throw "invalid item type"
+        throw new Error("invalid item type")
 
     let input: input
     let _path = path.slice(0, -1)
@@ -167,7 +164,7 @@ export function pathEquals(a: number[], b: number[]) {
         a.every((val, index) => val === b[index]);
 }
 
-interface EditorContext {
+interface IEditorContext {
     update_value: (new_value: Partial<mode_param>, path: number[],) => void;
     set_value: (new_value: mode_param, path: number[],) => void;
     set_active_path: (path: number[]) => void;
@@ -178,7 +175,7 @@ interface EditorContext {
     showNumericInputs: boolean;
 }
 
-export const EditorContext = createContext<EditorContext>({
+export const EditorContext = createContext<IEditorContext>({
     update_value: () => { },
     set_value: () => { },
     set_active_path: () => { },
@@ -223,7 +220,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [colors, set_colors] = useState<rgb[]>()
     const [mode, set_mode] = useState<mode>()
     const [loading, set_loading] = useState(true)
-    const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(false)
+    const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(true)
     const [show_raw_input, { toggle: toggleShowRawInput }] = useBoolean(false)
     const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
     const [live, { toggle: toggleLive }] = useBoolean(false);
@@ -233,6 +230,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [existing_modes, set_existing_modes] = useState<IComboBoxOption[]>()
     const [existing_shows, set_existing_shows] = useState<{ [key: string]: func_config | rgb_array_value }>()
     const [ui_components, set_ui_components] = useState<ui[]>([])
+    const [generators, set_generators] = useState<string[]>([])
 
     const [loop] = useState<ILoop>(() => make_loop(set_colors, { leds: 8 }))
 
@@ -240,20 +238,75 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [loading_libraries_error, set_loading_libraries_error] = useState<string>()
 
     useEffect(() => {
+        /* on load */
+        let canceled = false;
         (async () => {
             try {
                 await load_remotes();
             } catch (error) {
+                if (canceled) return
                 set_loading_libraries_error((error as any).message || "Something went wrong")
 
 
             } finally {
+                if (canceled) return
                 set_loading_libraries(false)
-
             }
         })()
-
+        return () => { canceled = true }
     }, [])
+
+    const set = useCallback((
+        new_value: mode_param,
+        path: number[],
+    ) => {
+        if (path.length === 0) {
+            // special case
+            console.log("setting show to new value", new_value)
+            set_show(new_value as rgb_array_value | func_config)
+            set_active_path([])
+
+            if (new_value.type === "func") {
+                console.log("re-building")
+                try {
+                    const mode = loop.start(new_value)
+                    console.log("........ loop start returned", typeof mode, Array.isArray(mode))
+                    set_mode(() => mode)
+                } catch (error) {
+                    console.log("bad show:", new_value)
+                    console.log("something went wrong while restarting the loop:", error)
+                    loop.stop()
+                }
+            } else {
+                loop.stop()
+            }
+            return
+        }
+
+        let old_value: mode_param = get_item_at_path(show, path, signatures)[0]
+
+        // error checking
+        let old_type = old_value.type === "func" ? signatures[old_value.name].output : old_value.type
+        let new_type = new_value.type === "func" ? signatures[new_value.name].output : new_value.type
+        if (old_type !== new_type)
+            throw new Error(`type of previous value (${old_type}) is not compatible with new value (${new_type})`)
+
+        // update the show
+        let new_show = copy(show)
+        let parent: func_config = get_item_at_path(new_show, path.slice(0, path.length - 1), signatures)[0] as func_config
+        parent.params[signatures[parent.name].input[path[path.length - 1]].key] = new_value
+
+        console.log("new_show.type", new_show.type)
+        if (new_show.type === "func") {
+            const mode = loop.start(new_show)
+            set_mode(() => mode)
+        } else {
+            loop.stop()
+        }
+        set_show(new_show)
+        set_active_path(path)
+
+    }, [show, set_show, set_mode, loop, signatures])
 
     const NameOptions: IComboBoxOption[] = free_text_option ? [
         { key: FREE_TEXT_KEY, text: free_text_option },
@@ -272,9 +325,13 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
         , [])
 
-    useEffect(() => {
+    useEffect(() => console.log("INIT did change"), [init])
+    useEffect(() => console.log("SET did change"), [set])
+    useEffect(() => console.log("LOOP did change"), [loop])
 
-        // component will mount
+    useEffect(() => {
+        /* component will mount */
+        console.log("COMPONENT WILL MOUNT")
         init();
         // update_LEDS();
         set(default_show, [])
@@ -284,7 +341,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             loop.stop();
             // live && (async () => { await fetch("/api/mode/off"); })()
         };
-    }, []);
+    }, []); // Dont add the dependencies!!! init, set, loop
 
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
 
@@ -296,7 +353,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             ui: ui_components
         })
         init()
-    }, [show, free_text_option, nameKey, ui_components])
+    }, [show, free_text_option, nameKey, ui_components, init])
 
     const deleteShow = useCallback(async () => {
         await delete_mode(
@@ -304,7 +361,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         )
         set(default_show, [])
         init()
-    }, [show, free_text_option, nameKey])
+    }, [init, set, free_text_option, nameKey])
 
     const getWrappers = (path: number[]): string[] => {
 
@@ -319,15 +376,14 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     }
 
-    const getUIcomponents = (p: func_config): ui[] => {
+    const getUIcomponents = useCallback((p: func_config): ui[] => {
         const inputs: ui[] = []
         walk_inputs(p, signatures, (el: value_instance, path: number[]) => {
             if (typeof el.ui !== "undefined")
                 inputs.push(el.ui)
         })
         return inputs
-
-    }
+    }, [signatures])
 
     const onClose = (path: number[]) => {
 
@@ -379,22 +435,39 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         live && update_LEDS()
         if (show.type === "func")
             set_ui_components(getUIcomponents(show))
-    }, [show, live]);
+    }, [show, live, update_LEDS, set_ui_components, getUIcomponents]);
 
     const [active_item, active_input] = get_item_at_path(show, active_path, signatures)
 
     // A list of functions whose outputs are the same as the current item type
-    const value_type: value = active_item.type === "func" ? signatures[active_item.name].output : active_item.type as value;
-    const generators: string[] = Object.entries(signatures).filter(e => e[1].output === value_type).map(e => e[0]).sort()
+    //const generators: string[] = Object.entries(signatures).filter(e => e[1].output === value_type).map(e => e[0]).sort()
+    useEffect(() => {
+        // working here
+        // working here
+        // working here
+        // working here
+        if (active_path.length === 0) {
+            set_generators(Object.entries(signatures)
+                .filter(e => ROOT_TYPES.indexOf(e[1].output) !== -1)
+                .map(e => e[0]).sort())
+        } else {
+            const value_type: value = active_item.type === "func" ? signatures[active_item.name].output : active_item.type as value;
+            set_generators(Object.entries(signatures)
+                .filter(e => e[1].output === value_type)
+                .map(e => e[0]).sort())
+        }
+
+    }, [active_item, signatures])
 
     const get_preview = useCallback((props: { path: number[] }) => {
 
-        if (props.path.length == 0)
+        if (props.path.length === 0)
             return typeof colors === "undefined" ? (
                 <p>too early (no colors)</p>
             ) : (<ColorArray colors={colors} />)
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
+
         switch (input.type) {
             case "button":
                 return <DefaultButton>{data}</DefaultButton>
@@ -405,6 +478,9 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             }
             case "rgb": { return <ColorArray colors={[data as rgb]} /> }
             case "rgb[]": { return <ColorArray colors={data as rgb[]} /> }
+            case "rgbw[]": { return <RGBWArray colors={data as rgbw[]} /> }
+            case "rgbw": { return <RGBW color={data as rgbw} /> }
+            case "number[]": { return <p>WhiteArray preview goes here</p> }
             default: {
                 let exhaustivenessCheck: never = input;
                 console.log(exhaustivenessCheck);
@@ -416,56 +492,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }, [mode, signatures, show, colors])
 
-    const set = useCallback((
-        new_value: mode_param,
-        path: number[],
-    ) => {
-        if (path.length === 0) {
-            // special case
-            set_show(new_value as rgb_array_value | func_config)
-            set_active_path([])
-
-            if (new_value.type === "func") {
-                console.log("re-building")
-                try {
-                    const mode = loop.start(new_value)
-                    console.log("........ loop start returned", typeof mode, Array.isArray(mode))
-                    set_mode(() => mode)
-                } catch (error) {
-                    console.log("bad show:", new_value)
-                    console.log("something went wrong while restarting the loop:", error)
-                    loop.stop()
-                }
-            } else {
-                loop.stop()
-            }
-            return
-        }
-
-        let old_value: mode_param = get_item_at_path(show, path, signatures)[0]
-
-        // error checking
-        let old_type = old_value.type === "func" ? signatures[old_value.name].output : old_value.type
-        let new_type = new_value.type === "func" ? signatures[new_value.name].output : new_value.type
-        if (old_type !== new_type)
-            throw new Error(`type of previous value (${old_type}) is not compatible with new value (${new_type})`)
-
-        // update the show
-        let new_show = copy(show)
-        let parent: func_config = get_item_at_path(new_show, path.slice(0, path.length - 1), signatures)[0] as func_config
-        parent.params[signatures[parent.name].input[path[path.length - 1]].key] = new_value
-
-        if (new_show.type === "func") {
-            const mode = loop.start(new_show)
-            set_mode(() => mode)
-        } else {
-            loop.stop()
-        }
-        set_show(new_show)
-        set_active_path(path)
-
-    }, [show, set_mode, active_path])
-
     const update_value = useCallback((
         new_value: Partial<mode_param>,
         path: number[],
@@ -474,13 +500,13 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         // @ts-ignore
         set({ ...old_value, ...new_value }, path)
 
-    }, [show, set_mode, active_path])
-
-
+    }, [show, set, signatures])
 
     const onDropdownChanged = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+        console.log("A")
         if (!option)
             return
+        console.log("B", option.key)
         if (option.key === "constant") {
             if (active_path.length === 0) {
                 set(default_show, [])
@@ -494,6 +520,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             }
         } else {
             const func = build_fun(option.key as string, signatures[option.key])
+            console.log('C', func, active_path)
             set(func, active_path)
         }
     }
@@ -519,7 +546,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 }
             }
         },
-        [existing_shows],
+        [existing_shows, set],
     );
 
 
@@ -649,7 +676,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                         />
                     )}
                     {VALUE_NAMES.indexOf((active_item as value_instance).type) !== -1 && (
-                        <UI_Selector
+                        <UISelector
                             el={active_item as value_instance}
                             spec={active_input!}
                             path={active_path}
@@ -684,18 +711,21 @@ const EditorTab: React.FC = () => {
     const [signatures, set_signatures] = useState<signatures>()
 
     useEffect(() => {
-        if (typeof signatures === "undefined")
-            (async () => {
-                try {
-                    console.log("fetching")
-                    const res = (await fetch("/api/registry/descriptors"));
-                    console.log("jsoning")
-                    const data: { [key: string]: signature } = await res.json()
-                    set_signatures(data)
-                } catch (err) {
-                    console.log("erroring", err)
-                }
-            })()
+        if (typeof signatures !== "undefined") return
+        let canceled = false;
+        (async () => {
+            try {
+                console.log("fetching")
+                const res = (await fetch("/api/registry/descriptors"));
+                const data: { [key: string]: signature } = await res.json()
+                if (canceled) return
+                console.log("setting signatures canceled... ", canceled)
+                set_signatures(data)
+            } catch (err) {
+                console.log("erroring", err)
+            }
+        })()
+        return () => { canceled = true }
     }, [signatures])
 
     if (typeof signatures === "undefined")

@@ -30,8 +30,7 @@ export const Number: React.FC<NumberProps> = ({ label, min, max, value, onChange
                 else set_error(undefined)
             }
         },
-        [],
-    );
+        [min, max, onChange]);
 
     return <TextField
         styles={{ root: { maxWidth: "5rem" } }}

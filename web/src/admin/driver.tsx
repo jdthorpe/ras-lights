@@ -38,10 +38,14 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     const [channels, set_channels] = useState<channel[]>([])
 
     useEffect(() => {
+        console.log("Driver mounting");
+        let canceled = false;
         (async () => {
             try {
                 const res = await fetch("/api/driver/")
+                if (canceled) return
                 const driver: IDriver = await res.json()
+                if (canceled) return
                 if (driver === null) {
                     set_driver({ frequency: 800000, dma: 10, channels: [] })
                     return
@@ -54,6 +58,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 console.log("dB driver error: ", err)
             }
         })()
+        return () => { canceled = true }
     }, [])
 
     const update_channel = useCallback((ch: channel, i: number) => {
@@ -66,6 +71,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     }, [driver, frequency, dma, channels])
 
     const save = useCallback(async () => {
+        let canceled = false
         const driver: IDriver = { frequency, dma, channels }
         await fetch("/api/driver/", {
             method: "POST",
@@ -73,7 +79,9 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(driver)
         })
+        if (canceled) return
         set_driver(driver)
+        return () => canceled = true
     }, [frequency, dma, channels])
 
     const add = useCallback(() => {
@@ -226,6 +234,7 @@ const PINS = [
     [10, 38],
 ]
 
+/*
 const pin_map = {
     12: "PWM0",
     18: "PWM0",
@@ -241,5 +250,6 @@ const pin_map = {
     10: "SPI0-MOSI",
     38: "SPI0-MOSI",
 }
+*/
 
 export default Driver

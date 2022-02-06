@@ -1,10 +1,27 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = require("fs");
-const path_1 = require("path");
-const ini_1 = __importDefault(require("ini"));
-const settings = ini_1.default.parse((0, fs_1.readFileSync)((0, path_1.join)(__dirname, "..", "..", "..", "config.ini"), "utf-8"));
-exports.default = settings;
+/*
+import { readFileSync } from "fs";
+import { join } from "path";
+import ini from "ini";
+
+interface Isettings {
+    LEDS: number;
+    api?: {
+        port?: number;
+        "app-dir"?: string;
+        loop_delay_ms: number;
+    };
+    show: {
+        controller_host: string;
+        port: number;
+    };
+    ws281x: any;
+}
+
+const settings: Isettings = ini.parse(
+    readFileSync(join(__dirname, "..", "..", "..", "config.ini"), "utf-8")
+) as Isettings;
+
+export default settings;
+
+*/
