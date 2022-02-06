@@ -180,7 +180,9 @@ function create_loop(mode, before, after) {
             if (this_show === current_show && ajv.validate(schema, colors))
                 (0, driver_1.set_colors)(colors);
             const end = perf_hooks_1.performance.now();
-            console.log(`duration ${(end - start).toFixed(1)}`);
+            const d = ;
+            if (end - start)
+                console.log(`duration: ${(d).toFixed(1)} since: ${(start - prev_start).toFixed(1)}`);
             prev_start = start;
             resolve();
         });
