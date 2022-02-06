@@ -16,54 +16,44 @@ interface props {
 
 export const NumberOptions: React.FC<props> = ({ spec, value, path }) => {
 
+    const [_value, set_value] = useState<string | undefined>(value.toString())
     const { type, label, min, max } = spec;
-    // const [s_value, setValue] = useState(value.toString())
     const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
     const editor = useContext(EditorContext);
 
-    useEffect(() => {
-        // error messages should only stick around for 5 seconds (since the bad
-        // values aren't kept anyway)
-        if (typeof errorMessage === "undefined")
-            return
-        const timeout = setTimeout(() => setErrorMessage(undefined), 5e3) // TODO: magic number
-        return () => {
-            clearTimeout(timeout)
-        }
-    }, [errorMessage])
-
     const onChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
 
+        set_value(newValue)
+
         if (typeof newValue === "undefined") {
-            //setValue('');
+            editor.update_value({ value: min }, path)
+            setErrorMessage(`Required`)
             return;
         }
 
-        if (type === "integer" && !is_int.test(newValue)) {
-            setErrorMessage(`Value must be an integer`)
-            return
-        }
+        if (type === "integer" && !is_int.test(newValue))
+            return setErrorMessage(`Value must be an integer`)
 
-        if (type === "number" && !is_number.test(newValue)) {
-            setErrorMessage(`Value must be a number`)
-            return
-        }
+        if (type === "number" && !is_number.test(newValue))
+            return setErrorMessage(`Value must be a number`)
+
         if (+newValue < min)
-            setErrorMessage(`Value must be at least ${min}`)
+            return setErrorMessage(`Value must be at least ${min}`)
+
         if (+newValue > max)
-            setErrorMessage(`Value must be at most ${max}`)
+            return setErrorMessage(`Value must be at most ${max}`)
 
         //setValue(newValue);
         editor.update_value({ value: +newValue }, path)
         setErrorMessage(undefined)
-    }, [min, max, type, editor])
+    }, [min, max, type, editor, path])
 
     return (
         <div style={{ display: 'inline-block', margin: ".5rem" }}>
             <TextField
                 label={label}
-                value={`${value}`}
+                value={_value}
                 onChange={onChange}
                 styles={styles}
                 errorMessage={errorMessage}

@@ -6,14 +6,13 @@ import styled from "styled-components"
 import cc from "color-convert"
 import {
     ColorPicker,
-    // getColorFromString,
     IColor,
     IColorPickerStyles,
 } from '@fluentui/react/lib/index';
 import { Label } from '@fluentui/react/lib/Label';
 import { rgb } from 'shared/types/mode';
 
-import { color_input, color_array_input } from "shared/types/parameters"
+import { color_input, color_array_input, number_array_input } from "shared/types/parameters"
 import { EditorContext, pathEquals } from '../editor';
 
 const WrappedRow = styled.div`
@@ -26,7 +25,16 @@ const WrappedRow = styled.div`
 const SIZE = "2rem"
 const CLOSE_SIZE = "1.1rem"
 const CLOSE_FONT_SIZE = "0.9rem"
-const OFFSET = "1.5rem"
+
+const ColorBox = styled.div<{ color: string }>` 
+    height: ${SIZE};
+    width: ${SIZE};
+    background-color: ${props => props.color};
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: black;
+`
 
 const smallIcon = mergeStyles({
     // fontSize: 15,
@@ -71,35 +79,16 @@ export const ColorValue: React.FC<color_value_props> = ({ spec, value }) => {
                 margin: "0 .5rem",
             }}>
             <Label>{spec.label}</Label>
-            <div
-                style={{
-                    height: SIZE,
-                    width: SIZE,
-                    backgroundColor: `#${cc.rgb.hex(value)}`,
-                    borderStyle: "solid",
-                    borderWidth: "1px",
-                    borderRadius: "2px",
-                    borderColor: "black",
-                }}
-            />
+            <ColorBox color={`#${cc.rgb.hex(value)}`} />
         </div>
     )
 }
 
 
 export const Color: React.FC<{ color: rgb }> = ({ color }) => (
-    <div
-        style={{
-            height: SIZE,
-            width: SIZE,
-            backgroundColor: `#${cc.rgb.hex(color)}`,
-            borderStyle: "solid",
-            borderWidth: "1px",
-            borderRadius: "2px",
-            borderColor: "black",
-        }}
-    />
+    <ColorBox color={`#${cc.rgb.hex(color)}`} />
 )
+
 interface color_input_props {
     spec: color_input;
     value: rgb;
@@ -134,7 +123,9 @@ export const ColorValuePicker: React.FC<colorValuePickerProps> = ({ color, onCha
 
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
         onChange([color.r, color.g, color.b,])
-    }, 50), [onChange]);
+    }, 50),
+        // @ts-ignore
+        [onChange]);
 
     return (
         <ColorPicker
@@ -160,22 +151,22 @@ export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
     return (
         <WrappedRow >
             {colors.map((color: rgb, i) => (
-                <div
-                    key={i}
-                    style={{
-                        height: SIZE,
-                        width: SIZE,
-                        backgroundColor: `#${cc.rgb.hex(color)}`,
-                        borderStyle: "solid",
-                        borderWidth: "1px",
-                        borderRadius: "2px",
-                        borderColor: "black",
-                    }}
-                />
+                <ColorBox key={i} color={`#${cc.rgb.hex(color)}`} />
             ))}
         </WrappedRow>
     )
 }
+
+
+export const WArrayValue: React.FC<{ spec: number_array_input; value: number[]; }> =
+    ({ value, spec }) => {
+        return (
+            <>
+                <Label>{spec.label}</Label>
+                <ColorArray colors={value.map(v => [v, v, v])} />
+            </>
+        )
+    }
 
 
 
@@ -252,7 +243,6 @@ export const ColorArrayPicker: React.FC<colorArrayPickerProps> = ({ colors, onCh
             set_active_color(active_color - 1)
         }
     }, [onChange, colors, active_color]);
-
 
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
         const value: rgb[] = [

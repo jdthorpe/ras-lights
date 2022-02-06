@@ -5,7 +5,8 @@ import InputPicker from "./input"
 import { value, input, color_array_input, color_input } from 'shared/types/parameters';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { DefaultButton } from '@fluentui/react/lib/Button';
-import { rgb, func_config } from 'shared/types/mode';
+import { rgb } from 'shared/types/mode';
+// import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import ValuePicker from "./valuePicker"
 
 import copy from 'copy-to-clipboard';
@@ -16,7 +17,6 @@ import { basicSetup } from '@codemirror/basic-setup'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { javascript } from '@codemirror/lang-javascript'
 import { ColorArrayPicker, ColorValuePicker } from "../editor/inputs/color-input"
-import reportWebVitals from '../reportWebVitals';
 
 const nameTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
 
@@ -67,7 +67,7 @@ let input_number = 0
 const default_input = (): color_input => ({
     type: "rgb",
     default: [0, 0, 255],
-    label: "My Color",
+    label: `My Color ${input_number}`,
     key: `input_${input_number++}`
 })
 
@@ -126,6 +126,7 @@ const Template: React.FC = () => {
     }
 
     useEffect(() => {
+        /* quality checks */
 
         if (!name)
             return setCode("// Your effect needs a name")
@@ -173,13 +174,14 @@ const Template: React.FC = () => {
                             justifyContent: "space-between",
                             margin: "1.5rem 8px .7rem"
                         }}>
-                        <h3>Inputs</h3>
-                        <DefaultButton
-                            onClick={() => setInputs([...inputs, default_input()])}>Add Input</DefaultButton>
+                        <h2>Inputs</h2>
+                        <DefaultButton style={{ alignSelf: 'flex-start' }}
+                            onClick={() => setInputs([...inputs, default_input()])}
+                        >Add Input</DefaultButton>
                     </Row>
 
                     {inputs.map((input, i) => (
-                        <div style={{
+                        <div key={i} style={{
                             // padding: "5px",
                             backgroundColor: (i % 2 === 1) ? "none" : "#dddddd",
                             border: "1px black",

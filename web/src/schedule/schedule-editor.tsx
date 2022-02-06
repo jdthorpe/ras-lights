@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import styled from "styled-components"
 import Cron, { CronError } from "react-js-cron"
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
-import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
+import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { ISchedule } from 'shared/types/schedule';
 import cronstrue from 'cronstrue';
 
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd/dist/antd.min.css'; // required by cron
 
 const Row = styled.div`
     display: flex;
@@ -26,8 +26,6 @@ const defaultValue = '* * * * *'
 
 interface EditScheduleProps {
     modes: string[];
-    // name?: string;
-    // mode?: string;
     schedule?: ISchedule;
     save: (s: ISchedule) => void;
 }
@@ -49,7 +47,6 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
         setCronError(undefined)
     }
 
-    // const [value, setValue] = useState(defaultValue);
     const disabled = (
         typeof mode === "undefined" ||
         typeof name === "undefined" ||
@@ -79,12 +76,10 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
                         value={name}
                         onChange={(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => setName(newValue)}
                         styles={textboxStyle}
-                    // errorMessage={errorMessage}
                     />
                     <Dropdown
                         label="Mode"
                         selectedKey={mode}
-                        // eslint-disable-next-line react/jsx-no-bind
                         onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<any>, index?: number | undefined) => option && setMode(option.key as string)}
                         placeholder="Select mode"
                         options={modes.sort().map(s => ({ key: s, text: s }))}

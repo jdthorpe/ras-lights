@@ -1,15 +1,58 @@
 import Ajv from "ajv";
 import { build_node, registry } from "shared";
-// import { turn_off, set_colors } from "./ws681x";
 import { turn_off, set_colors } from "./driver";
-import { show, func_config, rgb } from "shared/types/mode";
-import settings from "./settings";
+import { show, func_config } from "shared/types/mode";
+import { channel, IDriver } from "shared/types/admin";
+// import settings from "./settings";
 import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
 import { mode } from "shared/types/mode";
 import { ui } from "shared/types/user-input";
+import { adminStore } from "./db";
+import { general_settings } from "shared/types/admin";
+import { performance } from "perf_hooks";
 
-const DELAY_MS = (settings.api && settings.api.loop_delay_ms) || 50;
+// sudo systemctl stop bluetooth.service && sudo systemctl disable bluetooth.service
+// sudo systemctl stop cups.service && sudo systemctl disable cups.service
+// sudo systemctl stop alsa-state.service && sudo systemctl disable alsa-state.service
+// sudo systemctl stop hciuart.service && sudo systemctl disable hciuart.service
+// sudo systemctl stop cups-browsed.service && sudo systemctl disable cups-browsed.service
+
+let DELAY_MS = 50;
+let leds: number;
+
+export async function reset_delay() {
+    const settings = await adminStore.findOne<general_settings>(
+        { type: "GENERAL" },
+        { _id: 0 }
+    );
+
+    if (settings !== null) {
+        settings.delay_ms && (DELAY_MS = settings.delay_ms);
+    }
+
+    const series =
+        settings && typeof settings.series !== undefined
+            ? settings.series
+            : true;
+
+    const driver_spec = await adminStore.findOne<IDriver>(
+        { type: "DRIVER" },
+        { _id: 0 }
+    );
+
+    if (driver_spec === null) {
+        console.log("fetched driver spec was null");
+        return;
+    }
+
+    leds = 0;
+    for (let i in driver_spec.channels) {
+        let ch = driver_spec.channels[i];
+        leds = series ? leds + ch.count : Math.max(leds, ch.count);
+    }
+}
+reset_delay();
 
 const ajv = new Ajv();
 const schema = {
@@ -25,11 +68,6 @@ const schema = {
 // ----------------------------------------
 // registry
 // ----------------------------------------
-// const modes: { [key: string]: { (): any } } = {};
-
-// export function create_node(name: string, x: func_config) {
-//     modes[name] = build_node(x, { leds: settings.ws281x.leds });
-// }
 
 async function get_show(name: string): Promise<show> {
     // if (name in modes) return modes[name];
@@ -41,18 +79,15 @@ async function get_show(name: string): Promise<show> {
 }
 
 async function get_mode(show: show): Promise<mode> {
-    // if (name in modes) return modes[name];
     const func = build_node(show.def as func_config, {
-        leds: settings.ws281x.leds,
+        leds, // : settings.ws281x.leds,
     });
-    // modes[name] = func;
     return func;
 }
 
 // ----------------------------------------
 // loop
 // ----------------------------------------
-let loop: ReturnType<typeof setTimeout>;
 let current_mode: string = "off";
 let updates: { [key: string]: string } = {};
 
@@ -123,9 +158,12 @@ function apply_update(mode: mode, show: show, indx: ui_index) {
 export function set_updates(x: { [key: string]: any }) {
     for (let [key, value] of Object.entries(x)) updates[key] = value;
 }
+
+let current_show = 0;
 export function stop() {
-    loop && clearTimeout(loop);
+    current_show++;
 }
+
 export async function setMode(new_mode: string | show): Promise<void> {
     let show: show;
 
@@ -165,22 +203,56 @@ export async function setMode(new_mode: string | show): Promise<void> {
     stop();
     // reset the updates before restarting the loop
     updates = {};
-    loop = setTimeout(create_loop(mode, before, after), 0);
+    create_loop(mode, before, after);
 }
 
 type cb = () => void;
 
-function create_loop(mode: mode, before?: cb, after?: cb): { (): void } {
-    const fun = () => {
-        before && before();
-        const colors = mode();
-        after && after();
-        if (ajv.validate(schema, colors)) {
-            set_colors(colors);
-        } else {
-            return;
-        }
-        loop = setTimeout(fun, DELAY_MS);
+const drive_yourself_crazy_trying_to_debug_periodic_delays = false;
+
+let prev_error = performance.now();
+function create_loop(mode: mode, before?: cb, after?: cb): void {
+    const this_show = ++current_show;
+    const run = () => {
+        const delay = new Promise<void>((resolve) => {
+            setTimeout(() => resolve(), DELAY_MS);
+        });
+
+        const render = new Promise<void>((resolve) => {
+            const A = performance.now();
+            before && before();
+            const B = performance.now();
+            const colors = mode();
+            const C = performance.now();
+            after && after();
+            const D = performance.now();
+            if (this_show === current_show && ajv.validate(schema, colors))
+                set_colors(colors);
+            const E = performance.now();
+            const d = E - A;
+            // // THIS WAY MADNESS LIES:
+            if (
+                drive_yourself_crazy_trying_to_debug_periodic_delays &&
+                d > 100
+            ) {
+                console.log(
+                    `total: ${d.toFixed(1)} before: ${(B - A).toFixed(
+                        1
+                    )} render: ${(C - B).toFixed(1)} after: ${(D - C).toFixed(
+                        1
+                    )} render: ${(E - D).toFixed(1)} since: ${(
+                        A - prev_error
+                    ).toFixed(1)}`
+                );
+                prev_error = A;
+            }
+            resolve();
+        });
+
+        Promise.all([delay, render]).then(() => {
+            this_show === current_show && run();
+        });
     };
-    return fun;
+
+    run();
 }

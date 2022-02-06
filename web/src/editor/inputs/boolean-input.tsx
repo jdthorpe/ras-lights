@@ -13,21 +13,15 @@ interface props {
 export const BooleanOptions: React.FC<props> = ({ spec, value, path }) => {
 
     const editor = useContext(EditorContext);
-
     const onChange = useCallback((val: boolean) => {
-        editor.update_value({ value: val }, path) // , trigger_label
-    }, [editor]) // , trigger_label // setChecked, 
+        editor.update_value({ value: val }, path)
+    }, [editor, path])
 
-    return (
-        <>
-            <Toggle
-                label={spec.label}
-                checked={value}
-                onChanged={onChange}
-            />
-        </>
-
-    )
+    return <Toggle
+        label={spec.label}
+        checked={value}
+        onChanged={onChange}
+    />
 }
 
 export const BooleanValue = BooleanOptions

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react"
-// DefaultButton, 
+import React, { useState } from "react"
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Slider } from '@fluentui/react/lib/Slider';
 import debounce from "lodash.debounce"
@@ -58,9 +57,7 @@ async function update_color(x: IColor, on: boolean) {
         await fetch("/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify([[x.r, x.g, x.b]])
         });
     } catch (err) {
@@ -77,17 +74,22 @@ const Manual: React.FC = () => {
         set_on(false)
         setColor(colorObj)
         update_color(colorObj, on)
-    }, 25), [setColor, update_color, on]);
+    }, 25), [setColor, update_color, set_on, on]);
 
     const set_random = React.useCallback(debounce(() => {
         set_on(false)
         setRandomColors(on)
-    }, 25), [on]);
+    }, 25),
+
+        // @ts-ignore
+        [on, set_on]);
 
     const slider_cb = React.useCallback(debounce((n: number) => {
         set_on(false)
         setWhiteIntensity(on, n)
-    }, 25), [on]);
+    }, 25),
+        // @ts-ignore
+        [on, set_on]);
 
     return (
         <div style={{ margin: "1.5rem" }}>

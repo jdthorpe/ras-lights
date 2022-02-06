@@ -29,10 +29,7 @@ interface IReadableSchedule extends ISchedule {
     human: string
 }
 
-interface ScheduleProps {
-}
-const Schedule: React.FC<ScheduleProps> = ({ }) => {
-
+const Schedule: React.FC = () => {
 
     const [schedules, set_schedules] = useState<IReadableSchedule[]>()
     const [modes, set_modes] = useState<string[]>()
@@ -85,22 +82,24 @@ const Schedule: React.FC<ScheduleProps> = ({ }) => {
     useEffect(() => {
         if (typeof schedules === "undefined")
             fetchSchedules()
-    }, [])
+    }, [schedules])
 
     useEffect(() => {
-        if (typeof modes === "undefined") {
-            (async () => {
-                const response = await fetch("/api/mode/");
-                try {
-                    const config: any = await response.json();
-                    set_modes(["off", ...config.map((x: any) => x.name)])
-                } catch (err) {
-                    console.log(`fetch("/api/mode/").json() failed with`, err)
-                    console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")
-                }
-            })()
-        }
-    }, [])
+        if (typeof modes !== "undefined") return
+        let canceled = false;
+        (async () => {
+            const response = await fetch("/api/mode/");
+            try {
+                const config: any = await response.json();
+                if (canceled) return
+                set_modes(["off", ...config.map((x: any) => x.name)])
+            } catch (err) {
+                console.log(`fetch("/api/mode/").json() failed with`, err)
+                console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")
+            }
+        })()
+        return () => { canceled = true }
+    }, [modes])
 
     if (typeof schedules === "undefined")
         return (<div><Spinner label="I am definitely loading..." size={SpinnerSize.large} /></div>)

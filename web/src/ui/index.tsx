@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components"
 import { Button } from "./button";
 import { ToggleInput } from "./toggle"
@@ -34,7 +34,7 @@ export const UI: React.FC<{ ui: ui[] }> = ({ ui }) => {
                 <div key={i} style={{ margin: 10 }} onClick={() => {
                     SetPreview(null)
                 }}>
-                    <UI_instance ui={data} />
+                    <UI_INSTANCE ui={data} />
                 </div>
             )}
             <OptionsPanel>
@@ -46,7 +46,7 @@ export const UI: React.FC<{ ui: ui[] }> = ({ ui }) => {
 
 
 
-const UI_instance: React.FC<{ ui: ui }> = ({ ui }) => {
+const UI_INSTANCE: React.FC<{ ui: ui }> = ({ ui }) => {
     const type: ui_type = ui.type
 
     switch (type) {

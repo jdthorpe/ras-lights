@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ui_type, ui, ui_slider } from "shared/types/user-input";
 import { num_value, value_instance } from 'shared/types/mode';
 import { input, integer_input } from 'shared/types/parameters';
-// import { Slider } from '@fluentui/react';
 import { SliderConfig, default_slider_config } from '../../ui/slider';
 
-// import { value } from 'shared/types/parameters';
-import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react';
+import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import equal from "fast-deep-equal"
 
@@ -19,6 +17,12 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 const NoneOption: IDropdownOption = { key: "none", text: "None" }
 function get_ui_type_options(el: value_instance): IDropdownOption[] {
     switch (el.type) {
+        case "rgbw":
+        case "rgbw[]":
+        case "number[]":
+            // no pickers for these...
+            return []
+        case "boolean":
         case "boolean":
             return [
                 NoneOption,
@@ -46,7 +50,7 @@ function get_ui_type_options(el: value_instance): IDropdownOption[] {
             ]
         default:
             const checker: never = el
-            console.log("something went wrong with checker get_ui_options()", el)
+            console.log("something went wrong with checker get_ui_options()", checker)
             return []
     }
 
@@ -99,12 +103,8 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
             } catch (err) {
                 console.log("something went wrong when updating from the outside", err)
                 throw err
-
-
             }
         } else {
-            // console.log("Updating from the >> INSIDE <<")
-
             const val: ui | undefined = (
                 dropdown_key === "none" ?
                     undefined :
@@ -120,7 +120,7 @@ const Selector: React.FC<props> = ({ el, spec, path, onChange }) => {
             if (!equal(val, el.ui))
                 onChange(val)
         }
-    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options, path])
+    }, [el, spec, _el, _spec, dropdown_key, _label, key, slider_options, path, onChange])
 
 
     return (

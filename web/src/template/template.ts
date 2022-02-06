@@ -12,23 +12,28 @@ function templateBuilder(args: templateParams): string {
         return str;
     };
 
-    return builder`import { register, globals } from "../index";
-${usedValueTypes}
-interface input {
-${interfaces}}
-
+    return builder`import { register } from "../register";
+${interfaces}
 function effect(this: any, x: input, globals: globals): ${output_type} {
     // Your code goes here...
 }
 
-register(
-    "${(args: templateParams) => args.effectName}",
-    effect,
-    ${inputs},
-    "${output_type}"
-);
+register({
+    /* Effect Name */
+    name: "${(args: templateParams) => args.effectName}",
+    /* Effect Function */
+    func: effect,
+    /* Effect Inputs */
+    input: ${inputs},
+    /* Effect Output Type */
+    output: "${output_type}"
+});
 `;
 }
+
+// now in the global.d.ts file:
+// import { globals } from "../../types";
+// ${usedValueTypes}
 
 interface templateParams {
     effectName: string;
@@ -41,9 +46,16 @@ function output_type(args: templateParams): string {
 }
 
 function interfaces(args: templateParams): string {
-    return args.inputs
-        .map((i) => `    ${i.key}: ${i.type};\n`)
-        .reduce((a, b) => `${a}${b}`, "");
+    if (args.inputs.length)
+        return `
+interface input {
+${args.inputs
+    .map((i) => `    ${i.key}: ${i.type};\n`)
+    .reduce((a, b) => `${a}${b}`, "")}}
+`;
+    return `
+interface input {)
+`;
 }
 
 function _input(i: input): string {
@@ -68,27 +80,30 @@ function inputs(args: templateParams): string {
     ]`;
 }
 
-function usedValueTypes(args: templateParams): string {
-    const types = new Set<string>();
-    switch (args.output_type) {
-        case "rgb":
-        case "rgb[]":
-            types.add("rgb");
-            break;
-    }
-    for (let i of args.inputs) {
-        switch (i.type) {
-            case "rgb":
-            case "rgb[]":
-                types.add("rgb");
-                break;
-        }
-    }
-    if (!types.size) return "";
-    const type_imports = Array.from(types.values()).reduce(
-        (a, b) => `${a}, ${b}`
-    );
-    return `import { ${type_imports} } from "shared/types/mode";\n`;
-}
+// function usedValueTypes(args: templateParams): string {
+//     const types = new Set<string>();
+//     switch (args.output_type) {
+//         case "rgb":
+//         case "rgb[]":
+//             types.add("rgb");
+//             break;
+//         case "rgbw[]":
+//             types.add("rgbw");
+//             break;
+//     }
+//     for (let i of args.inputs) {
+//         switch (i.type) {
+//             case "rgb":
+//             case "rgb[]":
+//                 types.add("rgb");
+//                 break;
+//         }
+//     }
+//     if (!types.size) return "";
+//     const type_imports = Array.from(types.values()).reduce(
+//         (a, b) => `${a}, ${b}`
+//     );
+//     return `import { ${type_imports} } from "shared/types/mode";\n`;
+// }
 
 export default templateBuilder;

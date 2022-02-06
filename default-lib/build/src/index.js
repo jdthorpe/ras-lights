@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./rgb");
-require("./rgbw");
-require("./w");
+require("./alternate-color");
+require("./dimmer");
+require("./gradient");
+require("./rainbow-stripes");
+require("./rotate");
+require("./solid");
+require("./unzip");

@@ -9,7 +9,6 @@ router.post("/", async (req, res, next) => {
     /* inject parameters into the running show (mode) */
     const start = perf_hooks_1.performance.now();
     try {
-        // console.log("body:", JSON.stringify(req.body));
         (0, mode_1.set_updates)(req.body);
     }
     catch (err) {

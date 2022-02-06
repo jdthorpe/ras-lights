@@ -17,7 +17,7 @@ export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
             return
         set_curr(ui)
         setColor(ui.default)
-    }, [ui])
+    }, [ui, curr])
 
     const control = useContext(ToolContext);
     const setControl = useCallback((ev: React.MouseEvent<HTMLElement>) => {
@@ -34,7 +34,7 @@ export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
                 />
             </>
         })
-    }, [ui, color])
+    }, [ui, color, control])
 
     return (
         <div onClick={setControl}>
@@ -47,10 +47,10 @@ export const ColorInput: React.FC<{ ui: ui_rgb }> = ({ ui }) => {
 export const ColorArrayInput: React.FC<{ ui: ui_rgb_array }> = ({ ui }) => {
 
     const [colors, setColors] = useState<rgb[]>(ui.default)
-    const updateColors = (c: rgb[]) => {
+    const updateColors = useCallback((c: rgb[]) => {
         set_update(ui.key, c)
         setColors(c)
-    }
+    }, [setColors, ui.key])
 
     const control = useContext(ToolContext);
     const setControl = useCallback(() => {
@@ -60,7 +60,7 @@ export const ColorArrayInput: React.FC<{ ui: ui_rgb_array }> = ({ ui }) => {
                 colors={colors}
                 onChange={updateColors}
             />)
-    }, [colors])
+    }, [colors, control, updateColors])
 
     return (
         <div onClick={setControl}>

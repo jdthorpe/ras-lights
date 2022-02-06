@@ -27,8 +27,6 @@ const schema = {
     type: "object",
     properties: {
         type: { const: "LIBRARY" },
-        // use: { type: "boolean" },
-        // watch: { type: "boolean" },
         path: { type: "string" },
         name: { type: "string" },
     },
