@@ -4,7 +4,7 @@ exports.build_node = void 0;
 const registry_1 = require("./registry");
 function build_node(x, globals) {
     console.log("about to build node: ", JSON.stringify(x));
-    return _build_node(x, "rgb[]", globals);
+    return _build_node(x, ["rgb[]", "rgbw[]", "number[]"], globals);
 }
 exports.build_node = build_node;
 function _build_node(x, returnType, globals) {
@@ -14,7 +14,11 @@ function _build_node(x, returnType, globals) {
         throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => (a === "" ? b : `${a}, ${b}`), "")}`);
     }
     const [func, inputs, value] = f;
-    if (returnType !== value) {
+    if (Array.isArray(returnType)) {
+        if (returnType.indexOf(value) === -1)
+            throw new Error(`Expected return type in "${returnType}" but registry function ${x.name} returns ${value}`);
+    }
+    else if (returnType !== value) {
         throw new Error(`Expected return type "${returnType}" but registry function ${x.name} returns ${value}`);
     }
     const args = {};

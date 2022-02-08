@@ -4,12 +4,12 @@ import { registry, globals } from "./registry";
 
 export function build_node(x: func_config, globals: globals): mode {
     console.log("about to build node: ", JSON.stringify(x));
-    return _build_node(x, "rgb[]", globals);
+    return _build_node(x, ["rgb[]", "rgbw[]", "number[]"], globals);
 }
 
 function _build_node(
     x: func_config,
-    returnType: value,
+    returnType: value | value[],
     globals: globals
 ): { (): any; __args__: any } {
     // get the function and its types from the registry
@@ -23,7 +23,12 @@ function _build_node(
     }
     const [func, inputs, value] = f;
 
-    if (returnType !== value) {
+    if (Array.isArray(returnType)) {
+        if (returnType.indexOf(value) === -1)
+            throw new Error(
+                `Expected return type in "${returnType}" but registry function ${x.name} returns ${value}`
+            );
+    } else if (returnType !== value) {
         throw new Error(
             `Expected return type "${returnType}" but registry function ${x.name} returns ${value}`
         );
