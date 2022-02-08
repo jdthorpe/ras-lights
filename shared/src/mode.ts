@@ -3,6 +3,7 @@ import { func_config, mode_param, mode } from "../types/mode";
 import { registry, globals } from "./registry";
 
 export function build_node(x: func_config, globals: globals): mode {
+    console.log("about to build node: ", JSON.stringify(x));
     return _build_node(x, "rgb[]", globals);
 }
 

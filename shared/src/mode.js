@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.build_node = void 0;
 const registry_1 = require("./registry");
 function build_node(x, globals) {
+    console.log("about to build node: ", JSON.stringify(x));
     return _build_node(x, "rgb[]", globals);
 }
 exports.build_node = build_node;
