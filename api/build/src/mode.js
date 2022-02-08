@@ -41,13 +41,21 @@ exports.reset_delay = reset_delay;
 reset_delay();
 const ajv = new ajv_1.default();
 const schema = {
-    type: "array",
-    items: {
-        type: "array",
-        items: { type: "number" },
-        minItems: 3,
-        maxItems: 3,
-    },
+    anyOf: [
+        {
+            type: "array",
+            items: {
+                type: "array",
+                items: { type: "number" },
+                minItems: 3,
+                maxItems: 4,
+            },
+        },
+        {
+            type: "array",
+            items: { type: "number", minimum: 0, maximum: 255 },
+        },
+    ],
 };
 // ----------------------------------------
 // registry
