@@ -65,8 +65,8 @@ function _input(i: input): string {
             default: ${JSON.stringify(i.default)},`;
     if (i.type === "number" || i.type === "integer")
         out += `
-            min: "${i.min}",
-            max: ${JSON.stringify(i.min)},`;
+            min: ${i.min},
+            max: ${i.max},`;
 
     return `        {
 ${out}

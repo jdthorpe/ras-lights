@@ -256,12 +256,14 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
             <NumField
                 label="Minimum"
                 value={min}
+                max={typeof max === "undefined" ? max : +max}
                 set_value={set_min}
                 type={type}
                 styles={numberTextBoxstyle} />
             <NumField
-                label="Miximum"
+                label="Maximum"
                 value={max}
+                min={typeof min === "undefined" ? min : +min}
                 set_value={set_max}
                 type={type}
                 styles={numberTextBoxstyle} />
@@ -291,9 +293,11 @@ interface numProps {
     set_value: (x: string) => void;
     styles?: Partial<ITextFieldStyles>;
     type: "number" | "integer";
+    min?: number;
+    max?: number;
 }
 
-const NumField: React.FC<numProps> = ({ label, value, set_value, styles, type }) => {
+const NumField: React.FC<numProps> = ({ label, value, set_value, styles, type, min, max }) => {
 
     const [error, set_error] = useState<string | undefined>()
 
@@ -318,8 +322,16 @@ const NumField: React.FC<numProps> = ({ label, value, set_value, styles, type })
             set_error("not an integer")
             return
         }
+        if (typeof min !== "undefined" && min > +value) {
+            set_error(`minimum: ${min}`)
+            return
+        }
+        if (typeof max !== "undefined" && max < +value) {
+            set_error(`maximum: ${max}`)
+            return
+        }
         set_error(undefined)
-    }, [value, set_error, type])
+    }, [value, set_error, type, min, max])
 
     return <TextField
         label={label}

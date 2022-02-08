@@ -211,13 +211,12 @@ function walk_inputs(
     }
 }
 
-
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     // path to the active element
     const [active_path, set_active_path] = useState<number[]>([])
     const [show, set_show] = useState<func_config | rgb_array_value>(default_show)
-    const [colors, set_colors] = useState<rgb[]>()
+    const [colors, set_colors] = useState<rgb[] | rgbw[] | number[]>()
     const [mode, set_mode] = useState<mode>()
     const [loading, set_loading] = useState(true)
     const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(true)
@@ -459,12 +458,25 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     }, [active_item, signatures])
 
+    const RootPreview = useCallback(() => {
+        if (!colors || colors === null || colors.length === 0)
+            return <p>too early (no colors)</p>
+        if (typeof colors[0] === "number")
+            return <p>WhiteArray preview goes here</p>
+        if (colors[0].length === 3)
+            return <ColorArray colors={colors as rgb[]} />
+        else
+            return <RGBWArray colors={colors as rgbw[]} />
+    }, [colors])
+
+
     const get_preview = useCallback((props: { path: number[] }) => {
 
         if (props.path.length === 0)
-            return typeof colors === "undefined" ? (
-                <p>too early (no colors)</p>
-            ) : (<ColorArray colors={colors} />)
+            return RootPreview()
+        // return typeof colors === "undefined" ? (
+        //     <p>too early (no colors)</p>
+        // ) : (<ColorArray colors={colors} />)
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
 

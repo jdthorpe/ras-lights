@@ -4,13 +4,21 @@ import { func_config, rgb, mode } from "shared/types/mode";
 
 const ajv = new Ajv();
 const schema = {
-    type: "array",
-    items: {
-        type: "array",
-        items: { type: "number" },
-        minItems: 3,
-        maxItems: 3,
-    },
+    anyOf: [
+        {
+            type: "array",
+            items: {
+                type: "array",
+                items: { type: "number" },
+                minItems: 3,
+                maxItems: 4,
+            },
+        },
+        {
+            type: "array",
+            items: { type: "number", minimum: 0, maximum: 255 },
+        },
+    ],
 };
 
 export interface ILoop {
