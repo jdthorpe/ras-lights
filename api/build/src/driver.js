@@ -126,13 +126,25 @@ function render(C) {
 }
 function set_colors(colors) {
     /* Render arrays of numbers to the RGBW Channels */
+    let _colors;
+    if (typeof colors[0] === "number") {
+        _colors = colors.map((n) => [
+            0,
+            0,
+            0,
+            Math.min(Math.max(n, 0), 255),
+        ]);
+    }
+    else {
+        _colors = colors;
+    }
     const C = [];
-    for (let i = 0; i < colors.length; i++)
+    for (let i = 0; i < _colors.length; i++)
         C[i] =
-            (R * colors[i % colors.length][0]) |
-                (G * colors[i % colors.length][1]) |
-                (B * colors[i % colors.length][2]) |
-                (W * (colors[i % colors.length][3] || 0));
+            (R * _colors[i % _colors.length][0]) |
+                (G * _colors[i % _colors.length][1]) |
+                (B * _colors[i % _colors.length][2]) |
+                (W * (_colors[i % _colors.length][3] || 0));
     render(C);
 }
 exports.set_colors = set_colors;
