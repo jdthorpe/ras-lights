@@ -77,8 +77,8 @@ router.post("/", async (req, res, next) => {
 // delete
 router.delete("/:library", async (req, res) => {
     const start = perf_hooks_1.performance.now();
-    console.log(`removing ${req.params.name} ???`);
-    db_1.adminStore.remove({ name: req.params.name }, { multi: true });
+    console.log(`removing ${req.params.library} ???`);
+    db_1.adminStore.remove({ name: req.params.library }, { multi: true });
     // TODO: uncache the library members (this requires a restart for now)
     const end = perf_hooks_1.performance.now();
     res.status(200);

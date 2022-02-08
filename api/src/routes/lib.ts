@@ -87,8 +87,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 router.delete("/:library", async (req: Request, res: Response) => {
     const start = performance.now();
 
-    console.log(`removing ${req.params.name} ???`);
-    adminStore.remove({ name: req.params.name }, { multi: true });
+    console.log(`removing ${req.params.library} ???`);
+    adminStore.remove({ name: req.params.library }, { multi: true });
 
     // TODO: uncache the library members (this requires a restart for now)
 
