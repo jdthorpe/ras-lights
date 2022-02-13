@@ -16,21 +16,34 @@ const WrappedRow = styled.div`
 const Col = styled.div`
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 5px;
 `
 
 const SIZE = "2rem"
-const H_SIZE = "1rem"
+const H_SIZE = "1.2rem"
 
-const ColorBox = styled.div<{ height: string, width: string, color: string }>`
+export const ColorBox = styled.div<{ height: string, width: string, color: string }>`
     height: ${(props) => props.height};
     width: ${(props) => props.width};
-    backgroundColor: #${props => props.color};
-    borderStyle: "solid";
-    borderWidth: "1px";
-    borderRadius: "2px";
-    borderColor: "black";
+    background-color: #${props => props.color};
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: black;
 `
+
+// export const ColorBox: React.FC<{ height: string, width: string, color: string } = ({ height, width, color }) => (
+//     <div style={{
+
+//     borderStyle: "solid",
+//     borderWidth: "1px";
+//     borderRadius: "2px";
+//     borderColor: "black";
+//     }}/>
+//     height: ${(props) => props.height};
+//     width: ${(props) => props.width};
+//     backgroundColor: #${props => props.color};
+// `
 
 /*
 interface color_value_props {
@@ -69,19 +82,24 @@ export const RGBW: React.FC<{ color: rgbw }> = ({ color }) => {
 }
 
 export const RGBWArray: React.FC<{ colors: rgbw[] }> = ({ colors }) => {
-    return (
-        <WrappedRow >
-            {colors.map((color: rgbw, i) => {
-                const w = color[3].toString(16)
-                return (
-                    <Col key={i}>
-                        <ColorBox height={H_SIZE} width={SIZE} color={`#${w}${w}${w}`} />
-                        <ColorBox height={H_SIZE} width={SIZE} color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
-                    </Col>
-                )
-            })}
-        </WrappedRow>
-    )
+    try {
+        return (
+            <WrappedRow >
+                {colors.map((color: rgbw, i) => {
+                    const w = color[3].toString(16)
+                    return (
+                        <Col key={i}>
+                            <ColorBox height={H_SIZE} width={SIZE} color={`${w}${w}${w}`} />
+                            <ColorBox height={H_SIZE} width={SIZE} color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
+                        </Col>
+                    )
+                })}
+            </WrappedRow>
+        )
+    } catch (e) {
+        console.log(e)
+        return <>something went wrong</>
+    }
 }
 
 interface color_value_props {

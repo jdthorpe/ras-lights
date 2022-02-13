@@ -22,6 +22,7 @@ import {
 } from "shared/types/parameters"
 import { NumberValue } from './number-input';
 import { Label } from '@fluentui/react/lib/Label';
+import { ContextualMenu } from '@fluentui/react/lib/ContextualMenu';
 import {
     bool_value, func_config, mode_param,
     num_value, rgb_array_value, rgbw_array_value,
@@ -67,10 +68,19 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
     const is_active = pathEquals(editor.active_path, path)
     const wrappers = editor.getWrappers(path)
 
+
     const mainRef = React.useRef(null)
     const menuRef = React.useRef(null)
     const [mainWidth] = useSize(mainRef)
     const [menuWidth] = useSize(menuRef)
+
+    const linkRef = React.useRef(null);
+    const [showContextualMenu, setShowContextualMenu] = React.useState(false);
+    const onShowContextualMenu = React.useCallback((ev: React.MouseEvent<HTMLElement>) => {
+        ev.preventDefault(); // don't navigate
+        setShowContextualMenu(true);
+    }, []);
+    const onHideContextualMenu = React.useCallback(() => setShowContextualMenu(false), []);
 
 
     return (
@@ -96,11 +106,20 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                     backgroundColor: "rgba(255,255,255,0.85)",
                 }}>
                 {wrappers.length > 0 && (
-                    <Box>
-                        <FontAwesomeIcon
-                            style={{ margin: "auto", display: "block" }}
-                            icon={faGift} />
-                    </Box>
+                    <>
+                        <Box ref={linkRef} onClick={onShowContextualMenu}>
+                            <FontAwesomeIcon
+                                style={{ margin: "auto", display: "block" }}
+                                icon={faGift} />
+                        </Box>
+                        <ContextualMenu
+                            items={wrappers.map(w => ({ key: w, text: w, onClick: () => { editor.wrap(path, w) } }))}
+                            hidden={!showContextualMenu}
+                            target={linkRef}
+                            onItemClick={onHideContextualMenu}
+                            onDismiss={onHideContextualMenu}
+                        />
+                    </>
                 )}
                 <Box onClick={() => { editor.onClose(path) }}>
                     <FontAwesomeIcon
@@ -122,7 +141,7 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
                         const value = config.params[input.key];
                         if (value.type === "func") {
                             return (<div key={i} >
-                                <Label>{input.label}:</Label>
+                                <Label>{input.label}</Label>
                                 <FuncValue
                                     config={value}
                                     path={[...path, i]}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useCallback } from 'react';
+import React, { useRef, useState, useEffect, createContext, useCallback } from 'react';
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
@@ -21,7 +21,7 @@ import { ui } from "shared/types/user-input";
 
 import { func_config, mode_param, rgb_array_value, rgb, rgbw, mode, value_instance } from 'shared/types/mode';
 import {
-    value, signature, signatures, input, number_array_input,
+    value, signature, signatures, input,
     color_array_input, color_input,
     range_input, integer_input, boolean_input
 } from "shared/types/parameters"
@@ -172,6 +172,7 @@ interface IEditorContext {
     active_path: number[];
     onClose: (path: number[]) => void;
     getWrappers: (path: number[]) => string[];
+    wrap: (path: number[], name: string) => void;
     showNumericInputs: boolean;
 }
 
@@ -183,6 +184,7 @@ export const EditorContext = createContext<IEditorContext>({
     active_path: [],
     onClose: () => { },
     getWrappers: () => [],
+    wrap: () => { },
     showNumericInputs: false,
 });
 
@@ -324,23 +326,35 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
         , [])
 
-    useEffect(() => console.log("INIT did change"), [init])
-    useEffect(() => console.log("SET did change"), [set])
-    useEffect(() => console.log("LOOP did change"), [loop])
+    // useEffect(() => console.log("INIT did change"), [init])
+    // useEffect(() => console.log("SET did change"), [set])
+    // useEffect(() => console.log("LOOP did change"), [loop])
+
+    const globals_ref = useRef<{
+        init: () => void, loop: ILoop, set: (
+            new_value: mode_param,
+            path: number[],
+        ) => void
+    }>({ init, loop, set })
+
+    globals_ref.current.init = init
+    globals_ref.current.loop = loop
+    globals_ref.current.set = set
 
     useEffect(() => {
         /* component will mount */
         console.log("COMPONENT WILL MOUNT")
-        init();
+        globals_ref.current.init();
         // update_LEDS();
-        set(default_show, [])
+        globals_ref.current.set(default_show, [])
 
+        const loop = globals_ref.current.loop
         // component will unmount
         return function cleanup() {
             loop.stop();
             // live && (async () => { await fetch("/api/mode/off"); })()
         };
-    }, []); // Dont add the dependencies!!! init, set, loop
+    }, [globals_ref]); // Dont add the dependencies!!! init, set, loop
 
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
 
@@ -384,7 +398,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         return inputs
     }, [signatures])
 
-    const onClose = (path: number[]) => {
+    const onClose = (path: number[]): void => {
 
         const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
         const s = signatures[old_value.name]
@@ -456,7 +470,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 .map(e => e[0]).sort())
         }
 
-    }, [active_item, signatures])
+    }, [active_path.length, active_item, signatures])
 
     const RootPreview = useCallback(() => {
         if (!colors || colors === null || colors.length === 0)
@@ -474,9 +488,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
         if (props.path.length === 0)
             return RootPreview()
-        // return typeof colors === "undefined" ? (
-        //     <p>too early (no colors)</p>
-        // ) : (<ColorArray colors={colors} />)
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
 
@@ -492,7 +503,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             case "rgb[]": { return <ColorArray colors={data as rgb[]} /> }
             case "rgbw[]": { return <RGBWArray colors={data as rgbw[]} /> }
             case "rgbw": { return <RGBW color={data as rgbw} /> }
-            case "number[]": { return <p>WhiteArray preview goes here</p> }
+            case "number[]": { return <WArray w={data as number[]} /> }
+
             default: {
                 let exhaustivenessCheck: never = input;
                 console.log(exhaustivenessCheck);
@@ -502,7 +514,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
 
         }
-    }, [mode, signatures, show, colors])
+    }, [mode, signatures, show, RootPreview])
 
     const update_value = useCallback((
         new_value: Partial<mode_param>,
@@ -532,9 +544,35 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             }
         } else {
             const func = build_fun(option.key as string, signatures[option.key])
-            console.log('C', func, active_path)
+            console.log('func C', func, active_path)
             set(func, active_path)
         }
+    }
+
+    const wrap = (path: number[], name: string): void => {
+
+        const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
+        const s = signatures[old_value.name]
+        // const old_type = s.output
+        let unwrapped = true
+
+        const new_func_config: func_config = {
+            type: "func",
+            name,
+            // @ts-ignore no (simple) way to check this 
+            params: Object.fromEntries(
+                signatures[name].input.map(o => {
+                    if (unwrapped && o.type === s.output) {
+                        unwrapped = false
+                        return [o.key, old_value]
+                    }
+                    return [o.key, { type: o.type, value: o.default }]
+                })
+            )
+        }
+        console.log('[WRAP] current path', path)
+        console.dir(new_func_config)
+        set(new_func_config, path)
     }
 
     const onNameChange = React.useCallback(
@@ -582,6 +620,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             update_value,
             onClose,
             getWrappers,
+            wrap,
             showNumericInputs,
         }}>
             <Header>

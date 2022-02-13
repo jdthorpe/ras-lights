@@ -19,7 +19,7 @@ function rainbow_stripes(inputs, globals) {
             label: "Colors (count)",
             default: 6,
             min: 1,
-            max: 100,
+            max: 9999,
         },
     ],
     output: "rgb[]",

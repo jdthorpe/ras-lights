@@ -148,13 +148,18 @@ export const ColorValuePicker: React.FC<colorValuePickerProps> = ({ color, onCha
 
 
 export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
-    return (
-        <WrappedRow >
-            {colors.map((color: rgb, i) => (
-                <ColorBox key={i} color={`#${cc.rgb.hex(color)}`} />
-            ))}
-        </WrappedRow>
-    )
+    try {
+        return (
+            <WrappedRow >
+                {colors.map((color: rgb, i) => (
+                    <ColorBox key={i} color={`#${cc.rgb.hex(color)}`} />
+                ))}
+            </WrappedRow>
+        )
+    } catch (e) {
+        console.log(e)
+        return <div>something went wrong</div>
+    }
 }
 
 export const WArray: React.FC<{ w: number[] }> = ({ w }) => {
