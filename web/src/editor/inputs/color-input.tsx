@@ -157,6 +157,10 @@ export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
     )
 }
 
+export const WArray: React.FC<{ w: number[] }> = ({ w }) => {
+    return (<ColorArray colors={w.map(v => [v, v, v])} />)
+}
+
 
 export const WArrayValue: React.FC<{ spec: number_array_input; value: number[]; }> =
     ({ value, spec }) => {

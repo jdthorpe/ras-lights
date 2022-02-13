@@ -26,7 +26,7 @@ import {
     range_input, integer_input, boolean_input
 } from "shared/types/parameters"
 import { FuncValue } from './inputs/func-input';
-import { ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
+import { WArray, ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
 import { RGBWArray, RGBW } from './inputs/rgbw-input';
 import { BooleanOptions } from './inputs/boolean-input';
 import { NumberOptions } from './inputs/number-input';
@@ -462,7 +462,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         if (!colors || colors === null || colors.length === 0)
             return <p>too early (no colors)</p>
         if (typeof colors[0] === "number")
-            return <p>WhiteArray preview goes here</p>
+            return <WArray w={colors as number[]} />
         if (colors[0].length === 3)
             return <ColorArray colors={colors as rgb[]} />
         else

@@ -115,7 +115,8 @@ export const FuncValue: React.FC<props> = ({ config, signatures, path }) => {
             <div
                 style={{
                     display: "flex",
-                    flexDirection: "row"
+                    flexDirection: "row",
+                    gap: "0.5rem"
                 }}>{
                     signatures[config.name].input.map((input, i: number) => {
                         const value = config.params[input.key];

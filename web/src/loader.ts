@@ -58,15 +58,26 @@ interface library {
 
 export async function load_remotes() {
     const libs = await fetch_libraries();
-    await Promise.all(
-        libs.map(async (lib) => {
-            console.log(`about to load library ${lib.name}`);
-            const mod: library = await load_library(lib.name);
-            console.log(`loaded library ${lib.name}`);
-            console.log(`library ${lib.name} is of type ${typeof mod}`);
-            console.log(`library ${lib.name} has keys ${Object.keys(mod)}`);
-            mod.load(register);
-            console.log(`REGISTERED LIBRARY ${lib.name}`);
-        })
-    );
+    for (let lib of libs) {
+        console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        console.log(`about to load library ${lib.name}`);
+        let mod: library = await load_library(lib.name);
+        console.log(`loaded library ${lib.name}`);
+        console.log(`library ${lib.name} is of type ${typeof mod}`);
+        console.log(`library ${lib.name} has keys ${Object.keys(mod)}`);
+        mod.load(register);
+        console.log(`REGISTERED LIBRARY ${lib.name}`);
+    }
+
+    // await Promise.all(
+    //     libs.map(async (lib) => {
+    //         console.log(`about to load library ${lib.name}`);
+    //         const mod: library = await load_library(lib.name);
+    //         console.log(`loaded library ${lib.name}`);
+    //         console.log(`library ${lib.name} is of type ${typeof mod}`);
+    //         console.log(`library ${lib.name} has keys ${Object.keys(mod)}`);
+    //         mod.load(register);
+    //         console.log(`REGISTERED LIBRARY ${lib.name}`);
+    //     })
+    // );
 }
