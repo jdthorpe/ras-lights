@@ -7,3 +7,4 @@ require("./rainbow-stripes");
 require("./rotate");
 require("./solid");
 require("./unzip");
+require("./smooth-to");

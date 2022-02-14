@@ -5,3 +5,4 @@ import "./rainbow-stripes";
 import "./rotate";
 import "./solid";
 import "./unzip";
+import "./smooth-to";
