@@ -5,6 +5,7 @@ import { Label } from '@fluentui/react/lib/Label';
 import { rgb, rgbw } from 'shared/types/mode';
 
 import { rgbw_input, rgbw_array_input } from "shared/types/parameters"
+import { sizeBoolean } from '@fluentui/react';
 
 const WrappedRow = styled.div`
     display: flex;
@@ -22,10 +23,22 @@ const Col = styled.div`
 const SIZE = "2rem"
 const H_SIZE = "1.2rem"
 
-export const ColorBox = styled.div<{ height: string, width: string, color: string }>`
-    height: ${(props) => props.height};
-    width: ${(props) => props.width};
-    background-color: #${props => props.color};
+export const HalfColorBox = styled.div.attrs<{ color: string }>(props => ({
+    style: { backgroundColor: props.color }
+}))`
+    height: 1.2rem;
+    width: 2rem;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: black;
+`
+
+export const ColorBox = styled.div.attrs<{ color: string }>(props => ({
+    style: { backgroundColor: props.color }
+}))`
+    height: 2rem;
+    width: 2rem;
     border-style: solid;
     border-width: 1px;
     border-radius: 2px;
@@ -75,8 +88,8 @@ export const RGBW: React.FC<{ color: rgbw }> = ({ color }) => {
     const w = color[3].toString(16)
     return (
         <Col>
-            <ColorBox height={H_SIZE} width={SIZE} color={`#${w}${w}${w}`} />
-            <ColorBox height={H_SIZE} width={SIZE} color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
+            <HalfColorBox color={`#${w}${w}${w}`} />
+            <HalfColorBox color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
         </Col>
     )
 }
@@ -89,8 +102,8 @@ export const RGBWArray: React.FC<{ colors: rgbw[] }> = ({ colors }) => {
                     const w = color[3].toString(16)
                     return (
                         <Col key={i}>
-                            <ColorBox height={H_SIZE} width={SIZE} color={`${w}${w}${w}`} />
-                            <ColorBox height={H_SIZE} width={SIZE} color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
+                            <HalfColorBox color={`${w}${w}${w}`} />
+                            <HalfColorBox color={cc.rgb.hex(color.slice(0, 3) as rgb)} />
                         </Col>
                     )
                 })}

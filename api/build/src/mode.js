@@ -69,10 +69,14 @@ async function get_show(name) {
         throw new Error(`No such mode "${name}"`);
     }
 }
+const GLOBALS = {
+    leds: 1,
+    stop,
+    prev: new Array(1).fill([0, 0, 0, 0]),
+};
 async function get_mode(show) {
-    const func = (0, shared_1.build_node)(show.def, {
-        leds, // : settings.ws281x.leds,
-    });
+    GLOBALS.leds = leds;
+    const func = (0, shared_1.build_node)(show.def, GLOBALS);
     return func;
 }
 // ----------------------------------------
@@ -194,8 +198,10 @@ function create_loop(mode, before, after) {
             const C = perf_hooks_1.performance.now();
             after && after();
             const D = perf_hooks_1.performance.now();
-            if (this_show === current_show && ajv.validate(schema, colors))
+            if (this_show === current_show && ajv.validate(schema, colors)) {
                 (0, driver_1.set_colors)(colors);
+                GLOBALS.prev = colors;
+            }
             const E = perf_hooks_1.performance.now();
             const d = E - A;
             // // THIS WAY MADNESS LIES:

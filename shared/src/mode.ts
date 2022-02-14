@@ -3,9 +3,9 @@ import { func_config, mode_param, mode } from "../types/mode";
 import { registry, globals } from "./registry";
 
 export function build_node(x: func_config, globals: globals): mode {
-    console.log("[build_node] about to build node: ", JSON.stringify(x));
+    // console.log("[build_node] about to build node: ", JSON.stringify(x));
     const node = _build_node(x, ["rgb[]", "rgbw[]", "number[]"], globals);
-    console.log("[build_node]  finished building node: ", node);
+    // console.log("[build_node]  finished building node: ", node);
     return node;
 }
 
@@ -17,14 +17,7 @@ function _build_node(
     console.log("[_build_node] got config: ", x);
     // get the function and its types from the registry
     const f = registry[x.name];
-    console.log(
-        "[_build_node] got config: ",
-        x,
-        "name:",
-        x.name,
-        "exists: ",
-        x.name in registry
-    );
+    // console.log( "[_build_node] got config: ", x, "name:", x.name, "exists: ", x.name in registry);
     if (typeof f === "undefined") {
         console.log("throwing");
         throw new Error(
@@ -94,7 +87,7 @@ function _build_node(
             }
             default: {
                 let exhaustivenessCheck: never = input_value;
-                console.log(exhaustivenessCheck);
+                console.log("exhaustivenessCheck", exhaustivenessCheck);
                 // @ts-ignore
                 throw new Error(`unknown input type ${input_value.type}`);
             }

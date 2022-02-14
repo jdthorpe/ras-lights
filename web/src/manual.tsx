@@ -39,6 +39,10 @@ async function setRandomColors(on: boolean) {
     }
 }
 
+/*
+{"name":"editor","def":{"type":"func","name":"SmoothTo","params":{"to":{"type":"rgbw","value":[0,0,255,127]},"fade_time":{"type":"number","value":500}}}}
+
+*/
 async function setWhiteIntensity(on: boolean, intensity: number) {
     try {
         if (on)
@@ -50,6 +54,33 @@ async function setWhiteIntensity(on: boolean, intensity: number) {
 }
 
 
+async function update_color(x: IColor, on: boolean) {
+    try {
+        await fetch("/api/mode", {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "name": "editor",
+                "def": {
+                    "type": "func",
+                    "name": "SmoothTo",
+                    "params": {
+                        "to": {
+                            "type": "rgbw",
+                            "value": [x.r, x.g, x.b, 0]
+                        },
+                        "fade_time": { "type": "number", "value": 1000 }
+                    }
+                }
+            })
+        });
+    } catch (err) {
+        console.log("/lights/set-colors failed with error", err)
+    }
+}
+
+/*
 async function update_color(x: IColor, on: boolean) {
     try {
         if (on)
@@ -64,7 +95,7 @@ async function update_color(x: IColor, on: boolean) {
         console.log("/lights/set-colors failed with error", err)
     }
 }
-
+*/
 
 const Manual: React.FC = () => {
     const [color, setColor] = useState(white);

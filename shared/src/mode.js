@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.build_node = void 0;
 const registry_1 = require("./registry");
 function build_node(x, globals) {
-    console.log("[build_node] about to build node: ", JSON.stringify(x));
+    // console.log("[build_node] about to build node: ", JSON.stringify(x));
     const node = _build_node(x, ["rgb[]", "rgbw[]", "number[]"], globals);
-    console.log("[build_node]  finished building node: ", node);
+    // console.log("[build_node]  finished building node: ", node);
     return node;
 }
 exports.build_node = build_node;
@@ -13,7 +13,7 @@ function _build_node(x, returnType, globals) {
     console.log("[_build_node] got config: ", x);
     // get the function and its types from the registry
     const f = registry_1.registry[x.name];
-    console.log("[_build_node] got config: ", x, "name:", x.name, "exists: ", x.name in registry_1.registry);
+    // console.log( "[_build_node] got config: ", x, "name:", x.name, "exists: ", x.name in registry);
     if (typeof f === "undefined") {
         console.log("throwing");
         throw new Error(`Unknown function ${x.name}. Known functions include: ${Object.keys(registry_1.registry).reduce((a, b) => (a === "" ? b : `${a}, ${b}`), "")}`);
@@ -67,7 +67,7 @@ function _build_node(x, returnType, globals) {
             }
             default: {
                 let exhaustivenessCheck = input_value;
-                console.log(exhaustivenessCheck);
+                console.log("exhaustivenessCheck", exhaustivenessCheck);
                 // @ts-ignore
                 throw new Error(`unknown input type ${input_value.type}`);
             }

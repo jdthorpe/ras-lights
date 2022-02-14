@@ -2,7 +2,8 @@ import Ajv from "ajv";
 import { build_node, registry } from "shared";
 import { turn_off, set_colors } from "./driver";
 import { show, func_config } from "shared/types/mode";
-import { channel, IDriver } from "shared/types/admin";
+import { globals } from "shared/src/registry";
+import { IDriver } from "shared/types/admin";
 // import settings from "./settings";
 import { modeStore } from "./db";
 import { input } from "shared/types/parameters";
@@ -86,10 +87,15 @@ async function get_show(name: string): Promise<show> {
     }
 }
 
+const GLOBALS: globals = {
+    leds: 1, // : settings.ws281x.leds,
+    stop,
+    prev: new Array(1).fill([0, 0, 0, 0]),
+};
+
 async function get_mode(show: show): Promise<mode> {
-    const func = build_node(show.def as func_config, {
-        leds, // : settings.ws281x.leds,
-    });
+    GLOBALS.leds = leds;
+    const func = build_node(show.def as func_config, GLOBALS);
     return func;
 }
 
@@ -234,8 +240,10 @@ function create_loop(mode: mode, before?: cb, after?: cb): void {
             const C = performance.now();
             after && after();
             const D = performance.now();
-            if (this_show === current_show && ajv.validate(schema, colors))
+            if (this_show === current_show && ajv.validate(schema, colors)) {
                 set_colors(colors);
+                GLOBALS.prev = colors;
+            }
             const E = performance.now();
             const d = E - A;
             // // THIS WAY MADNESS LIES:

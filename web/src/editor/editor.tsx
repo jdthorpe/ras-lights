@@ -213,6 +213,17 @@ function walk_inputs(
     }
 }
 
+const RootPreview: React.FC<{ colors: rgb[] | rgbw[] | number[] | undefined }> = ({ colors }) => {
+    if (!colors || colors === null || colors.length === 0)
+        return <p>too early (no colors)</p>
+    if (typeof colors[0] === "number")
+        return <WArray w={colors as number[]} />
+    if (colors[0].length === 3)
+        return <ColorArray colors={colors as rgb[]} />
+    else
+        return <RGBWArray colors={colors as rgbw[]} />
+}
+
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     // path to the active element
@@ -224,7 +235,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(true)
     const [show_raw_input, { toggle: toggleShowRawInput }] = useBoolean(false)
     const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
-    const [live, { toggle: toggleLive }] = useBoolean(false);
+    const [live, set_live] = useState(false);
 
     const [free_text_option, set_free_text_option] = useState<string>()
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
@@ -343,7 +354,6 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     useEffect(() => {
         /* component will mount */
-        console.log("COMPONENT WILL MOUNT")
         globals_ref.current.init();
         // update_LEDS();
         globals_ref.current.set(default_show, [])
@@ -444,6 +454,14 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }), [show])
 
+    const onLiveChange = useCallback(() => {
+        set_live(!live)
+        if (!live) {
+            update_LEDS()
+        }
+
+    }, [live, update_LEDS, set_live])
+
     useEffect(() => {
         live && update_LEDS()
         if (show.type === "func")
@@ -472,22 +490,18 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     }, [active_path.length, active_item, signatures])
 
-    const RootPreview = useCallback(() => {
-        if (!colors || colors === null || colors.length === 0)
-            return <p>too early (no colors)</p>
-        if (typeof colors[0] === "number")
-            return <WArray w={colors as number[]} />
-        if (colors[0].length === 3)
-            return <ColorArray colors={colors as rgb[]} />
-        else
-            return <RGBWArray colors={colors as rgbw[]} />
-    }, [colors])
+
+    //     useEffect(() => console.log("colors did change"), [colors])
+    // useEffect(() => console.log("mode did change"), [mode])
+    // useEffect(() => console.log("signatures did change"), [signatures])
+    // useEffect(() => console.log("show did change"), [show])
+    // useEffect(() => console.log("RootPreview did change"), [RootPreview])
 
 
     const get_preview = useCallback((props: { path: number[] }) => {
 
         if (props.path.length === 0)
-            return RootPreview()
+            return <RootPreview colors={colors} />
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
 
@@ -514,7 +528,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
 
         }
-    }, [mode, signatures, show, RootPreview])
+    }, [mode, signatures, show, colors])
 
     const update_value = useCallback((
         new_value: Partial<mode_param>,
@@ -635,7 +649,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 />
                 <div style={{ margin: "auto" }}></div>
                 <IconButton
-                    onClick={toggleLive}
+                    onClick={onLiveChange}
                     title="Use Live Updates"
                     style={{ color: live ? ACTIVE_COLOR : "black" }}
                     icon={faBolt}
@@ -770,7 +784,6 @@ const EditorTab: React.FC = () => {
                 const res = (await fetch("/api/registry/descriptors"));
                 const data: { [key: string]: signature } = await res.json()
                 if (canceled) return
-                console.log("setting signatures canceled... ", canceled)
                 set_signatures(data)
             } catch (err) {
                 console.log("erroring", err)
