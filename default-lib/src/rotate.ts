@@ -37,7 +37,7 @@ register({
             key: "period",
             type: "number",
             label: "Period (s)",
-            default: 1,
+            default: 10,
             min: 1,
             max: 600,
         },

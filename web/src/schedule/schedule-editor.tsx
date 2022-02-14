@@ -61,7 +61,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
     return (
         <div
             style={{
-                backgroundColor: "#c2d2ff",
+                backgroundColor: "#dddddd",
             }}
         >
 

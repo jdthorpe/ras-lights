@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useCallback } from 'react';
+import React, { useRef, useState, useEffect, createContext, useCallback } from 'react';
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
@@ -21,12 +21,12 @@ import { ui } from "shared/types/user-input";
 
 import { func_config, mode_param, rgb_array_value, rgb, rgbw, mode, value_instance } from 'shared/types/mode';
 import {
-    value, signature, signatures, input, number_array_input,
+    value, signature, signatures, input,
     color_array_input, color_input,
     range_input, integer_input, boolean_input
 } from "shared/types/parameters"
 import { FuncValue } from './inputs/func-input';
-import { ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
+import { WArray, ColorArray, ColorOptions, ColorArrayOptions } from './inputs/color-input';
 import { RGBWArray, RGBW } from './inputs/rgbw-input';
 import { BooleanOptions } from './inputs/boolean-input';
 import { NumberOptions } from './inputs/number-input';
@@ -172,6 +172,7 @@ interface IEditorContext {
     active_path: number[];
     onClose: (path: number[]) => void;
     getWrappers: (path: number[]) => string[];
+    wrap: (path: number[], name: string) => void;
     showNumericInputs: boolean;
 }
 
@@ -183,6 +184,7 @@ export const EditorContext = createContext<IEditorContext>({
     active_path: [],
     onClose: () => { },
     getWrappers: () => [],
+    wrap: () => { },
     showNumericInputs: false,
 });
 
@@ -211,19 +213,29 @@ function walk_inputs(
     }
 }
 
+const RootPreview: React.FC<{ colors: rgb[] | rgbw[] | number[] | undefined }> = ({ colors }) => {
+    if (!colors || colors === null || colors.length === 0)
+        return <p>too early (no colors)</p>
+    if (typeof colors[0] === "number")
+        return <WArray w={colors as number[]} />
+    if (colors[0].length === 3)
+        return <ColorArray colors={colors as rgb[]} />
+    else
+        return <RGBWArray colors={colors as rgbw[]} />
+}
 
 const Editor: React.FC<editorProps> = ({ signatures }) => {
 
     // path to the active element
     const [active_path, set_active_path] = useState<number[]>([])
     const [show, set_show] = useState<func_config | rgb_array_value>(default_show)
-    const [colors, set_colors] = useState<rgb[]>()
+    const [colors, set_colors] = useState<rgb[] | rgbw[] | number[]>()
     const [mode, set_mode] = useState<mode>()
     const [loading, set_loading] = useState(true)
     const [showNumericInputs, { toggle: toggleShowNumericInputs }] = useBoolean(true)
     const [show_raw_input, { toggle: toggleShowRawInput }] = useBoolean(false)
     const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
-    const [live, { toggle: toggleLive }] = useBoolean(false);
+    const [live, set_live] = useState(false);
 
     const [free_text_option, set_free_text_option] = useState<string>()
     const [nameKey, set_nameKey] = useState<string | number | undefined>()
@@ -325,23 +337,34 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
         , [])
 
-    useEffect(() => console.log("INIT did change"), [init])
-    useEffect(() => console.log("SET did change"), [set])
-    useEffect(() => console.log("LOOP did change"), [loop])
+    // useEffect(() => console.log("INIT did change"), [init])
+    // useEffect(() => console.log("SET did change"), [set])
+    // useEffect(() => console.log("LOOP did change"), [loop])
+
+    const globals_ref = useRef<{
+        init: () => void, loop: ILoop, set: (
+            new_value: mode_param,
+            path: number[],
+        ) => void
+    }>({ init, loop, set })
+
+    globals_ref.current.init = init
+    globals_ref.current.loop = loop
+    globals_ref.current.set = set
 
     useEffect(() => {
         /* component will mount */
-        console.log("COMPONENT WILL MOUNT")
-        init();
+        globals_ref.current.init();
         // update_LEDS();
-        set(default_show, [])
+        globals_ref.current.set(default_show, [])
 
+        const loop = globals_ref.current.loop
         // component will unmount
         return function cleanup() {
             loop.stop();
             // live && (async () => { await fetch("/api/mode/off"); })()
         };
-    }, []); // Dont add the dependencies!!! init, set, loop
+    }, [globals_ref]); // Dont add the dependencies!!! init, set, loop
 
     const disableSave = (!nameKey) || !(nameKey === FREE_TEXT_KEY ? free_text_option! : (nameKey as string)).length
 
@@ -385,7 +408,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         return inputs
     }, [signatures])
 
-    const onClose = (path: number[]) => {
+    const onClose = (path: number[]): void => {
 
         const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
         const s = signatures[old_value.name]
@@ -431,6 +454,14 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         }
     }), [show])
 
+    const onLiveChange = useCallback(() => {
+        set_live(!live)
+        if (!live) {
+            update_LEDS()
+        }
+
+    }, [live, update_LEDS, set_live])
+
     useEffect(() => {
         live && update_LEDS()
         if (show.type === "func")
@@ -457,14 +488,20 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 .map(e => e[0]).sort())
         }
 
-    }, [active_item, signatures])
+    }, [active_path.length, active_item, signatures])
+
+
+    //     useEffect(() => console.log("colors did change"), [colors])
+    // useEffect(() => console.log("mode did change"), [mode])
+    // useEffect(() => console.log("signatures did change"), [signatures])
+    // useEffect(() => console.log("show did change"), [show])
+    // useEffect(() => console.log("RootPreview did change"), [RootPreview])
+
 
     const get_preview = useCallback((props: { path: number[] }) => {
 
         if (props.path.length === 0)
-            return typeof colors === "undefined" ? (
-                <p>too early (no colors)</p>
-            ) : (<ColorArray colors={colors} />)
+            return <RootPreview colors={colors} />
 
         const [data, input] = get_preview_at_path(mode!, show, props.path, signatures)
 
@@ -480,7 +517,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             case "rgb[]": { return <ColorArray colors={data as rgb[]} /> }
             case "rgbw[]": { return <RGBWArray colors={data as rgbw[]} /> }
             case "rgbw": { return <RGBW color={data as rgbw} /> }
-            case "number[]": { return <p>WhiteArray preview goes here</p> }
+            case "number[]": { return <WArray w={data as number[]} /> }
+
             default: {
                 let exhaustivenessCheck: never = input;
                 console.log(exhaustivenessCheck);
@@ -520,9 +558,35 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             }
         } else {
             const func = build_fun(option.key as string, signatures[option.key])
-            console.log('C', func, active_path)
+            console.log('func C', func, active_path)
             set(func, active_path)
         }
+    }
+
+    const wrap = (path: number[], name: string): void => {
+
+        const old_value: func_config = get_item_at_path(show, path, signatures)[0] as func_config
+        const s = signatures[old_value.name]
+        // const old_type = s.output
+        let unwrapped = true
+
+        const new_func_config: func_config = {
+            type: "func",
+            name,
+            // @ts-ignore no (simple) way to check this 
+            params: Object.fromEntries(
+                signatures[name].input.map(o => {
+                    if (unwrapped && o.type === s.output) {
+                        unwrapped = false
+                        return [o.key, old_value]
+                    }
+                    return [o.key, { type: o.type, value: o.default }]
+                })
+            )
+        }
+        console.log('[WRAP] current path', path)
+        console.dir(new_func_config)
+        set(new_func_config, path)
     }
 
     const onNameChange = React.useCallback(
@@ -570,6 +634,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             update_value,
             onClose,
             getWrappers,
+            wrap,
             showNumericInputs,
         }}>
             <Header>
@@ -584,7 +649,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
                 />
                 <div style={{ margin: "auto" }}></div>
                 <IconButton
-                    onClick={toggleLive}
+                    onClick={onLiveChange}
                     title="Use Live Updates"
                     style={{ color: live ? ACTIVE_COLOR : "black" }}
                     icon={faBolt}
@@ -719,7 +784,6 @@ const EditorTab: React.FC = () => {
                 const res = (await fetch("/api/registry/descriptors"));
                 const data: { [key: string]: signature } = await res.json()
                 if (canceled) return
-                console.log("setting signatures canceled... ", canceled)
                 set_signatures(data)
             } catch (err) {
                 console.log("erroring", err)

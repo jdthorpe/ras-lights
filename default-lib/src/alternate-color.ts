@@ -59,7 +59,7 @@ register({
             label: "Fade Time (seconds)",
             default: 1.5,
             min: 1,
-            max: 3600000,
+            max: 3600,
         },
         {
             key: "hold",
@@ -67,7 +67,7 @@ register({
             label: "Hold Time (seconds)",
             default: 1.5,
             min: 1,
-            max: 3600000,
+            max: 3600,
         },
     ],
     output: "rgb",

@@ -26,15 +26,18 @@ const SIZE = "2rem"
 const CLOSE_SIZE = "1.1rem"
 const CLOSE_FONT_SIZE = "0.9rem"
 
-const ColorBox = styled.div<{ color: string }>` 
-    height: ${SIZE};
-    width: ${SIZE};
-    background-color: ${props => props.color};
+const ColorBox = styled.div.attrs<{ color: string }>(props => ({
+    style: { backgroundColor: props.color }
+}))`
+    height: 2rem;
+    width: 2rem;
     border-style: solid;
     border-width: 1px;
     border-radius: 2px;
     border-color: black;
 `
+
+
 
 const smallIcon = mergeStyles({
     // fontSize: 15,
@@ -148,13 +151,22 @@ export const ColorValuePicker: React.FC<colorValuePickerProps> = ({ color, onCha
 
 
 export const ColorArray: React.FC<{ colors: rgb[] }> = ({ colors }) => {
-    return (
-        <WrappedRow >
-            {colors.map((color: rgb, i) => (
-                <ColorBox key={i} color={`#${cc.rgb.hex(color)}`} />
-            ))}
-        </WrappedRow>
-    )
+    try {
+        return (
+            <WrappedRow >
+                {colors.map((color: rgb, i) => (
+                    <ColorBox key={i} color={`#${cc.rgb.hex(color)}`} />
+                ))}
+            </WrappedRow>
+        )
+    } catch (e) {
+        console.log(e)
+        return <div>something went wrong</div>
+    }
+}
+
+export const WArray: React.FC<{ w: number[] }> = ({ w }) => {
+    return (<ColorArray colors={w.map(v => [v, v, v])} />)
 }
 
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Slider } from '@fluentui/react/lib/Slider';
+import { rgbw } from "shared/types/mode";
 import debounce from "lodash.debounce"
 import {
     ColorPicker,
@@ -23,7 +24,8 @@ const Row = styled.div`
 
 async function turnOff() {
     try {
-        await fetch("/api/mode/off")
+        // await fetch("/api/mode/off")
+        await smooth_to([0, 0, 0, 0], 500)
     } catch (err) {
         console.log("/lights/off failed with error", err)
     }
@@ -39,6 +41,44 @@ async function setRandomColors(on: boolean) {
     }
 }
 
+/*
+{"name":"editor","def":{"type":"func","name":"SmoothTo","params":{"to":{"type":"rgbw","value":[0,0,255,127]},"fade_time":{"type":"number","value":500}}}}
+
+*/
+
+async function smooth_to(x: rgbw, t: number = 300) {
+    await fetch("/api/mode", {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            "name": "editor",
+            "def": {
+                "type": "func",
+                "name": "SmoothTo",
+                "params": {
+                    "to": {
+                        "type": "rgbw",
+                        "value": x
+                    },
+                    "fade_time": { "type": "number", "value": t } // TODO: magic number
+                }
+            }
+        })
+    })
+}
+
+
+
+async function setWhiteIntensity(intensity: number) {
+    try {
+        await smooth_to([0, 0, 0, intensity])
+    } catch (err) {
+        console.log("/lights/white failed with error", err)
+    }
+}
+
+/*
 async function setWhiteIntensity(on: boolean, intensity: number) {
     try {
         if (on)
@@ -48,8 +88,17 @@ async function setWhiteIntensity(on: boolean, intensity: number) {
         console.log("/lights/white failed with error", err)
     }
 }
+*/
 
+async function update_color(x: IColor) {
+    try {
+        await smooth_to([x.r, x.g, x.b, 0])
+    } catch (err) {
+        console.log("/lights/set-colors failed with error", err)
+    }
+}
 
+/*
 async function update_color(x: IColor, on: boolean) {
     try {
         if (on)
@@ -64,7 +113,7 @@ async function update_color(x: IColor, on: boolean) {
         console.log("/lights/set-colors failed with error", err)
     }
 }
-
+*/
 
 const Manual: React.FC = () => {
     const [color, setColor] = useState(white);
@@ -73,7 +122,7 @@ const Manual: React.FC = () => {
     const updateColor = React.useCallback(debounce((ev: any, colorObj: IColor) => {
         set_on(false)
         setColor(colorObj)
-        update_color(colorObj, on)
+        update_color(colorObj)
     }, 25), [setColor, update_color, set_on, on]);
 
     const set_random = React.useCallback(debounce(() => {
@@ -86,7 +135,8 @@ const Manual: React.FC = () => {
 
     const slider_cb = React.useCallback(debounce((n: number) => {
         set_on(false)
-        setWhiteIntensity(on, n)
+        setWhiteIntensity(n)
+        // setWhiteIntensity(on, n)
     }, 25),
         // @ts-ignore
         [on, set_on]);

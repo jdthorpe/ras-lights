@@ -1,7 +1,10 @@
 import { input, value, signatures } from "../types/parameters";
+import { rgb, rgbw } from "../types/mode";
 
 export interface globals {
     leds: number;
+    stop: () => void;
+    prev: rgb[] | rgbw[] | number[];
 }
 
 type func =

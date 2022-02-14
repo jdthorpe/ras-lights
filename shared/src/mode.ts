@@ -3,17 +3,23 @@ import { func_config, mode_param, mode } from "../types/mode";
 import { registry, globals } from "./registry";
 
 export function build_node(x: func_config, globals: globals): mode {
-    return _build_node(x, "rgb[]", globals);
+    // console.log("[build_node] about to build node: ", JSON.stringify(x));
+    const node = _build_node(x, ["rgb[]", "rgbw[]", "number[]"], globals);
+    // console.log("[build_node]  finished building node: ", node);
+    return node;
 }
 
 function _build_node(
     x: func_config,
-    returnType: value,
+    returnType: value | value[],
     globals: globals
 ): { (): any; __args__: any } {
+    console.log("[_build_node] got config: ", x);
     // get the function and its types from the registry
     const f = registry[x.name];
+    // console.log( "[_build_node] got config: ", x, "name:", x.name, "exists: ", x.name in registry);
     if (typeof f === "undefined") {
+        console.log("throwing");
         throw new Error(
             `Unknown function ${x.name}. Known functions include: ${Object.keys(
                 registry
@@ -22,7 +28,12 @@ function _build_node(
     }
     const [func, inputs, value] = f;
 
-    if (returnType !== value) {
+    if (Array.isArray(returnType)) {
+        if (returnType.indexOf(value) === -1)
+            throw new Error(
+                `Expected return type in "${returnType}" but registry function ${x.name} returns ${value}`
+            );
+    } else if (returnType !== value) {
         throw new Error(
             `Expected return type "${returnType}" but registry function ${x.name} returns ${value}`
         );
@@ -76,7 +87,7 @@ function _build_node(
             }
             default: {
                 let exhaustivenessCheck: never = input_value;
-                console.log(exhaustivenessCheck);
+                console.log("exhaustivenessCheck", exhaustivenessCheck);
                 // @ts-ignore
                 throw new Error(`unknown input type ${input_value.type}`);
             }
