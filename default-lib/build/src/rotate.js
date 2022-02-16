@@ -5,10 +5,11 @@ function rotate(x) {
     if (typeof this.starttime === "undefined")
         this.starttime = +new Date();
     const period = Math.ceil(1000 * x.period);
-    let offset = Math.floor((x.in.length * ((+new Date() - this.starttime) % period)) / period);
+    const show = x.in;
+    let offset = Math.floor((show.length * ((+new Date() - this.starttime) % period)) / period);
     if (x.backwards)
         offset *= -1;
-    return x.in.slice(offset).concat(x.in.slice(0, offset));
+    return show.slice(offset).concat(show.slice(0, offset));
 }
 (0, register_1.register)({
     name: "Rotate",
