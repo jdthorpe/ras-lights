@@ -9,6 +9,7 @@ import { value, input } from 'shared/types/parameters';
 import { Color, ColorArray } from "../editor/inputs/color-input";
 import { is_int, is_number } from "../editor/inputs/number-input";
 import { IconButton } from "../utils/icon-button";
+import { check } from "reserved-words";
 
 import { faTimes, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
@@ -190,6 +191,10 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         }
         if (!is_js_identifier.test(key)) {
             set_key_error("not a valid JS identifier")
+            return
+        }
+        if (check(key, 6)) {
+            set_key_error("reserved word")
             return
         }
         set_key_error(undefined)
