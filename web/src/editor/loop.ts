@@ -27,7 +27,7 @@ export interface ILoop {
     stop: () => void;
 }
 
-const neurotic_timing_debugging = true;
+const neurotic_timing_debugging = false;
 const verbose = false;
 
 export function make_loop(

@@ -2,6 +2,39 @@
 
 A rasperry pi based light show and web app
 
+## Quickstart
+
+### Get your IP address
+
+This command:
+
+```
+ip r
+```
+
+will print out your ip configuration which will look like this:
+
+```txt
+default via 192.168.4.1 dev wlan0 proto dhcp src 192.168.4.70 metric 302
+```
+
+so my Raspberry Pi's ip address is `192.168.4.70` ( **not** `192.168.4.1`)
+
+### Setup SSH on the pi
+
+
+```
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
+
+### Run the install script
+
+
+```sh
+sudo in/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
+```
+
 ## TODO
 
 * Add a set of validators to common (including that defaults have been included in function signatures)

@@ -51,10 +51,9 @@ export async function reimport(lib: user_library) {
     } else {
         fs.symlinkSync(lib_dist_target, lib_dist);
     }
-    console.log(`>>> About to require lib.path: ${lib.path}`);
 
     try {
-        setActiveLibrary(lib.name);
+        //setActiveLibrary(lib.name);
         console.log(`>>> About to require lib.path: ${lib.path}`);
         const library = require(lib.path);
         console.log(`>>> library is type ${typeof library}`);
