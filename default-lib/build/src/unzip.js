@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const register_1 = require("../register");
 function effect(x, globals) {
-    const even_colors = x.colors.filter((c, i) => {
+    const colors = x.colors;
+    const even_colors = colors.filter((c, i) => {
         return i % 2 === 0;
     });
-    const odd_colors = x.colors.filter((c, i) => {
+    const odd_colors = colors.filter((c, i) => {
         return i % 2 === 1;
     });
     return [...even_colors, ...odd_colors.reverse()];

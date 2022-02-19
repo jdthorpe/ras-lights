@@ -5,6 +5,7 @@ Infrastructure (as opposed to setting up a new Rasperry pi or working with a
 user library )
 
 ## Local Dev Machine Setup
+
 ### Start the builders
 
 Start the shared library transpiler in watch mode:
@@ -55,8 +56,7 @@ address of your Raspberry Pi:
 Then open a terminal and run the nginx from the root of this repo like so: 
 
 ```sh
-docker run --rm -it -p 5000:80 \
-    -v $PWD/nginx-dev.conf:/etc/nginx/nginx.conf nginx
+docker run --rm -it -p 5000:80 -v $PWD/nginx-dev.conf:/etc/nginx/nginx.conf nginx
 ```
 
 ### React App Startup

@@ -9,11 +9,12 @@ interface input {
 function rotate(this: { starttime: number }, x: input): rgb[] {
     if (typeof this.starttime === "undefined") this.starttime = +new Date();
     const period = Math.ceil(1000 * x.period);
+    const show = x.in;
     let offset: number = Math.floor(
-        (x.in.length * ((+new Date() - this.starttime) % period)) / period
+        (show.length * ((+new Date() - this.starttime) % period)) / period
     );
     if (x.backwards) offset *= -1;
-    return x.in.slice(offset).concat(x.in.slice(0, offset));
+    return show.slice(offset).concat(show.slice(0, offset));
 }
 
 register({

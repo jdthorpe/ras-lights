@@ -14,8 +14,8 @@ function templateBuilder(args: templateParams): string {
 
     return builder`import { register } from "../register";
 ${interfaces}
-function effect(this: any, x: input, globals: globals): ${output_type} {
-    // Your code goes here...
+function effect(this: any, input: input, globals: globals): ${output_type} {
+    ${imports}// Your code goes here...
 }
 
 register({
@@ -54,7 +54,7 @@ ${args.inputs
     .reduce((a, b) => `${a}${b}`, "")}}
 `;
     return `
-interface input {)
+interface input {}
 `;
 }
 
@@ -71,6 +71,17 @@ function _input(i: input): string {
     return `        {
 ${out}
         },`;
+}
+
+function imports(args: templateParams): string {
+    if (args.inputs.length) {
+        const inputs =
+            args.inputs.length === 1
+                ? args.inputs[0].key
+                : args.inputs.map((i) => i.key).reduce((a, b) => `${a}, ${b}`);
+        return `const { ${inputs} } = inputs;\n    `;
+    }
+    return "";
 }
 
 function inputs(args: templateParams): string {

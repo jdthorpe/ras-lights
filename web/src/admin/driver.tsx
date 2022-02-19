@@ -47,12 +47,35 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 const driver: IDriver = await res.json()
                 if (canceled) return
                 if (driver === null) {
-                    set_driver({ frequency: 800000, dma: 10, channels: [] })
+                    const ch: channel = {
+                        gpio: PINS[0][0],
+                        count: 1,
+                        brightness: 255,
+                        type: STRIP_TYPE[0],
+                        invert: false,
+                        reverse: false,
+                    }
+                    set_driver({
+                        frequency: 800000, dma: 10, channels: [ch]
+                    })
+                    set_channels([ch])
                     return
                 }
                 set_driver(driver)
                 set_freq(driver.frequency)
-                set_channels(driver.channels)
+                if (driver.channels && driver.channels.length) {
+                    set_channels(driver.channels)
+                } else {
+                    const ch: channel = {
+                        gpio: PINS[0][0],
+                        count: 1,
+                        brightness: 255,
+                        type: STRIP_TYPE[0],
+                        invert: false,
+                        reverse: false,
+                    }
+                    set_channels([ch])
+                }
                 set_dma(driver.dma)
             } catch (err) {
                 console.log("dB driver error: ", err)
@@ -118,6 +141,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
         </DataRow>
         <h3 style={{ marginTop: "1.5rem" }}>Light Strips</h3>
+        {JSON.stringify(channels)}
         {
             channels && channels.map((ch, i) => (
                 <DataRow key={i} style={{ backgroundColor: (i % 2 ? "#dddddd" : "none") }}>

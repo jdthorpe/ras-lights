@@ -5,10 +5,11 @@ interface input {
 }
 
 function effect(this: any, x: input, globals: globals): rgb[] {
-    const even_colors = x.colors.filter((c, i) => {
+    const colors = x.colors;
+    const even_colors = colors.filter((c, i) => {
         return i % 2 === 0;
     });
-    const odd_colors = x.colors.filter((c, i) => {
+    const odd_colors = colors.filter((c, i) => {
         return i % 2 === 1;
     });
     return [...even_colors, ...odd_colors.reverse()];
