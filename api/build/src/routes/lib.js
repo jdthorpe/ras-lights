@@ -6,18 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* Library management routes */
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
-const fs_1 = __importDefault(require("fs"));
 const ajv_1 = __importDefault(require("ajv"));
-const db_1 = require("../db");
-const watch_1 = require("../watch");
-// startup
-(async () => {
-    const libs = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
-    for (let lib of libs) {
-        console.log(`[STARTUP] importing library ${JSON.stringify(lib)}`);
-        (0, watch_1.reimport)(lib);
-    }
-})();
+const lib_1 = require("../lib");
+// // startup
+// (async () => {
+//     const libs = await adminStore.find<user_library_data>(
+//         { type: "LIBRARY" },
+//         { _id: 0 }
+//     );
+//     for (let lib of libs) {
+//         console.log(`[STARTUP] importing library ${JSON.stringify(lib)}`);
+//         reimport(lib);
+//     }
+// })();
 const router = (0, express_1.Router)();
 exports.default = router;
 const ajv = new ajv_1.default();
@@ -31,7 +32,7 @@ const schema = {
 };
 // list all
 router.get("/", async (req, res) => {
-    const results = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
+    const results = await (0, lib_1.list_library)();
     res.status(200);
     res.json(results);
 });
@@ -40,32 +41,33 @@ router.post("/", async (req, res, next) => {
     const start = perf_hooks_1.performance.now();
     try {
         const body = req.body;
-        console.log("[LIB/POST] validation");
         if (!ajv.validate(schema, body)) {
             res.status(500);
+            console.log(`[LIB/POST] invalid json payload: ${JSON.stringify(body, null, 2)}`);
             res.send(`invalid json payload`);
             return;
         }
-        console.log("[LIB/POST] exists??");
-        if (!fs_1.default.existsSync(body.path)) {
-            res.status(500);
-            res.send(`no such library ${body.path}`);
-            return;
-        }
-        if (body.name === "default") {
-            res.status(500);
-            res.send(`Invalid library name`);
-            return;
-        }
-        console.log("[LIB/POST] upserting");
-        db_1.adminStore.update({ type: "LIBRARY", name: body.name }, body, {
-            upsert: true,
-        });
-        // if (body.watch) watch(body);
-        // else unwatch(body);
-        console.log("[LIB/POST] watching...");
-        (0, watch_1.watch)(body);
-        console.log("[LIB/POST] DONE");
+        await (0, lib_1.upsert_library)(body);
+        // console.log("[LIB/POST] exists??");
+        // if (!fs.existsSync(body.path)) {
+        //     res.status(500);
+        //     res.send(`no such library ${body.path}`);
+        //     return;
+        // }
+        // if (body.name === "default") {
+        //     res.status(500);
+        //     res.send(`Invalid library name`);
+        //     return;
+        // }
+        // console.log("[LIB/POST] upserting");
+        // adminStore.update({ type: "LIBRARY", name: body.name }, body, {
+        //     upsert: true,
+        // });
+        // // if (body.watch) watch(body);
+        // // else unwatch(body);
+        // console.log("[LIB/POST] watching...");
+        // watch(body);
+        // console.log("[LIB/POST] DONE");
     }
     catch (err) {
         return next(err);
@@ -77,9 +79,10 @@ router.post("/", async (req, res, next) => {
 // delete
 router.delete("/:library", async (req, res) => {
     const start = perf_hooks_1.performance.now();
-    console.log(`removing ${req.params.library} ???`);
-    db_1.adminStore.remove({ name: req.params.library }, { multi: true });
-    // TODO: uncache the library members (this requires a restart for now)
+    (0, lib_1.remove_library)(req.params.library);
+    // console.log(`removing ${req.params.library} ???`);
+    // adminStore.remove({ name: req.params.library }, { multi: true });
+    // // TODO: uncache the library members (this requires a restart for now)
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);
@@ -87,12 +90,16 @@ router.delete("/:library", async (req, res) => {
 // import
 router.get("/reload/:library", async (req, res) => {
     const start = perf_hooks_1.performance.now();
-    const results = await db_1.adminStore.findOne({ type: "LIBRARY", name: req.params.library }, { _id: 0 });
-    if (!results) {
-        res.status(500);
-        res.send(`no such library ${req.params.library}`);
-    }
-    (0, watch_1.reimport)(results);
+    (0, lib_1.reload_library)(req.params.library);
+    // const results = await adminStore.findOne<user_library_data>(
+    //     { type: "LIBRARY", name: req.params.library },
+    //     { _id: 0 }
+    // );
+    // if (!results) {
+    //     res.status(500);
+    //     res.send(`no such library ${req.params.library}`);
+    // }
+    // reimport(results);
     const end = perf_hooks_1.performance.now();
     res.status(200);
     res.send(`OK ${end - start}`);

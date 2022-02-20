@@ -25,7 +25,7 @@ then
 fi
 
 NODE_VERSION=$(node --version | perl -pe 's/^v(\d+)\..*/\1/')
-if [[ NODE_VERSION -lt 12]]
+if [[ "$NODE_VERSION" -lt "12" ]];
 then 
   echo "[ras-lights setup.sh] Incompatible Node version. Please upgrade to version 12 or higher" 
   exit
@@ -45,25 +45,25 @@ else
 fi
 
 cd /home/pi/ras-lights
-echo "[ras-lights setup.sh] Configuring NGINX"
+echo "[ras-lights setup.sh] Configuring NGINX";
 cp nginx.conf /etc/nginx/nginx.conf
-echo "[ras-lights setup.sh] Configuring supervisord"
+echo "[ras-lights setup.sh] Configuring supervisord";
 cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 echo "[ras-lights setup.sh] install api dependencies"
 pushd api
-npm install
+npm install --only=production
 popd
 
-echo "[ras-lights setup.sh] install common dependencies"
-# not sure this is actually necessary...
-pushd common
-npm install
-popd
+# echo "[ras-lights setup.sh] install common dependencies"
+# # not sure this is actually necessary...
+# pushd common
+# npm install --only=production
+# popd
 
 echo "[ras-lights setup.sh] install default-lib dependencies"
 pushd default-lib
-npm install
+npm install --only=production
 popd
 
 echo "[ras-lights setup.sh] starting the application"
