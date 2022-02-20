@@ -3,6 +3,7 @@ import { performance } from "perf_hooks";
 import { Router, Request, Response, NextFunction } from "express";
 import Ajv from "ajv";
 import { user_library_data } from "shared/types/admin";
+import { watch } from "./watch";
 import {
     list_library,
     upsert_library,
@@ -62,6 +63,11 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
         }
 
         await upsert_library(body);
+
+        console.log("[LIB/POST] watching...");
+        watch(body);
+        console.log("[LIB/POST] DONE");
+
         // console.log("[LIB/POST] exists??");
         // if (!fs.existsSync(body.path)) {
         //     res.status(500);

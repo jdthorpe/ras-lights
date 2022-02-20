@@ -32,32 +32,13 @@ sudo systemctl start ssh
 
 
 ```sh
-sudo in/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
 ```
 
-## TODO
+## optional
 
-* Add a set of validators to common (including that defaults have been included in function signatures)
-* Add validation for the signatures fetched from the backend (if the server is
-    not running or the proxy is not set, the text is an HTML rendering from NGINX with a 502 or 404 message)
-
-## Initial Set Up
-
-1. Usual Raspeberry pi setup
-
-* install rasbian
-* setup ssh
-* get the ip address (that's how you'll connect with ssh and to the web app)
 * make an IP address reservation on your router (so you can find your pi online)
 * disable visual mode on your pi (optional, probably)
-* install the with either:
-
-    ```sh
-    /bsudo in/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/install.sh)"
-    ```
-
-    or clone this repo into `/home/pi/` and run the install script with `sudo install.sh`
-
 
 ## Quick start
 

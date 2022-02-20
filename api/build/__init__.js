@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("./src/db");
 const default_modes_json_1 = __importDefault(require("./default-modes.json"));
+const lib_1 = require("./src/lib");
 (async () => {
     const count = await db_1.modeStore.count({});
     if (count) {
@@ -20,4 +21,8 @@ const default_modes_json_1 = __importDefault(require("./default-modes.json"));
             await db_1.modeStore.update({ name: show.name }, show, { upsert: true });
         }
     }
+    await (0, lib_1.upsert_library)({
+        name: "internal",
+        path: "/home/pi/ras-lights/default-lib/",
+    });
 })();
