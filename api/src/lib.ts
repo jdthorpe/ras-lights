@@ -1,19 +1,7 @@
 import fs from "fs";
 import { adminStore } from "./db";
-import { reimport, watch } from "./watch";
+import { reimport } from "./watch";
 import { user_library_data, user_library } from "shared/types/admin";
-
-// startup
-(async () => {
-    const libs = await adminStore.find<user_library_data>(
-        { type: "LIBRARY" },
-        { _id: 0 }
-    );
-    for (let lib of libs) {
-        console.log(`[STARTUP] importing library ${JSON.stringify(lib)}`);
-        reimport(lib);
-    }
-})();
 
 export async function reload_library(name: string) {
     const results = await adminStore.findOne<user_library_data>(
@@ -41,10 +29,6 @@ export async function upsert_library(x: user_library) {
     console.log(`[LIB/POST] upserting ${x.name} @ ${x.path}`);
     const lib: user_library_data = { type: "LIBRARY", ...x };
     adminStore.update({ type: "LIBRARY", name: x.name }, lib, { upsert: true });
-
-    console.log("[LIB/POST] watching...");
-    watch(x);
-    console.log("[LIB/POST] DONE");
 }
 
 export async function remove_library(name: string) {

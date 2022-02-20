@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
+const watch_1 = require("./watch");
 const lib_1 = require("../lib");
 // // startup
 // (async () => {
@@ -48,6 +49,9 @@ router.post("/", async (req, res, next) => {
             return;
         }
         await (0, lib_1.upsert_library)(body);
+        console.log("[LIB/POST] watching...");
+        (0, watch_1.watch)(body);
+        console.log("[LIB/POST] DONE");
         // console.log("[LIB/POST] exists??");
         // if (!fs.existsSync(body.path)) {
         //     res.status(500);

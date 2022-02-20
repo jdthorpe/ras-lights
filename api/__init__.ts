@@ -5,6 +5,7 @@
 
 import { modeStore } from "./src/db";
 import modes from "./default-modes.json";
+import { upsert_library } from "./src/lib";
 
 (async () => {
     const count = await modeStore.count({});
@@ -16,4 +17,9 @@ import modes from "./default-modes.json";
             await modeStore.update({ name: show.name }, show, { upsert: true });
         }
     }
+
+    await upsert_library({
+        name: "internal",
+        path: "/home/pi/ras-lights/default-lib/",
+    });
 })();

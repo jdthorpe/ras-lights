@@ -7,14 +7,6 @@ exports.remove_library = exports.upsert_library = exports.list_library = exports
 const fs_1 = __importDefault(require("fs"));
 const db_1 = require("./db");
 const watch_1 = require("./watch");
-// startup
-(async () => {
-    const libs = await db_1.adminStore.find({ type: "LIBRARY" }, { _id: 0 });
-    for (let lib of libs) {
-        console.log(`[STARTUP] importing library ${JSON.stringify(lib)}`);
-        (0, watch_1.reimport)(lib);
-    }
-})();
 async function reload_library(name) {
     const results = await db_1.adminStore.findOne({ type: "LIBRARY", name }, { _id: 0 });
     if (!results) {
@@ -35,9 +27,6 @@ async function upsert_library(x) {
     console.log(`[LIB/POST] upserting ${x.name} @ ${x.path}`);
     const lib = { type: "LIBRARY", ...x };
     db_1.adminStore.update({ type: "LIBRARY", name: x.name }, lib, { upsert: true });
-    console.log("[LIB/POST] watching...");
-    (0, watch_1.watch)(x);
-    console.log("[LIB/POST] DONE");
 }
 exports.upsert_library = upsert_library;
 async function remove_library(name) {

@@ -18,7 +18,7 @@ then
   # NO!: apt-get install node -y
   # https://hassancorrigan.com/blog/install-nodejs-on-a-raspberry-pi-zero/ 
   wget https://unofficial-builds.nodejs.org/download/release/v12.22.9/node-v12.22.9-linux-armv6l.tar.xz
-  tar xvfJ node-v12.22.9-linux-armv6l.tar.xz
+  tar xfJ node-v12.22.9-linux-armv6l.tar.xz
   sudo cp -R node-v12.22.9-linux-armv6l/* /usr/local
   rm -rf node-v12.22.9-linux-armv6l/
   rm node-v12.22.9-linux-armv6l.tar.xz
@@ -50,10 +50,6 @@ cp nginx.conf /etc/nginx/nginx.conf
 echo "[ras-lights setup.sh] Configuring supervisord";
 cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-echo "[ras-lights setup.sh] install api dependencies"
-pushd api
-npm install --only=production
-popd
 
 # echo "[ras-lights setup.sh] install common dependencies"
 # # not sure this is actually necessary...
@@ -62,8 +58,12 @@ popd
 # popd
 
 echo "[ras-lights setup.sh] install default-lib dependencies"
-pushd default-lib
-npm install --only=production
+pushd default-lib && npm install --only=production && popd
+
+echo "[ras-lights setup.sh] install api dependencies"
+pushd api 
+npm install --only=production 
+node api/build/__init__.js
 popd
 
 echo "[ras-lights setup.sh] starting the application"
