@@ -43,28 +43,22 @@ else
     echo "[ras-lights setup.sh] cloning ras lights repo"
     git clone https://github.com/jdthorpe/ras-lights
 fi
-
 cd /home/pi/ras-lights
-echo "[ras-lights setup.sh] Configuring NGINX";
-cp nginx.conf /etc/nginx/nginx.conf
-echo "[ras-lights setup.sh] Configuring supervisord";
-cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
-
-
-# echo "[ras-lights setup.sh] install common dependencies"
-# # not sure this is actually necessary...
-# pushd common
-# npm install --only=production
-# popd
 
 echo "[ras-lights setup.sh] install default-lib dependencies"
 pushd default-lib && npm install --only=production && popd
 
 echo "[ras-lights setup.sh] install api dependencies"
 pushd api 
-npm install --only=production 
+# the LED lib needs root perms...
+npm install --only=production --unsafe-perm 
 node build/__init__.js
 popd
 
-echo "[ras-lights setup.sh] starting the application"
+echo "[ras-lights setup.sh] Configuring NGINX";
+cp nginx.conf /etc/nginx/nginx.conf
+nginx -s reload
+
+echo "[ras-lights setup.sh] Configuring supervisord";
+cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 supervisorctl reload

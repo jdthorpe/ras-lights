@@ -4,21 +4,25 @@ A rasperry pi based light show and web app
 
 ## Quickstart
 
+When you first turn on your pi, use the welcome screen to choose your language,
+set a password, and connect your Pi to your wireless network. Then open up a
+terminal window and run the following commands
+
 ### Get your IP address
 
-This command:
+This command will print out your ip configuration:
 
 ```
-ip r
+ip r | grep default
 ```
 
-will print out your ip configuration which will look like this:
+which will look like this:
 
 ```txt
 default via 192.168.4.1 dev wlan0 proto dhcp src 192.168.4.70 metric 302
 ```
 
-so my Raspberry Pi's ip address is `192.168.4.70` ( **not** `192.168.4.1`)
+so in this case, my Raspberry Pi's IP address is `192.168.4.70` ( **not** `192.168.4.1`)
 
 ### Setup SSH on the pi
 
@@ -30,10 +34,28 @@ sudo systemctl start ssh
 
 ### Run the install script
 
-
 ```sh
 sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
 ```
+
+sudo curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh | bash
+
+On my raspberry pi zero,  I couldn't use the browser to view this page, because the browser wouldn't open.  So for this step, I logged onto my pi from my main computer using SSH, by opening a terminal window on my computer and typing
+
+```sh
+ssh pi@192.168.4.64
+```
+
+where the ip address is the ip address of the Pi on my local network.  I then copied the above command from my browser into the ssh session.
+
+### View the app
+
+If the install script worked, you can open a browser and navigate to your Pi's  IP address to view the app.
+
+
+
+
+
 
 ## optional
 
