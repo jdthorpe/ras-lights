@@ -3,7 +3,7 @@ import { performance } from "perf_hooks";
 import { Router, Request, Response, NextFunction } from "express";
 import Ajv from "ajv";
 import { user_library_data } from "shared/types/admin";
-import { watch } from "./watch";
+import { watch } from "../watch";
 import {
     list_library,
     upsert_library,

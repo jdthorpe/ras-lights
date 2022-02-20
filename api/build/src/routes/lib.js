@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const perf_hooks_1 = require("perf_hooks");
 const express_1 = require("express");
 const ajv_1 = __importDefault(require("ajv"));
-const watch_1 = require("./watch");
+const watch_1 = require("../watch");
 const lib_1 = require("../lib");
 // // startup
 // (async () => {
