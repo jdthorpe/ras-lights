@@ -63,7 +63,7 @@ pushd default-lib && npm install --only=production && popd
 echo "[ras-lights setup.sh] install api dependencies"
 pushd api 
 npm install --only=production 
-node api/build/__init__.js
+node build/__init__.js
 popd
 
 echo "[ras-lights setup.sh] starting the application"
