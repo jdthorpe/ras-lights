@@ -4,6 +4,8 @@ title: Quick Start
 permalink: /quick-start.html
 ---
 
+{:toc}
+
 # Quick Start
 
 Assuming you have a Raspberry Pi in hand, you'll need to do a few things to get
