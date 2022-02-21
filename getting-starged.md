@@ -1,6 +1,8 @@
 ---
+layout: default
 title: Quick Start
 permalink: /quick-start.html
+nav_order: 1
 ---
 
 # Quick Start
