@@ -5,7 +5,7 @@ permalink: /quick-start.html
 nav_order: 1
 ---
 
-# Quick Start
+# Quick Start ?
 
 Assuming you have a Raspberry Pi in hand, you'll need to do a few things to get
 the Ras-Lights set up on your pi. In short, you'll need to:
