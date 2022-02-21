@@ -1,4 +1,9 @@
-# Quickstart
+---
+title: Quick Start
+permalink: /quick-start.html
+---
+
+# Quick Start
 
 Assuming you have a Raspberry Pi in hand, you'll need to do a few things to get
 the Ras-Lights set up on your pi. In short, you'll need to:
