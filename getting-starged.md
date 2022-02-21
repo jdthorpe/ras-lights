@@ -4,7 +4,8 @@ title: Quick Start
 permalink: /quick-start.html
 ---
 
-{:toc}
+toc??
+{% toc %}
 
 # Quick Start
 
