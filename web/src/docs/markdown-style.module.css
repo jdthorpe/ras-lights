@@ -1,0 +1,11 @@
+.markdown p > code,
+.markdown li > code {
+    background-color: #686d72;
+    color: #e3e3ea;
+    padding: 3px;
+    border-radius: 1.5px;
+}
+
+.markdown a {
+    color: #0477ff;
+}

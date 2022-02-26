@@ -24,9 +24,9 @@ export const default_settings: general_settings = {
     delay_ms: 50,
     series: false,
     tabs: {
-        phone: { "manual": true, "modes": true, "editor": false, "schedule": false, "template": false, "admin": false, },
-        tablet: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": false, "admin": false, },
-        computer: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": true, "admin": true, },
+        phone: { "manual": true, "modes": true, "editor": false, "schedule": false, "template": false, "admin": false, "docs": false, },
+        tablet: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": false, "admin": false, "docs": false, },
+        computer: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": true, "admin": true, "docs": true, },
     }
 }
 
@@ -145,7 +145,9 @@ const TABS: (keyof tab_lookup)[] = [
     "editor",
     "schedule",
     "template",
-    "admin"];
+    "admin",
+    "docs",
+];
 
 interface TabProps {
     tabs: tab_lookup;

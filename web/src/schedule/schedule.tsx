@@ -11,13 +11,16 @@ const Table = styled.table`
     border-collapse: collapse;
     tr:nth-child(even) {background: #DDD};
     tr:nth-child(odd) {background: #FFF};
-    margin: 2rem;
+    margin: 1rem;
+    max-width: 800px;
 `
+
 const Th = styled.th`
     border: 1px solid #999;
     padding: 0.5rem;
     text-align: left;
 `
+
 const Td = styled.td`
     border: 1px solid #999;
     padding: 0.5rem;
@@ -52,6 +55,7 @@ const Schedule: React.FC = () => {
             await fetchSchedules()
         })()
     }
+
     const editSchedule = (i: number) => {
         if (typeof schedules === "undefined")
             return
@@ -102,7 +106,7 @@ const Schedule: React.FC = () => {
     }, [modes])
 
     if (typeof schedules === "undefined")
-        return (<div><Spinner label="I am definitely loading..." size={SpinnerSize.large} /></div>)
+        return (<div style={{ paddingTop: "2rem" }}><Spinner label="I am definitely loading..." size={SpinnerSize.large} /></div>)
 
     return (
         <div>

@@ -141,7 +141,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
         </DataRow>
         <h3 style={{ marginTop: "1.5rem" }}>Light Strips</h3>
-        {JSON.stringify(channels)}
+        {/* {JSON.stringify(channels)} */}
         {
             channels && channels.map((ch, i) => (
                 <DataRow key={i} style={{ backgroundColor: (i % 2 ? "#dddddd" : "none") }}>

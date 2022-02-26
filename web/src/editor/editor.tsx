@@ -55,7 +55,6 @@ const Header = styled.div`
     flex-direction: row;
     gap: 1rem;
     background-color: #cccccc;
-    margin-top: 1rem;
     padding: 1rem;
 `
 
@@ -615,7 +614,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
 
     if (loading || loading_libraries) {
-        return (<div>
+        return (<div style={{ marginTop: "2rem" }}>
             <Spinner label="I am totally loading..." size={SpinnerSize.large} />
         </div>)
     }
