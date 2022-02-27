@@ -45,6 +45,9 @@ const NavList = styled.ul`
     & link {
         text-decoration: none;
     }
+    & a {
+        text-decoration: none;
+    }
 `
 
 const _NavListItem = styled.li<{ level: number }>`
@@ -53,10 +56,12 @@ const _NavListItem = styled.li<{ level: number }>`
     padding: 6px 0 6px 16px;
     border-left: 4px solid transparent;
     box-sizing: content-box;
+    text-decoration: none;
     &:hover {
         border-left-color:  #aaaaaa;
     };
 `
+
 
 const NavListItem: React.FC<NavItem> = ({ name, path, level }) => {
 
@@ -64,7 +69,7 @@ const NavListItem: React.FC<NavItem> = ({ name, path, level }) => {
     const link = `/docs/${path}`
 
     return (
-        <Link to={link}>
+        <Link to={link} style={{ textDecoration: "none" }}>
             {
                 // eslint-disable-next-line react/jsx-pascal-case 
                 <_NavListItem
