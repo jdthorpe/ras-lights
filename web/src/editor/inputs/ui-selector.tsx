@@ -23,7 +23,6 @@ function get_ui_type_options(el: value_instance): IDropdownOption[] {
             // no pickers for these...
             return []
         case "boolean":
-        case "boolean":
             return [
                 NoneOption,
                 { key: "toggle", text: "Toggle" },

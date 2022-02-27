@@ -65,14 +65,17 @@ const NavListItem: React.FC<NavItem> = ({ name, path, level }) => {
 
     return (
         <Link to={link}>
-            <_NavListItem
-                level={level}
-                style={{
-                    borderLeftColor: location.pathname === link ? "#eeeeee" : undefined,
-                    paddingLeft: `calc( 10px + ${1.2 * (level - 1)}rem)`
-                }}>
-                {name}
-            </_NavListItem>
+            {
+                // eslint-disable-next-line react/jsx-pascal-case 
+                <_NavListItem
+                    level={level}
+                    style={{
+                        borderLeftColor: location.pathname === link ? "#eeeeee" : undefined,
+                        paddingLeft: `calc( 10px + ${1.2 * (level - 1)}rem)`
+                    }}>
+                    {name}
+                </_NavListItem>
+            }
         </Link >
     )
 }

@@ -9,9 +9,10 @@ import { set_update } from "./utils"
 
 export const SliderInput: React.FC<{ ui: ui_slider }> = ({ ui }) => {
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const onChange = React.useCallback(debounce((value: number) => {
         set_update(ui.key, value)
-    }, 25), [ui]);
+    }, 25), [ui.key]);
 
     return (
         <div style={{ minWidth: 200, maxWidth: 300 }} >

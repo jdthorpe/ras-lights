@@ -10,6 +10,7 @@ import { IconButton } from '../utils/icon-button';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
 import equal from "fast-deep-equal"
 import { Number } from "../utils/NumberInput"
+import { Loading } from "../App"
 
 const Row = styled.div`
     display: flex;
@@ -125,7 +126,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     }, [channels])
 
     if (!driver)
-        return (<div><p>Loading...</p></div>)
+        return (<Loading />)
 
     return <div>
         <Row style={{ alignItems: "flex-end" }}>
@@ -195,7 +196,7 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
 
     useEffect(() => {
         onChange({ brightness, count, gpio, type, invert, reverse })
-    }, [brightness, count, gpio, type, invert, reverse])
+    }, [brightness, count, gpio, type, invert, reverse, onChange])
 
     useEffect(() => {
         set_brightness(channel.brightness)

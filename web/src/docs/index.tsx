@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import { FourOhFour } from "../App"
+import { FourOhFour, Loading } from "../App"
 import { Routes, Route, Link, useParams } from "react-router-dom";
 import { Nav } from "./nav"
+
 // markdown:
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
 import style from "./markdown-style.module.css"
 import rehypeRaw from 'rehype-raw'
 import Markdown from "react-markdown"
 
+// fixed pages
 import Configuration from "./md/configuration.md"
 import ConnectingToYourPi from "./md/connecting-to-your-pi.md"
 import Editor from "./md/editor.md"
@@ -62,7 +65,7 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
     }, [url])
 
     if (typeof contents === "undefined")
-        return <p>Loading...</p>
+        return <Loading />
 
     return <div style={{ marginLeft: 15, maxWidth: 800 }}>
         <Markdown
@@ -71,7 +74,6 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
             className={style.markdown}
             components={{
                 a(props) {
-                    console.log('a props.href: ', props.href,)
                     return (
                         props.href!.match(/^(https?:)?\/\//)
                             ? <a href={props.href}>{props.children}</a>
@@ -83,7 +85,7 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
                     return !inline && match ? (
                         <SyntaxHighlighter
                             children={String(children).replace(/\n$/, '')}
-                            style={okaidia}
+                            style={atomOneDark}
                             language={match[1]}
                             PreTag="div"
                             {...props}
@@ -99,20 +101,6 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
     </div >
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const _Page: React.FC<{ page?: string }> = ({ page }) => {
     const content = page && pageMap[page]
     // return <div>hi world, i'm a document page: {page}</div>
@@ -123,13 +111,13 @@ const _Page: React.FC<{ page?: string }> = ({ page }) => {
 
 const Page: React.FC = () => {
     const { page } = useParams();
+    // eslint-disable-next-line react/jsx-pascal-case
     return <_Page page={page} />
 }
 
-
 export const Docs: React.FC = () => {
 
-    // if (1 == 1) return <FourOhFour />
+
     return (
         < Row>
             <div>
@@ -138,16 +126,13 @@ export const Docs: React.FC = () => {
             <Body>
                 <Routes>
                     <Route path="/:page" element={<Page />} />
-                    <Route path="/" element={<_Page page="index" />} />
-                    {/* <Route path="/" element={<div>this is the root</div>} />
-        <Route path="page" element={<div>this is a plain page</div>} /> */}
+                    <Route path="/" element={
+                        // eslint-disable-next-line react/jsx-pascal-case 
+                        <_Page page="index" />} />
                     <Route path="*" element={<FourOhFour />} />
                 </Routes>
             </Body>
         </Row>)
 }
-
-
-
 
 export default Docs;

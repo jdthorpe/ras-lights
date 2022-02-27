@@ -8,12 +8,16 @@ import { user_library_data } from 'shared/types/admin';
 import * as API from "./lib-api"
 import styled from "styled-components"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faTrashAlt, faPlus, faRedoAlt } from '@fortawesome/free-solid-svg-icons'
+
 import { useBoolean } from '@fluentui/react-hooks';
 
 const dialogStyles = { main: { maxWidth: 450 } };
 
-
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+`
 const Table = styled.table`
     border-collapse: collapse;
     tr:nth-child(even) {background: #DDD};
@@ -40,6 +44,7 @@ const dialogContentProps = {
 const LibraryList: React.FC = () => {
 
     const [libraries, set_libraries] = useState<user_library_data[]>()
+    const [error, set_error] = useState<string>()
 
     const fetchLibraries = async () => {
         const libs = await API.fetch_libraries()
@@ -71,10 +76,11 @@ const LibraryList: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {libraries.map((lib, i) => <LibRow lib={lib} key={i} rowkey={i} update={fetchLibraries} />)}
+                    {libraries.map((lib, i) => <LibRow lib={lib} key={i} update={fetchLibraries} set_error={set_error} />)}
                     <AddLibrary update={fetchLibraries} />
                 </tbody>
             </Table>
+            {error && <p style={{ color: "red" }}>error</p>}
         </div>
     )
 }
@@ -87,9 +93,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
     const [name_error, set_name_error] = useState<string>()
     const [path, set_path] = useState<string>()
     const [path_error, set_path_error] = useState<string>()
-
     const [saveError, set_save_error] = useState<string>()
-
 
     const onPathChange = useCallback((event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         set_path(newValue)
@@ -145,6 +149,7 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
                     errorMessage={path_error}
                 /></Td>
                 <Td>
+
                     <FontAwesomeIcon
                         style={{ margin: "0 7px", color: (active ? "black" : "grey") }}
                         icon={faPlus}
@@ -160,7 +165,13 @@ const AddLibrary: React.FC<{ update: { (): void } }> = ({ update }) => {
     )
 }
 
-const LibRow: React.FC<{ lib: user_library_data, rowkey: number, update: { (): void } }> = ({ lib, rowkey, update }) => {
+interface RowProps {
+    lib: user_library_data;
+    update: { (): void };
+    set_error: { (x: string): void }
+}
+
+const LibRow: React.FC<RowProps> = ({ lib, update, set_error }) => {
 
     const [active, set_active] = useState(true)
 
@@ -179,18 +190,33 @@ const LibRow: React.FC<{ lib: user_library_data, rowkey: number, update: { (): v
         update()
     }, [lib, active, update])
 
+    const refresh = useCallback(async () => {
+        try {
+            await fetch(`/api/lib/reload/${lib.name}`)
+        } catch (err) {
+            set_error((err as any).message || `Something went wrong while reloading the library ${lib.name}`)
+        }
+    }, [set_error, lib])
 
     return (
-        <tr key={rowkey}>
+        <tr >
             <Td>{lib.name}</Td>
             <Td>{lib.path}</Td>
             <Td>
-                <FontAwesomeIcon
-                    style={{ margin: "0 7px", color: (active ? "black" : "grey") }}
-                    icon={faTrashAlt}
-                    title="Delete"
-                    onClick={toggleHideDialog}
-                />
+                <Row>
+                    <FontAwesomeIcon
+                        style={{ margin: "0 7px", color: (active ? "black" : "grey") }}
+                        icon={faRedoAlt}
+                        title="Reload"
+                        onClick={refresh}
+                    />
+                    <FontAwesomeIcon
+                        style={{ margin: "0 7px", color: (active ? "black" : "grey") }}
+                        icon={faTrashAlt}
+                        title="Delete"
+                        onClick={toggleHideDialog}
+                    />
+                </Row>
             </Td>
             <Dialog
                 hidden={hideDialog}

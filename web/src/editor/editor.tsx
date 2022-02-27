@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, createContext, useCallback } from '
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
+import { Loading } from '../App';
 import { IconButton } from '../utils/icon-button';
 import { faCode, faHashtag, faBolt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { delete_mode, save_mode, fetch_modes } from "../utils/api"
@@ -792,7 +793,7 @@ const EditorTab: React.FC = () => {
     }, [signatures])
 
     if (typeof signatures === "undefined")
-        return (<div><p>Loading...</p></div>)
+        return (<Loading />)
 
     if (Object.keys(signatures).length === 0)
         return (<div><p>Something went wrong -- no functions available...</p></div>)

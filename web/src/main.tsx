@@ -15,6 +15,7 @@ export const Main: React.FC = () => {
 
     return (
         <Routes>
+            <Route path="/" element={<Manual />} />
             <Route path="/manual" element={<Manual />} />
             <Route path="/modes" element={<Modes />} />
             <Route path="/editor" element={<Editor />} />

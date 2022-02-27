@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from "styled-components"
+import { Loading } from '../App';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Toggle } from '@fluentui/react/lib/Toggle';
 import { general_settings, surface, tab_lookup, surface_tabs, tab_name } from 'shared/types/admin';
@@ -97,7 +98,8 @@ const GeneralSettings: React.FC = () => {
     }, [tabs, series, delay_ms])
 
     if (typeof tabs === "undefined" || typeof series === "undefined")
-        return <div>Loading...</div>
+        return (<Loading />)
+
     return <div>
         <Row>
             <h2>General Settings</h2>

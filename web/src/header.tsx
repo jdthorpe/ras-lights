@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react"
 import styled from "styled-components"
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
@@ -7,15 +6,16 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { isTablet, isMobile } from "react-device-detect"
 import { general_settings, tab_lookup } from 'shared/types/admin';
 
+// eslint-disable-next-line no-useless-escape
 const re_segment = /^(\/[^\/]*)/
 
 const Shadow = styled.div`
     z-index: 999;
     box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
     padding: 8px;
-    height: 60px;
     position: relative;
 `
+
 function get_tabs(x: general_settings): tab_lookup {
     if (isTablet) {
         return (x.tabs.tablet)
@@ -39,7 +39,7 @@ export function Nav() {
 
     const onLinkClick = useCallback((item?: PivotItem, ev?: React.MouseEvent<HTMLElement>) => {
         item && navigate(item.props.itemKey!)
-    }, [])
+    }, [navigate])
 
     useEffect(() => {
         // pull in the stored settings 
@@ -54,7 +54,7 @@ export function Nav() {
             location.pathname === "/" && navigate("/manual")
         })()
 
-    }, [])
+    }, [location.pathname, navigate])
 
 
     if (tabs === null || typeof tabs === "undefined")

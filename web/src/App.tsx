@@ -1,6 +1,7 @@
 import React from "react"
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { BrowserRouter, useLocation } from "react-router-dom"
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { Nav } from "./header"
 import { Main } from "./main"
 
@@ -32,6 +33,12 @@ class ErrorBoundary extends React.Component<{}, { hasError: boolean, error?: any
 
     return this.props.children
   }
+}
+
+export const Loading: React.FC = () => {
+  return (<div style={{ marginTop: "2rem" }}>
+    <Spinner label="I am totally loading..." size={SpinnerSize.large} />
+  </div>)
 }
 
 export const FourOhFour: React.FC = () => {
