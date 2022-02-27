@@ -79,11 +79,13 @@ importers:
       '@fortawesome/fontawesome-svg-core': ^1.2.36
       '@fortawesome/free-solid-svg-icons': ^5.15.4
       '@fortawesome/react-fontawesome': ^0.1.16
+      '@loadable/component': 5.15.2
       '@react-hook/size': ^2.1.2
       '@testing-library/jest-dom': ^5.16.1
       '@testing-library/react': ^12.1.2
       '@types/color-convert': ^2.0.0
       '@types/jest': ^27.0.3
+      '@types/loadable__component': 5.13.4
       '@types/lodash.debounce': ^4.0.6
       '@types/node': ^16.11.17
       '@types/react': ^17.0.38
@@ -133,11 +135,13 @@ importers:
       '@fortawesome/fontawesome-svg-core': 1.2.36
       '@fortawesome/free-solid-svg-icons': 5.15.4
       '@fortawesome/react-fontawesome': 0.1.16_f515edce028694561ceb456e3dba224c
+      '@loadable/component': 5.15.2_react@17.0.2
       '@react-hook/size': 2.1.2_react@17.0.2
       '@testing-library/jest-dom': 5.16.1
       '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
       '@types/color-convert': 2.0.0
       '@types/jest': 27.4.0
+      '@types/loadable__component': 5.13.4
       '@types/lodash.debounce': 4.0.6
       '@types/node': 16.11.19
       '@types/react': 17.0.38
@@ -2286,6 +2290,18 @@ packages:
       '@lezer/common': 0.15.11
     dev: false
 
+  /@loadable/component/5.15.2_react@17.0.2:
+    resolution: {integrity: sha512-ryFAZOX5P2vFkUdzaAtTG88IGnr9qxSdvLRvJySXcUA4B4xVWurUNADu3AnKPksxOZajljqTrDEDcYjeL4lvLw==}
+    engines: {node: '>=8'}
+    peerDependencies:
+      react: '>=16.3.0'
+    dependencies:
+      '@babel/runtime': 7.16.7
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-is: 16.13.1
+    dev: false
+
   /@microsoft/load-themed-styles/1.10.242:
     resolution: {integrity: sha512-+uhhXr7BqYDD+ZZmVhtEZkc2e5x8zUe39ELtcN7qNm3I5ru7e8VTe0CBInIkhpXHIJJ4jqBcp0NqdcC4axxOiw==}
     dev: false
@@ -2830,6 +2846,12 @@ packages:
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
     dev: true
+
+  /@types/loadable__component/5.13.4:
+    resolution: {integrity: sha512-YhoCCxyuvP2XeZNbHbi8Wb9EMaUJuA2VGHxJffcQYrJKIKSkymJrhbzsf9y4zpTmr5pExAAEh5hbF628PAZ8Dg==}
+    dependencies:
+      '@types/react': 17.0.38
+    dev: false
 
   /@types/lodash.debounce/4.0.6:
     resolution: {integrity: sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==}

@@ -25,6 +25,8 @@
         "@types/color-convert": "^2.0.0",
         "@types/reserved-words": "0.1.0",
         "@types/react-syntax-highlighter": "13.5.2",
+        "@types/loadable__component": "5.13.4",
+        "@loadable/component": "5.15.2",
         "react-syntax-highlighter": "15.4.5",
         "assert": "2.0.0",
         "react-app-rewired": "2.1.11",

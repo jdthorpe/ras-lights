@@ -1,13 +1,15 @@
 import React from "react"
 import { Routes, Route } from "react-router-dom"
-import Manual from "./manual"
-import Admin from "./admin/admin"
-import Modes from "./modes"
-import Editor from "./editor/editor"
-import Template from "./template"
-import Schedule from "./schedule/schedule";
-import Docs from "./docs"
 import { FourOhFour } from "./App"
+import loadable from '@loadable/component'
+
+const Manual = loadable(() => import("./manual"))
+const Admin = loadable(() => import("./admin/admin"))
+const Modes = loadable(() => import("./modes"))
+const Editor = loadable(() => import("./editor/editor"))
+const Template = loadable(() => import("./template"))
+const Schedule = loadable(() => import("./schedule/schedule"))
+const Docs = loadable(() => import("./docs"))
 
 export const Main: React.FC = () => {
 
