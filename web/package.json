@@ -3,11 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@codemirror/basic-setup": "^0.19.1",
-        "@codemirror/lang-javascript": "^0.19.4",
-        "@codemirror/state": "^0.19.6",
-        "@codemirror/theme-one-dark": "^0.19.1",
-        "@codemirror/view": "^0.19.39",
         "@fluentui/react": "^8.48.1",
         "@fluentui/react-hooks": "^8.3.9",
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -49,7 +44,6 @@
         "react-router-dom": "6.2.1",
         "react-device-detect": "2.1.2",
         "rehype-raw": "6.1.1",
-        "rodemirror": "^1.6.6",
         "styled-components": "^5.3.3",
         "web-vitals": "^2.1.2",
         "ajv": "^8.9.0"

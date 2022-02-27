@@ -13,11 +13,6 @@ import copy from 'copy-to-clipboard';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-// import CodeMirror from 'rodemirror'
-// import { Extension } from '@codemirror/state'
-// import { basicSetup } from '@codemirror/basic-setup'
-// import { oneDark } from '@codemirror/theme-one-dark'
-// import { javascript } from '@codemirror/lang-javascript'
 import { ColorArrayPicker, ColorValuePicker } from "../editor/inputs/color-input"
 
 const nameTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
