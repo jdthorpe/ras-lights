@@ -3,7 +3,27 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 // const deps = require("./package.json").dependencies;
 
 module.exports = function override(config, env) {
-    config.output.publicPath = "auto";
+    config.output.publicPath = "/";
+
+    if (!config.module.rules) {
+        config.module.rules = [];
+    }
+    config.module.rules.unshift({
+        test: /\.md$/,
+        type: "asset/source",
+        // use: [
+        //     {
+        //         loader: "html-loader",
+        //     },
+        //     {
+        //         loader: "markdown-loader",
+        //         options: {
+        //             // Pass options to marked
+        //             // See https://marked.js.org/using_advanced#options
+        //         },
+        //     },
+        // ],
+    });
 
     if (!config.plugins) {
         config.plugins = [];

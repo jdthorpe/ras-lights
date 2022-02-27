@@ -14,7 +14,7 @@ const Row = styled.div`
     flex-directio: row;
     gap: 1rem;
     align-items: flex-end;
-    margin: 1rem;
+    margin: 0 1rem .6rem 1rem;
 `
 
 const textboxStyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
@@ -68,6 +68,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
             <div
                 style={{
                     width: "max-content",
+                    paddingTop: ".5rem",
                 }}
             >
                 <Row>

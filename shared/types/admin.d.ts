@@ -34,6 +34,7 @@ interface tab_lookup {
     schedule: boolean;
     template: boolean;
     admin: boolean;
+    docs: boolean;
 }
 
 export interface IDriver {

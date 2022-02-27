@@ -10,6 +10,7 @@ import { IconButton } from '../utils/icon-button';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
 import equal from "fast-deep-equal"
 import { Number } from "../utils/NumberInput"
+import { Loading } from "../App"
 
 const Row = styled.div`
     display: flex;
@@ -21,6 +22,7 @@ const Row = styled.div`
 const DataRow = styled.div`
     display: flex;
     flex-direction: Row;
+    border-radius: 5px;
     gap: 1rem;
     padding-left: 12px;
     padding-right: 12px;
@@ -124,7 +126,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     }, [channels])
 
     if (!driver)
-        return (<div><p>Loading...</p></div>)
+        return (<Loading />)
 
     return <div>
         <Row style={{ alignItems: "flex-end" }}>
@@ -141,7 +143,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                 style={{ alignSelf: "flex-end", marginLeft: "auto" }}>Save</PrimaryButton>
         </DataRow>
         <h3 style={{ marginTop: "1.5rem" }}>Light Strips</h3>
-        {JSON.stringify(channels)}
+        {/* {JSON.stringify(channels)} */}
         {
             channels && channels.map((ch, i) => (
                 <DataRow key={i} style={{ backgroundColor: (i % 2 ? "#dddddd" : "none") }}>
@@ -194,7 +196,7 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
 
     useEffect(() => {
         onChange({ brightness, count, gpio, type, invert, reverse })
-    }, [brightness, count, gpio, type, invert, reverse])
+    }, [brightness, count, gpio, type, invert, reverse, onChange])
 
     useEffect(() => {
         set_brightness(channel.brightness)

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, createContext, useCallback } from '
 import styled from "styled-components"
 import cc from "color-convert"
 import copy from "fast-copy";
+import { Loading } from '../App';
 import { IconButton } from '../utils/icon-button';
 import { faCode, faHashtag, faBolt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { delete_mode, save_mode, fetch_modes } from "../utils/api"
@@ -55,7 +56,6 @@ const Header = styled.div`
     flex-direction: row;
     gap: 1rem;
     background-color: #cccccc;
-    margin-top: 1rem;
     padding: 1rem;
 `
 
@@ -615,7 +615,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
 
 
     if (loading || loading_libraries) {
-        return (<div>
+        return (<div style={{ marginTop: "2rem" }}>
             <Spinner label="I am totally loading..." size={SpinnerSize.large} />
         </div>)
     }
@@ -793,7 +793,7 @@ const EditorTab: React.FC = () => {
     }, [signatures])
 
     if (typeof signatures === "undefined")
-        return (<div><p>Loading...</p></div>)
+        return (<Loading />)
 
     if (Object.keys(signatures).length === 0)
         return (<div><p>Something went wrong -- no functions available...</p></div>)

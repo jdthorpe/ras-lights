@@ -10,6 +10,7 @@ const IconBox = styled.div`
     border-radius: 2px;
     background: grey;
     padding-top: 0.4rem;
+    box-sizing: border-box;
 `
 
 interface props {

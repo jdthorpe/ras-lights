@@ -5,7 +5,6 @@ import { Label } from '@fluentui/react/lib/Label';
 import { rgb, rgbw } from 'shared/types/mode';
 
 import { rgbw_input, rgbw_array_input } from "shared/types/parameters"
-import { sizeBoolean } from '@fluentui/react';
 
 const WrappedRow = styled.div`
     display: flex;
@@ -20,69 +19,29 @@ const Col = styled.div`
     gap: 5px;
 `
 
-const SIZE = "2rem"
-const H_SIZE = "1.2rem"
-
 export const HalfColorBox = styled.div.attrs<{ color: string }>(props => ({
     style: { backgroundColor: props.color }
 }))`
-    height: 1.2rem;
-    width: 2rem;
+    height: 18px;
+    width: 32px;
     border-style: solid;
     border-width: 1px;
     border-radius: 2px;
     border-color: black;
+    box-sizing: border-box;
 `
 
 export const ColorBox = styled.div.attrs<{ color: string }>(props => ({
     style: { backgroundColor: props.color }
 }))`
-    height: 2rem;
-    width: 2rem;
+    height: 32px;
+    width: 32px;
     border-style: solid;
     border-width: 1px;
     border-radius: 2px;
     border-color: black;
+    box-sizing: border-box;
 `
-
-// export const ColorBox: React.FC<{ height: string, width: string, color: string } = ({ height, width, color }) => (
-//     <div style={{
-
-//     borderStyle: "solid",
-//     borderWidth: "1px";
-//     borderRadius: "2px";
-//     borderColor: "black";
-//     }}/>
-//     height: ${(props) => props.height};
-//     width: ${(props) => props.width};
-//     backgroundColor: #${props => props.color};
-// `
-
-/*
-interface color_value_props {
-    spec: color_input;
-    value: rgbw;
-}
-
-export const RGBWValue: React.FC<color_value_props> = ({ spec, value }) => {
-    const w = value[3].toString(16)
-    return (
-        <div
-            style={{
-                display: 'inline-block',
-                margin: "0 .5rem",
-            }}>
-            <Label>{spec.label}</Label>
-            <Col>
-                <ColorBox height={H_SIZE} width={SIZE} color={`#${w}${w}${w}`} />
-                <ColorBox height={H_SIZE} width={SIZE} color={cc.rgb.hex(value.slice(0, 3) as rgb)} />
-            </Col>
-        </div>
-    )
-}
-
-*/
-
 
 export const RGBW: React.FC<{ color: rgbw }> = ({ color }) => {
     const w = color[3].toString(16)

@@ -34,8 +34,13 @@ const numberTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "3r
 const Row = styled.div`
     display: flex;
     flex-direction: row;
+    border-radius: 4px;
     gap: 10px;
     padding: 0 10px 10px 10px;
+`
+const Offset = styled.div`
+    padding-top: 1.4rem;
+    align-self: center;
 `
 
 const is_js_identifier = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
@@ -72,9 +77,9 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
     const [min, set_min] = useState<string>("1");
     const [max, set_max] = useState<string>("10");
     // since there aren't pickers for these, we don't need setters
-    const rgbw: rgbw = [0, 0, 255, 127];
-    const rgbw_array: rgbw[] = [[0, 0, 255, 0], [0, 255, 255, 127], [100, 0, 255, 255],];
-    const w_array: number[] = [0, 63, 127, 191, 255];
+    const [rgbw] = useState<rgbw>([0, 0, 255, 127]);
+    const [rgbw_array] = useState<rgbw[]>([[0, 0, 255, 0], [0, 255, 255, 127], [100, 0, 255, 255],]);
+    const [w_array] = useState<number[]>([0, 63, 127, 191, 255]);
 
     const cb = useRef<cb>({ onChange, onRemove, onActivate, onUp, onDown })
     cb.current = { onChange, onRemove, onActivate, onUp, onDown }
@@ -119,18 +124,6 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
                 console.log(checker)
         }
     }, [input, _input])
-
-    // useEffect(() => console.log("[B]type DID change"), [type])
-    // useEffect(() => console.log("[B]key DID change"), [key])
-    // useEffect(() => console.log("[B]label DID change"), [label])
-    // useEffect(() => console.log("[B]bool DID change"), [bool])
-    // useEffect(() => console.log("[B]color DID change"), [color])
-    // useEffect(() => console.log("[B]color_array DID change"), [color_array])
-    // useEffect(() => console.log("[B]number DID change"), [number])
-    // useEffect(() => console.log("[B]min DID change"), [min])
-    // useEffect(() => console.log("[B]max DID change"), [max])
-    // useEffect(() => console.log("[B]button_label DID change"), [button_label])
-    // useEffect(() => console.log("[B]onChange DID change"), [onChange])
 
     useEffect(() => {
         /* send updates to the outside world */
@@ -177,7 +170,7 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
             set_input(input)
             cb.current.onChange(input)
         }
-    }, [type, key, label, bool, color, color_array, number, min, max, button_label])
+    }, [type, key, label, bool, color, color_array, number, min, max, button_label, rgbw, rgbw_array, w_array])
 
     useEffect(() => {
         /* validation for the key field */
@@ -199,9 +192,6 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
         }
         set_key_error(undefined)
     }, [key, set_key_error])
-
-    // useEffect(() => console.log("[C] key did change"), [key])
-    // useEffect(() => console.log("[C] set_key_error did change"), [set_key_error])
 
     return <Row onClick={onActivate}>
         <Dropdown
@@ -273,22 +263,24 @@ const InputPicker: React.FC<props> = ({ input, onChange, onRemove, onActivate, o
                 type={type}
                 styles={numberTextBoxstyle} />
         </>}
-        <div style={{ margin: "auto" }}></div>
-        < IconButton
-            buttonStyle={{ marginTop: "2rem" }}
-            title="Move Up"
-            icon={faChevronUp}
-            onClick={cb.current.onUp} />
-        < IconButton
-            buttonStyle={{ marginTop: "2rem" }}
-            title="Move Down"
-            icon={faChevronDown}
-            onClick={cb.current.onDown} />
-        < IconButton
-            buttonStyle={{ marginTop: "2rem" }}
-            title="Remove Input"
-            icon={faTimes}
-            onClick={cb.current.onRemove} />
+        <Offset style={{ marginLeft: "auto" }}>
+            < IconButton
+                title="Move Up"
+                icon={faChevronUp}
+                onClick={cb.current.onUp} />
+        </Offset>
+        <Offset>
+            < IconButton
+                title="Move Down"
+                icon={faChevronDown}
+                onClick={cb.current.onDown} />
+        </Offset>
+        <Offset>
+            < IconButton
+                title="Remove Input"
+                icon={faTimes}
+                onClick={cb.current.onRemove} />
+        </Offset>
     </Row>
 }
 

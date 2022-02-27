@@ -110,24 +110,20 @@ router.delete("/:library", async (req: Request, res: Response) => {
     res.send(`OK ${end - start}`);
 });
 
-// import
+// reload
 router.get("/reload/:library", async (req: Request, res: Response) => {
-    const start = performance.now();
-
-    reload_library(req.params.library);
-    // const results = await adminStore.findOne<user_library_data>(
-    //     { type: "LIBRARY", name: req.params.library },
-    //     { _id: 0 }
-    // );
-
-    // if (!results) {
-    //     res.status(500);
-    //     res.send(`no such library ${req.params.library}`);
-    // }
-
-    // reimport(results);
-
-    const end = performance.now();
-    res.status(200);
-    res.send(`OK ${end - start}`);
+    try {
+        const start = performance.now();
+        reload_library(req.params.library);
+        const end = performance.now();
+        res.status(200);
+        res.send(`OK ${end - start}`);
+    } catch (err) {
+        res.status(500);
+        res.send(
+            `Something went wrong while reloading "${req.params.library}": ${
+                (err as any).message || "An Unknown error occured"
+            }`
+        );
+    }
 });

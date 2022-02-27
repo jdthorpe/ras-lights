@@ -22,19 +22,20 @@ const WrappedRow = styled.div`
     gap: .7rem;
 `
 
-const SIZE = "2rem"
+const SIZE = "32px"
 const CLOSE_SIZE = "1.1rem"
 const CLOSE_FONT_SIZE = "0.9rem"
 
 const ColorBox = styled.div.attrs<{ color: string }>(props => ({
     style: { backgroundColor: props.color }
 }))`
-    height: 2rem;
-    width: 2rem;
+    height: 32px;
+    width: 32px;
     border-style: solid;
     border-width: 1px;
     border-radius: 2px;
     border-color: black;
+    box-sizing: border-box;
 `
 
 
@@ -124,11 +125,10 @@ interface colorValuePickerProps {
 
 export const ColorValuePicker: React.FC<colorValuePickerProps> = ({ color, onChange }) => {
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
         onChange([color.r, color.g, color.b,])
-    }, 50),
-        // @ts-ignore
-        [onChange]);
+    }, 50), [onChange]);
 
     return (
         <ColorPicker
@@ -256,6 +256,7 @@ export const ColorArrayPicker: React.FC<colorArrayPickerProps> = ({ colors, onCh
         }
     }, [onChange, colors, active_color]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateColor = React.useCallback(debounce((ev: any, color: IColor) => {
         const value: rgb[] = [
             ...colors.slice(0, active_color),

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from "styled-components"
+import { Loading } from '../App';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Toggle } from '@fluentui/react/lib/Toggle';
 import { general_settings, surface, tab_lookup, surface_tabs, tab_name } from 'shared/types/admin';
@@ -14,6 +15,7 @@ const Row = styled.div`
 
 const DataRow = styled.div`
     display: flex;
+    border-radius: 5px;
     flex-direction: Row;
     gap: 1rem;
     padding-left: 12px;
@@ -24,9 +26,9 @@ export const default_settings: general_settings = {
     delay_ms: 50,
     series: false,
     tabs: {
-        phone: { "manual": true, "modes": true, "editor": false, "schedule": false, "template": false, "admin": false, },
-        tablet: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": false, "admin": false, },
-        computer: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": true, "admin": true, },
+        phone: { "manual": true, "modes": true, "editor": false, "schedule": false, "template": false, "admin": false, "docs": false, },
+        tablet: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": false, "admin": false, "docs": false, },
+        computer: { "manual": true, "modes": true, "editor": true, "schedule": true, "template": true, "admin": true, "docs": true, },
     }
 }
 
@@ -96,7 +98,8 @@ const GeneralSettings: React.FC = () => {
     }, [tabs, series, delay_ms])
 
     if (typeof tabs === "undefined" || typeof series === "undefined")
-        return <div>Loading...</div>
+        return (<Loading />)
+
     return <div>
         <Row>
             <h2>General Settings</h2>
@@ -145,7 +148,9 @@ const TABS: (keyof tab_lookup)[] = [
     "editor",
     "schedule",
     "template",
-    "admin"];
+    "admin",
+    "docs",
+];
 
 interface TabProps {
     tabs: tab_lookup;

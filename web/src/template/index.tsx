@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import templateBuilder from "./template"
 import InputPicker from "./input"
@@ -11,11 +11,13 @@ import ValuePicker from "./valuePicker"
 
 import copy from 'copy-to-clipboard';
 
-import CodeMirror from 'rodemirror'
-import { Extension } from '@codemirror/state'
-import { basicSetup } from '@codemirror/basic-setup'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { javascript } from '@codemirror/lang-javascript'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+// import CodeMirror from 'rodemirror'
+// import { Extension } from '@codemirror/state'
+// import { basicSetup } from '@codemirror/basic-setup'
+// import { oneDark } from '@codemirror/theme-one-dark'
+// import { javascript } from '@codemirror/lang-javascript'
 import { ColorArrayPicker, ColorValuePicker } from "../editor/inputs/color-input"
 
 const nameTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
@@ -39,29 +41,26 @@ const OptionsPanel = styled.div`
     padding: .8rem;
 `
 
-
-const Editor: React.FC<{ code: string }> = ({ code }) => {
-    const extensions = useMemo<Extension[]>(
-        () => [basicSetup, oneDark, javascript({ typescript: true })],
-        []
-    )
-
-    const [value, setValue] = useState(code)
-
-    return (
-        <div style={{ maxWidth: 1000 }}>
-            <CodeMirror
-                value={code}
-                onUpdate={(v) => {
-                    if (v.docChanged) {
-                        setValue(v.state.doc.toString())
-                    }
-                }}
-                extensions={extensions}
-            />
-        </div>
-    )
-}
+// const Editor: React.FC<{ code: string }> = ({ code }) => {
+//     const extensions = useMemo<Extension[]>(
+//         () => [basicSetup, oneDark, javascript({ typescript: true })],
+//         []
+//     )
+//     const [value, setValue] = useState(code)
+//     return (
+//         <div style={{ maxWidth: 1000 }}>
+//             <CodeMirror
+//                 value={code}
+//                 onUpdate={(v) => {
+//                     if (v.docChanged) {
+//                         setValue(v.state.doc.toString())
+//                     }
+//                 }}
+//                 extensions={extensions}
+//             />
+//         </div>
+//     )
+// }
 
 let input_number = 0
 const default_input = (): color_input => ({
@@ -156,7 +155,7 @@ const Template: React.FC = () => {
             width: "100%", maxWidth: 1200, margin: "auto"
         }}>
             <Container>
-                <div style={{ margin: 15, flexGrow: 1 }}>
+                <div style={{ marginTop: 15, flexGrow: 1 }}>
 
                     <Row>
                         <ValuePicker
@@ -169,13 +168,9 @@ const Template: React.FC = () => {
                             styles={nameTextBoxstyle} />
                     </Row>
 
-                    <Row
-                        style={{
-                            justifyContent: "space-between",
-                            margin: "1.5rem 8px .7rem"
-                        }}>
-                        <h2>Inputs</h2>
-                        <DefaultButton style={{ alignSelf: 'flex-start' }}
+                    <Row style={{ justifyContent: "space-between", }}>
+                        <h3>Inputs</h3>
+                        <DefaultButton style={{ alignSelf: 'center' }}
                             onClick={() => setInputs([...inputs, default_input()])}
                         >Add Input</DefaultButton>
                     </Row>
@@ -185,6 +180,7 @@ const Template: React.FC = () => {
                             // padding: "5px",
                             backgroundColor: (i % 2 === 1) ? "none" : "#dddddd",
                             border: "1px black",
+                            borderRadius: 4,
                         }}>
                             {/* <p>{JSON.stringify(input)}</p> */}
                             <InputPicker
@@ -207,15 +203,15 @@ const Template: React.FC = () => {
                         </>
                     )}
 
-                    <Row
-                        style={{
-                            justifyContent: "space-between",
-                            margin: "1.5rem 8px .7rem"
-                        }}>
+                    <Row style={{ justifyContent: "space-between", }}>
                         <h3 >Code Template</h3>
-                        <DefaultButton onClick={() => copy(code)}>Copy to Clipboard</DefaultButton>
+                        <DefaultButton style={{ alignSelf: "center" }} onClick={() => copy(code)}>Copy to Clipboard</DefaultButton>
                     </Row>
-                    <Editor code={code} />
+                    {/* <Editor code={code} /> */}
+
+                    <SyntaxHighlighter language="typescript" style={atomOneDark} showLineNumbers={true}>
+                        {code}
+                    </SyntaxHighlighter>
                 </div>
                 <OptionsPanel>
                     {inputs[activeInput]?.type === "rgb" &&

@@ -8,7 +8,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-echo "[ras-lights setup.sh] Installing dependencies" 
+echo "[RAS-LIGHTS setup.sh] Installing dependencies" 
 apt-get update
 apt-get install nginx -y
 apt-get install supervisor -y
@@ -27,7 +27,7 @@ fi
 NODE_VERSION=$(node --version | perl -pe 's/^v(\d+)\..*/\1/')
 if [[ "$NODE_VERSION" -lt "12" ]];
 then 
-  echo "[ras-lights setup.sh] Incompatible Node version. Please upgrade to version 12 or higher" 
+  echo "[RAS-LIGHTS setup.sh] Incompatible Node version. Please upgrade to version 12 or higher" 
   exit
 fi
 
@@ -38,27 +38,27 @@ fi
 cd /home/pi
 if [ -d "/home/pi/ras-lights" ] 
 then
-    echo "[ras-lights setup.sh] Directory /home/pi/ras-lights" 
+    echo "[RAS-LIGHTS setup.sh] Directory /home/pi/ras-lights" 
 else
-    echo "[ras-lights setup.sh] cloning ras lights repo"
+    echo "[RAS-LIGHTS setup.sh] cloning ras lights repo"
     git clone https://github.com/jdthorpe/ras-lights
 fi
 cd /home/pi/ras-lights
 
-echo "[ras-lights setup.sh] install default-lib dependencies"
+echo "[RAS-LIGHTS setup.sh] install default-lib dependencies"
 pushd default-lib && npm install --only=production && popd
 
-echo "[ras-lights setup.sh] install api dependencies"
+echo "[RAS-LIGHTS setup.sh] install api dependencies"
 pushd api 
 # the LED lib needs root perms...
 npm install --only=production --unsafe-perm 
 node build/__init__.js
 popd
 
-echo "[ras-lights setup.sh] Configuring NGINX";
+echo "[RAS-LIGHTS setup.sh] Configuring NGINX";
 cp nginx.conf /etc/nginx/nginx.conf
 nginx -s reload
 
-echo "[ras-lights setup.sh] Configuring supervisord";
+echo "[RAS-LIGHTS setup.sh] Configuring supervisord";
 cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 supervisorctl reload

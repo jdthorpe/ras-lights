@@ -119,27 +119,25 @@ const Manual: React.FC = () => {
     const [color, setColor] = useState(white);
     const [on, set_on] = useState(true)
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateColor = React.useCallback(debounce((ev: any, colorObj: IColor) => {
         set_on(false)
         setColor(colorObj)
         update_color(colorObj)
     }, 25), [setColor, update_color, set_on, on]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const set_random = React.useCallback(debounce(() => {
         set_on(false)
         setRandomColors(on)
-    }, 25),
+    }, 25), [on, set_on]);
 
-        // @ts-ignore
-        [on, set_on]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const slider_cb = React.useCallback(debounce((n: number) => {
         set_on(false)
         setWhiteIntensity(n)
         // setWhiteIntensity(on, n)
-    }, 25),
-        // @ts-ignore
-        [on, set_on]);
+    }, 25), [on, set_on]);
 
     return (
         <div style={{ margin: "1.5rem" }}>

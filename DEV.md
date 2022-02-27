@@ -137,3 +137,14 @@ which bash users might want to alias via
 alias ppi="git push pi main"
 ```
 
+## notes on optimization
+
+https://superuser.com/questions/852610/how-to-tell-which-services-run-at-startup-on-raspberry-pi-raspbian
+
+sudo systemctl stop lxdm.service
+sudo systemctl disable lxdm.service
+
+[disable cups](https://unix.stackexchange.com/questions/480082/how-to-disable-cups-service-on-reboot-with-systemd):
+
+sudo systemctl stop cups
+systemctl mask cups
