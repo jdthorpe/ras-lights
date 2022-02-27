@@ -452,6 +452,10 @@
         //   "projectFolder": "tools/my-toolchain",
         //   "reviewCategory": "tools"
         // }
+        // {
+        //     "packageName": "docs",
+        //     "projectFolder": "docs"
+        // },
         {
             "packageName": "web",
             "projectFolder": "web"

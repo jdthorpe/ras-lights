@@ -21,6 +21,7 @@ const Row = styled.div`
 const DataRow = styled.div`
     display: flex;
     flex-direction: Row;
+    border-radius: 5px;
     gap: 1rem;
     padding-left: 12px;
     padding-right: 12px;

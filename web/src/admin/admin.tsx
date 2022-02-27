@@ -22,12 +22,13 @@ const Admin: React.FC = () => {
             <GeneralSettings />
         </Card>
         <Card>
-            <LibraryList />
-        </Card>
-        <Card>
             <Driver />
         </Card>
-    </Col>
+
+        <Card style={{ marginBottom: "2rem" }}>
+            <LibraryList />
+        </Card>
+    </Col >
 }
 
 export default Admin

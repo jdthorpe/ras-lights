@@ -78,24 +78,27 @@ set up the driver(s) for your LEDs.
 I'm starting with a NeoPixel breakout board from Adafruit which I connected to
 pin 18 of my Raspberry Pi Zero, so my setup looks like this:
 
-{{ picture here }}
+<img 
+    src="/assets/images/getting-started-driver.png" 
+    alt="LEDs powered by Raspberry Pi" 
+    style="width:750px; box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);"/>
 
-After clicking Save, the driver will be set up and ready to go. More details on
-each of the settings in this section can be found on the [configuration page](../configuration).
+After clicking Save, the driver will be set up and ready to go. 
 
-### What Strip type do I choose?
+More details on each of the settings in this section can be found on the
+[configuration page](../configuration).  Here's a brief summary of the above options
 
-If you're not sure what kind of strip you have, start by choosing the RGB option if you
-have a three color strip, and the RGBW option if you have a 4 color strip. Then head
-over to the "Manual" tab and choose a red color. This will turn on the first
-color for your strip -- **which might not be red**: If your strip turns
-green, you know your strip is either **G**RB or **G**BR, and if your strip
-turns blue, you have either a **B**RG or a **B**GR type strip.
-
-With this knowledge, head back to the Admin tab and select one of the
-two appropriate options, and head back to the "Manual" tab and select a
-green color. if your strip turns green you're done, and if not, head back to
-the Admin tab, select the other of the two options and save your changes.
+-   **GPIO**: The input pin of my [Adafruit
+    Neopixel breakout
+    board](https://www.amazon.com/Adafruit-NeoPixel-Arduino-Integrated-Drivers/dp/B00IEDH26K/ref=sr_1_7?keywords=adafruit+neopixel&qid=1645933197&sprefix=adafruit+neop%2Caps%2C167&sr=8-7) is connected to GPIO pin 18 of my Pi Zero
+-   **Brightness**: I like to start with value of around 50, especially when powering a small strip using the Pi
+-   **Count**: My little [Adafruit Neopixel breakout
+board](https://www.amazon.com/Adafruit-NeoPixel-Arduino-Integrated-Drivers/dp/B00IEDH26K/ref=sr_1_7?keywords=adafruit+neopixel&qid=1645933197&sprefix=adafruit+neop%2Caps%2C167&sr=8-7)
+    has 8 LEDs.
+-   **Invert**: My breakout board does not need inverted signals
+-   **Revere**: My led strip is mounted backward compared to the display on the Editor tab
+-   **Strip Type**: Adafruit NeoPixels are GRB type LEDs. See the [configuration
+    page]() for instructions to determine your strip type.
 
 ## Time to play!
 

@@ -1,12 +1,3 @@
-## Library folders
-
-These correspond to the libraries which contain the basic functions which control the lights.
-
-The `internal` library contains some default functions such as the `alternate`
-and `gradient` that are used in the default shows and a `SmoothTo` function used
-on the the Manual tab. **Do not delete this library** unless you're sure you
-know what you're doing.
-
 ## Driver options
 
 The `Frequency` and `dma` options are described in the documentation for the
@@ -16,36 +7,48 @@ driver.
 
 ### Light strip options
 
-Use the `+` to add more strips
-
--   **GPIO**: This is the pin to which the your LED strip's input pin is attached.
-    Consult your Pi's data sheet or do a search for "Raspberry Pi pinout" to
-    determine which pin to use.
+-   **GPIO**: This is the "**G**eneral **P**urpose **I**nput and **O**uput" pin
+    to which the LED strip's input pin is attached.  Consult your Pi's data
+    sheet or do a search for "Raspberry Pi pinout" to determine physical pin
+    that corresponds to the selected GPIO pin
 -   **Brightness**: This ranges between 0 and 255 and determines how bright and
-    how much power your LEDs will use. I like to start with value of around 50,
-    especially when powering a small strip using the Pi.
--   **Count**: The number of LED's on your strip. I'm using a little Adafruit
-    breakout board with 8 LEDs so I chose 8.
--   **Invert**: If selected, the signal sent to the LEDs is inverted (required for some LED strips)
--   **Revere**: If selected, the colors are rendered from left-to-right instead of
+    how much power your LEDs will use
+-   **Count**: The number of LED's on your strip
+-   **Invert**: If selected, the signal sent to the LEDs is inverted (required
+    for some LED strips)
+-   **Reverse**: If selected, the colors are rendered from left-to-right instead of
     right-to-left (handy depending on how you mount your LED's)
--   **Strip Type**: This list is grouped into two groups with 6 RGB types and 6
-    RGBW types. RGBW strips have an extra white pixel, which typically gives a much
-    more pleasant white color, compared to turning on all three color channels.
+-   **Strip Type**: This list contains 6 RGB pixel types and 6 RGBW pixel types.
+    RGBW strips have an extra white pixel
 
-## How to choose the strip type
+### How to choose the strip type
 
 If you're not sure what kind of strip you have, start by choosing RGB if you
 have a three color strip, and RGBW if you have a 4 color strip. Then head
 over to the "Manual" and choose a red color. This will turn on the first
-color for your strip -- \*which might not be red**: If your strip turns
-green, you know your strip is either **G**RB or **G**BR, and if your strip
-turns blue, you have either a **B**RG or a **B\*\*GR type strip.
+color for your strip -- **which might not be red**: If your strip turns
+<strong><span style="color: green;">green</span></strong>, you know your strip
+is either <strong><span style="color: green;">G</span></strong>RB or
+<strong><span style="color: green;">G</span></strong>BR, and if your strip turns
+<strong><span style="color: blue;">blue</span></strong>, you have either a
+<strong><span style="color: blue;">B</span></strong>RG or a <strong><span
+style="color: blue;">B</span></strong>GR type strip.
 
 With this knowledge, head back to the admin tab and select one of the
 two appropriate options, and head back to the "Manual" tab and select a
 green color. if your strip turns green you're done, and if not, head back to
 the select the admin tab, select the other of the two options, and save.
+
+## Library folders
+
+These correspond to the libraries which contain the basic functions which
+control the lights. See the [User Library](../user-library-overview) for
+details.
+
+**Note**: the `internal` library contains some default functions such as the
+`alternate` and `gradient` effects that are used in default shows and a
+effect called `SmoothTo` that is used by the light controls in the Manual tab.
+**Do not delete this library** unless you're sure you know what you're doing.
 
 ## Persistent data
 

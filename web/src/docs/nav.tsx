@@ -18,6 +18,9 @@ const nav_items: NavItem[] = [
     { name: "User Libraries", path: "user-library-overview", level: 1 },
     { name: "Initial Setup", path: "user-library-setup", level: 2 },
     { name: "Workflow", path: "user-library-workflow", level: 2 },
+    { name: "Tips And Tricks", path: "tips-and-tricks", level: 2 },
+    { name: 'Using "this"', path: "using-this", level: 2 },
+    { name: 'Timers', path: "timers", level: 2 },
 ]
 
 const Sidebar = styled.div`

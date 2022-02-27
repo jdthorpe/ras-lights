@@ -3,12 +3,11 @@ import styled from "styled-components"
 import { FourOhFour } from "../App"
 import { Routes, Route, Link, useParams } from "react-router-dom";
 import { Nav } from "./nav"
+// markdown:
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import style from "./markdown-style.module.css"
-
-
-
+import rehypeRaw from 'rehype-raw'
 import Markdown from "react-markdown"
 
 import Configuration from "./md/configuration.md"
@@ -20,6 +19,9 @@ import Index from "./md/index.md"
 import UserLibraryOverview from "./md/user-library-overview.md"
 import UserLibrarySetup from "./md/user-library-setup.md"
 import UserLibraryWorkflow from "./md/user-library-workflow.md"
+import TipsAndTricks from "./md/tips-and-tricks.md"
+import UsingThis from "./md/using-this.md"
+import Timers from "./md/timers.md"
 
 const Body = styled.div`
     padding: 10px;
@@ -43,6 +45,9 @@ const pageMap: { [x: string]: string } = {
     "user-library-overview": UserLibraryOverview,
     "user-library-setup": UserLibrarySetup,
     "user-library-workflow": UserLibraryWorkflow,
+    "tips-and-tricks": TipsAndTricks,
+    "using-this": UsingThis,
+    "timers": Timers,
 }
 
 
@@ -61,11 +66,12 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
 
     return <div style={{ marginLeft: 15, maxWidth: 800 }}>
         <Markdown
+            rehypePlugins={[rehypeRaw]}
             children={contents}
             className={style.markdown}
             components={{
                 a(props) {
-                    console.log('a props.href: ', props.href, props.href!.match(/^(https?:)?\/\//))
+                    console.log('a props.href: ', props.href,)
                     return (
                         props.href!.match(/^(https?:)?\/\//)
                             ? <a href={props.href}>{props.children}</a>

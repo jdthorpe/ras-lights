@@ -1,3 +1,6 @@
+.markdown h1 > code,
+.markdown h2 > code,
+.markdown h4 > code,
 .markdown p > code,
 .markdown li > code {
     background-color: #686d72;

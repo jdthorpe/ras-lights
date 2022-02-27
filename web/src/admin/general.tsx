@@ -14,6 +14,7 @@ const Row = styled.div`
 
 const DataRow = styled.div`
     display: flex;
+    border-radius: 5px;
     flex-direction: Row;
     gap: 1rem;
     padding-left: 12px;
