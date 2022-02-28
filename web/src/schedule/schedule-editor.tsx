@@ -7,7 +7,7 @@ import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { ISchedule } from 'shared/types/schedule';
 import cronstrue from 'cronstrue';
 
-import 'antd/dist/antd.min.css'; // required by cron
+// import 'antd/dist/antd.min.css'; // required by cron
 
 const Row = styled.div`
     display: flex;

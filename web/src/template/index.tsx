@@ -11,9 +11,18 @@ import ValuePicker from "./valuePicker"
 
 import copy from 'copy-to-clipboard';
 
-import SyntaxHighlighter from 'react-syntax-highlighter';
+// import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ColorArrayPicker, ColorValuePicker } from "../editor/inputs/color-input"
+
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import sh from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
+// import atomOneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atomOneDark';
+
+SyntaxHighlighter.registerLanguage('typescript', ts);
+SyntaxHighlighter.registerLanguage('bash', sh);
+
 
 const nameTextBoxstyle: Partial<ITextFieldStyles> = { fieldGroup: { width: "15rem" } };
 

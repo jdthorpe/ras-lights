@@ -5,8 +5,15 @@ import { Routes, Route, Link, useParams } from "react-router-dom";
 import { Nav } from "./nav"
 
 // markdown:
-import SyntaxHighlighter from 'react-syntax-highlighter';
+// import SyntaxHighlighter from 'react-syntax-highlighter';
+// import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import sh from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
+// import atomOneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atomOneDark';
+
+
 
 import style from "./markdown-style.module.css"
 import rehypeRaw from 'rehype-raw'
@@ -25,6 +32,9 @@ import UserLibraryWorkflow from "./md/user-library-workflow.md"
 import TipsAndTricks from "./md/tips-and-tricks.md"
 import UsingThis from "./md/using-this.md"
 import Timers from "./md/timers.md"
+
+SyntaxHighlighter.registerLanguage('typescript', ts);
+SyntaxHighlighter.registerLanguage('bash', sh);
 
 const Body = styled.div`
     padding: 10px;
