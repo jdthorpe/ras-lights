@@ -3,10 +3,19 @@ import styled from "styled-components"
 import { FourOhFour, Loading } from "../App"
 import { Routes, Route, Link, useParams } from "react-router-dom";
 import { Nav } from "./nav"
+import { stringify } from "flatted"
 
 // markdown:
-import SyntaxHighlighter from 'react-syntax-highlighter';
+// import SyntaxHighlighter from 'react-syntax-highlighter';
+// import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import sh from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
+// import atomOneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atomOneDark';
+
+import { special_components, default_component } from "./special-components"
+
 
 import style from "./markdown-style.module.css"
 import rehypeRaw from 'rehype-raw'
@@ -23,8 +32,12 @@ import UserLibraryOverview from "./md/user-library-overview.md"
 import UserLibrarySetup from "./md/user-library-setup.md"
 import UserLibraryWorkflow from "./md/user-library-workflow.md"
 import TipsAndTricks from "./md/tips-and-tricks.md"
+import GetterFunctions from "./md/getter-functions.md"
 import UsingThis from "./md/using-this.md"
-import Timers from "./md/timers.md"
+import UsingClosures from "./md/using-closures.md"
+
+SyntaxHighlighter.registerLanguage('typescript', ts);
+SyntaxHighlighter.registerLanguage('bash', sh);
 
 const Body = styled.div`
     padding: 10px;
@@ -49,8 +62,9 @@ const pageMap: { [x: string]: string } = {
     "user-library-setup": UserLibrarySetup,
     "user-library-workflow": UserLibraryWorkflow,
     "tips-and-tricks": TipsAndTricks,
+    "getter-functions": GetterFunctions,
     "using-this": UsingThis,
-    "timers": Timers,
+    "using-closures": UsingClosures,
 }
 
 
@@ -73,6 +87,13 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
             children={contents}
             className={style.markdown}
             components={{
+                output(props) {
+                    const Component = (props.name && special_components[props.name]) || default_component
+                    return (<>
+                        <Component />
+                        {props.children}
+                    </>)
+                },
                 a(props) {
                     return (
                         props.href!.match(/^(https?:)?\/\//)

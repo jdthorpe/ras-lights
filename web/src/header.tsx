@@ -10,11 +10,32 @@ import { general_settings, tab_lookup } from 'shared/types/admin';
 const re_segment = /^(\/[^\/]*)/
 
 const Shadow = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 20px;
     z-index: 999;
     box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
     padding: 8px;
     position: relative;
 `
+
+function default_tabs(): tab_lookup {
+    if (window.location.hostname.endsWith("github.io")) {
+        return {
+            "manual": false,
+            "modes": false,
+            "editor": false,
+            "schedule": false,
+            "template": true,
+            "admin": false,
+            "docs": true,
+        }
+    } else {
+        return get_tabs(default_settings)
+    }
+}
 
 function get_tabs(x: general_settings): tab_lookup {
     if (isTablet) {
@@ -24,7 +45,6 @@ function get_tabs(x: general_settings): tab_lookup {
     } else {
         return (x.tabs.computer)
     }
-
 }
 
 export function Nav() {
@@ -35,13 +55,15 @@ export function Nav() {
     const location = useLocation()
     console.log("location: ", location)
 
-    const [tabs, set_tabs] = useState<tab_lookup>(get_tabs(default_settings))
+    const [tabs, set_tabs] = useState<tab_lookup>(default_tabs)
 
     const onLinkClick = useCallback((item?: PivotItem, ev?: React.MouseEvent<HTMLElement>) => {
         item && navigate(item.props.itemKey!)
     }, [navigate])
 
     useEffect(() => {
+        if (window.location.hostname.endsWith("github.io"))
+            return
         // pull in the stored settings 
         (async () => {
             const res = await fetch("/api/settings/GENERAL")
@@ -56,7 +78,6 @@ export function Nav() {
 
     }, [location.pathname, navigate])
 
-
     if (tabs === null || typeof tabs === "undefined")
         return <div>Loading</div>
 
@@ -65,6 +86,7 @@ export function Nav() {
     return (
         <>
             <Shadow>
+                <h4 style={{ margin: "0.8rem 0 0.8rem 1rem" }}>Ras-Lights</h4>
                 <Pivot selectedKey={match === null ? "/manual" : match[0]} onLinkClick={onLinkClick}>
                     {(tabs.manual || location.pathname === "/manual") &&
                         <PivotItem itemKey="/manual" headerText="Manual" />}
