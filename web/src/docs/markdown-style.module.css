@@ -3,8 +3,13 @@
 .markdown h4 > code,
 .markdown p > code,
 .markdown li > code {
-    background-color: #686d72;
-    color: #e3e3ea;
+    background-color: #9aa0a7;
+    color: #ffffff;
+    padding: 1.5px;
+    border-radius: 1.5px;
+}
+
+.markdown > pre > div {
     padding: 3px;
     border-radius: 1.5px;
 }
