@@ -2,6 +2,7 @@
     "name": "web",
     "version": "0.1.0",
     "private": true,
+    "homepage": "https://jdthorpe.github.io/ras-lights",
     "dependencies": {
         "@fluentui/react": "^8.48.1",
         "@fluentui/react-hooks": "^8.3.9",
@@ -63,7 +64,7 @@
     "scripts": {
         "start": "react-app-rewired start",
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "build": "react-app-rewired build && rm -rf ../docs && mv build ../docs",
+        "build": "react-app-rewired build && rm -rf ../docs && mv build ../docs && cp gh/404.html ../docs && cp gh/index.html ../docs",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
     },
