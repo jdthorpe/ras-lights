@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/ras-lights/static/css/main.e6c13ad2.css",
-    "main.js": "/ras-lights/static/js/main.328265f8.js",
+    "main.js": "/ras-lights/static/js/main.023e1d24.js",
     "host.js": "/ras-lights/remoteEntry.js",
     "static/js/469.bb9f3257.chunk.js": "/ras-lights/static/js/469.bb9f3257.chunk.js",
     "static/js/702.6fa1e963.chunk.js": "/ras-lights/static/js/702.6fa1e963.chunk.js",
@@ -37,7 +37,7 @@
     "static/media/tips-and-tricks.md": "/ras-lights/static/media/tips-and-tricks.b19938b457c5c645bdba.md",
     "static/media/editor.md": "/ras-lights/static/media/editor.5d7cf769a383f2b1c0f2.md",
     "main.e6c13ad2.css.map": "/ras-lights/static/css/main.e6c13ad2.css.map",
-    "main.328265f8.js.map": "/ras-lights/static/js/main.328265f8.js.map",
+    "main.023e1d24.js.map": "/ras-lights/static/js/main.023e1d24.js.map",
     "remoteEntry.js.map": "/ras-lights/remoteEntry.js.map",
     "469.bb9f3257.chunk.js.map": "/ras-lights/static/js/469.bb9f3257.chunk.js.map",
     "702.6fa1e963.chunk.js.map": "/ras-lights/static/js/702.6fa1e963.chunk.js.map",
@@ -61,6 +61,6 @@
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.328265f8.js"
+    "static/js/main.023e1d24.js"
   ]
 }

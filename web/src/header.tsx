@@ -62,8 +62,10 @@ export function Nav() {
     }, [navigate])
 
     useEffect(() => {
-        if (window.location.hostname.endsWith("github.io"))
+        if (window.location.hostname.endsWith("github.io")) {
+            location.pathname === "/" && navigate("/docs")
             return
+        }
         // pull in the stored settings 
         (async () => {
             const res = await fetch("/api/settings/GENERAL")
@@ -73,9 +75,7 @@ export function Nav() {
             } else {
                 set_tabs(get_tabs(settings))
             }
-            location.pathname === "/" && navigate(
-                window.location.hostname.endsWith("github.io") ? "/docs" : "/manual"
-            )
+            location.pathname === "/" && navigate("/manual")
         })()
 
     }, [location.pathname, navigate])
@@ -84,12 +84,13 @@ export function Nav() {
         return <div>Loading</div>
 
     const match = location.pathname.match(re_segment)
+    const selectedKey = match === null ? (window.location.hostname.endsWith("github.io") ? "/docs" : "/manual") : match[0]
 
     return (
         <>
             <Shadow>
                 <h4 style={{ margin: "0.8rem 0 0.8rem 1rem" }}>Ras-Lights</h4>
-                <Pivot selectedKey={match === null ? "/manual" : match[0]} onLinkClick={onLinkClick}>
+                <Pivot selectedKey={selectedKey} onLinkClick={onLinkClick}>
                     {(tabs.manual || location.pathname === "/manual") &&
                         <PivotItem itemKey="/manual" headerText="Manual" />}
                     {(tabs.modes || location.pathname === "/modes") &&
