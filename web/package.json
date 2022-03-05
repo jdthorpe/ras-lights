@@ -64,7 +64,7 @@
     "scripts": {
         "start": "react-app-rewired start",
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "build": "react-app-rewired build && rm -rf ../docs && mv build ../docs && cp gh/404.html ../docs && cp gh/index.html ../docs",
+        "build": "react-app-rewired build && rm -rf ../docs && mv build ../docs",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
     },
