@@ -3,7 +3,7 @@ import { createContext, FC } from "react";
 export async function set_update(key: string, value: any) {
     try {
         const obj = Object.fromEntries([[key, value]]);
-        await fetch("/api/ctl/", {
+        await fetch("/ras-lights/api/ctl/", {
             method: "POST",
             cache: "no-cache",
             headers: {
@@ -12,7 +12,7 @@ export async function set_update(key: string, value: any) {
             body: JSON.stringify(obj),
         });
     } catch (err) {
-        console.log("/api/ctl/ failed with error", err);
+        console.log("/ras-lights/api/ctl/ failed with error", err);
     }
 }
 
