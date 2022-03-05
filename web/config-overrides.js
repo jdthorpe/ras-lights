@@ -3,28 +3,22 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 // const deps = require("./package.json").dependencies;
 
 module.exports = function override(config, env) {
-    config.output.publicPath = "/";
+    config.output.publicPath = "/ras-lights/";
 
+    // ------------------------------
+    // markdown configuration
+    // ------------------------------
     if (!config.module.rules) {
         config.module.rules = [];
     }
     config.module.rules.unshift({
         test: /\.md$/,
         type: "asset/source",
-        // use: [
-        //     {
-        //         loader: "html-loader",
-        //     },
-        //     {
-        //         loader: "markdown-loader",
-        //         options: {
-        //             // Pass options to marked
-        //             // See https://marked.js.org/using_advanced#options
-        //         },
-        //     },
-        // ],
     });
 
+    // ------------------------------
+    // module federatoin configuration
+    // ------------------------------
     if (!config.plugins) {
         config.plugins = [];
     }
@@ -37,17 +31,6 @@ module.exports = function override(config, env) {
             exposes: {
                 "./register": "./src/register",
             },
-            //   shared: {
-            //     ...deps,
-            //     react: {
-            //       singleton: true,
-            //       requiredVersion: deps.react,
-            //     },
-            //     "react-dom": {
-            //       singleton: true,
-            //       requiredVersion: deps["react-dom"],
-            //     },
-            //   },
         })
     );
 
