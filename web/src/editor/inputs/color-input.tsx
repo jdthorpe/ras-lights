@@ -4,11 +4,8 @@ import { FontIcon } from '@fluentui/react/lib/Icon';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import styled from "styled-components"
 import cc from "color-convert"
-import {
-    ColorPicker,
-    IColor,
-    IColorPickerStyles,
-} from '@fluentui/react/lib/index';
+import { ColorPicker, IColorPickerStyles, } from '@fluentui/react/lib/ColorPicker';
+import { IColor, } from '@fluentui/react/lib/Color';
 import { Label } from '@fluentui/react/lib/Label';
 import { rgb } from 'shared/types/mode';
 
