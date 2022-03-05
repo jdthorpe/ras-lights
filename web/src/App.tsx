@@ -53,7 +53,7 @@ export const FourOhFour: React.FC = () => {
 function App() {
   // bootstrap the router
   return <ErrorBoundary >
-    <BrowserRouter>
+    <BrowserRouter basename="/ras-lights">
       <Nav />
       <Main />
     </BrowserRouter>
