@@ -73,7 +73,9 @@ export function Nav() {
             } else {
                 set_tabs(get_tabs(settings))
             }
-            location.pathname === "/" && navigate("/manual")
+            location.pathname === "/" && navigate(
+                window.location.hostname.endsWith("github.io") ? "/docs" : "/manual"
+            )
         })()
 
     }, [location.pathname, navigate])
@@ -96,12 +98,12 @@ export function Nav() {
                         <PivotItem itemKey="/editor" headerText="Editor" />}
                     {(tabs.schedule || location.pathname === "/schedule") &&
                         <PivotItem itemKey="/schedule" headerText="Schedule" />}
+                    {(tabs.docs || location.pathname === "/docs") &&
+                        <PivotItem itemKey="/docs" headerText="Docs" />}
                     {(tabs.template || location.pathname === "/template") &&
                         <PivotItem itemKey="/template" headerText="Template" />}
                     {(tabs.admin || location.pathname === "/admin") &&
                         <PivotItem itemKey="/admin" headerText="Admin" />}
-                    {(tabs.docs || location.pathname === "/docs") &&
-                        <PivotItem itemKey="/docs" headerText="Docs" />}
                 </Pivot>
             </Shadow>
         </>
