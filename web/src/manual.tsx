@@ -5,10 +5,12 @@ import { rgbw } from "shared/types/mode";
 import debounce from "lodash.debounce"
 import {
     ColorPicker,
-    getColorFromString,
-    IColor,
     IColorPickerStyles,
-} from '@fluentui/react/lib/index';
+} from '@fluentui/react/lib/ColorPicker';
+import { IColor } from "@fluentui/react/lib/Color"
+import { getColorFromString } from "@fluentui/react/lib/utilities/color";
+
+
 import styled from "styled-components"
 
 const Col = styled.div`
