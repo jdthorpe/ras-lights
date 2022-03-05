@@ -68,7 +68,7 @@ export function Nav() {
         }
         // pull in the stored settings 
         (async () => {
-            const res = await fetch("/api/settings/GENERAL")
+            const res = await fetch("/ras-lights/api/settings/GENERAL")
             const settings: general_settings | null = await res.json()
             if (settings === null) {
                 set_tabs(get_tabs(default_settings))

@@ -43,7 +43,7 @@ const Schedule: React.FC = () => {
         if (typeof schedules === "undefined")
             return
         (async () => {
-            const results = await fetch("/api/schedule/", {
+            const results = await fetch("/ras-lights/api/schedule/", {
                 method: 'DELETE',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
@@ -64,7 +64,7 @@ const Schedule: React.FC = () => {
 
     const saveSchedule = async (s: ISchedule) => {
         set_current_schedule(s)
-        const results = await fetch("/api/schedule/", {
+        const results = await fetch("/ras-lights/api/schedule/", {
             method: 'POST',
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ const Schedule: React.FC = () => {
     }
 
     const fetchSchedules = async () => {
-        const results = await fetch("/api/schedule/")
+        const results = await fetch("/ras-lights/api/schedule/")
         const _schedules: IReadableSchedule[] = await results.json()
         _schedules.forEach(s => { s.human = cronstrue.toString(s.schedule) })
         set_schedules(_schedules.sort((a, b) => (a.name < b.name) ? -1 : 1))
@@ -92,13 +92,13 @@ const Schedule: React.FC = () => {
         if (typeof modes !== "undefined") return
         let canceled = false;
         (async () => {
-            const response = await fetch("/api/mode/");
+            const response = await fetch("/ras-lights/api/mode/");
             try {
                 const config: any = await response.json();
                 if (canceled) return
                 set_modes(["off", ...config.map((x: any) => x.name)])
             } catch (err) {
-                console.log(`fetch("/api/mode/").json() failed with`, err)
+                console.log(`fetch("/ras-lights/api/mode/").json() failed with`, err)
                 console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")
             }
         })()

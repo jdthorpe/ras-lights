@@ -26,7 +26,7 @@ const Row = styled.div`
 
 async function turnOff() {
     try {
-        // await fetch("/api/mode/off")
+        // await fetch("/ras-lights/api/mode/off")
         await smooth_to([0, 0, 0, 0], 500)
     } catch (err) {
         console.log("/lights/off failed with error", err)
@@ -36,8 +36,8 @@ async function turnOff() {
 async function setRandomColors(on: boolean) {
     try {
         if (on)
-            await fetch("/api/mode/off")
-        await fetch("/api/lights/random")
+            await fetch("/ras-lights/api/mode/off")
+        await fetch("/ras-lights/api/lights/random")
     } catch (err) {
         console.log("/lights/random failed with error", err)
     }
@@ -49,7 +49,7 @@ async function setRandomColors(on: boolean) {
 */
 
 async function smooth_to(x: rgbw, t: number = 300) {
-    await fetch("/api/mode", {
+    await fetch("/ras-lights/api/mode", {
         method: 'POST',
         cache: 'no-cache',
         headers: { 'Content-Type': 'application/json' },
@@ -84,7 +84,7 @@ async function setWhiteIntensity(intensity: number) {
 async function setWhiteIntensity(on: boolean, intensity: number) {
     try {
         if (on)
-            await fetch("/api/mode/off")
+            await fetch("/ras-lights/api/mode/off")
         await fetch(`/api/lights/white/${intensity}`)
     } catch (err) {
         console.log("/lights/white failed with error", err)
@@ -104,8 +104,8 @@ async function update_color(x: IColor) {
 async function update_color(x: IColor, on: boolean) {
     try {
         if (on)
-            await fetch("/api/mode/off")
-        await fetch("/api/lights/set-colors", {
+            await fetch("/ras-lights/api/mode/off")
+        await fetch("/ras-lights/api/lights/set-colors", {
             method: 'POST',
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },

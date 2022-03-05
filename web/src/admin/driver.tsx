@@ -44,7 +44,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         let canceled = false;
         (async () => {
             try {
-                const res = await fetch("/api/driver/")
+                const res = await fetch("/ras-lights/api/driver/")
                 if (canceled) return
                 const driver: IDriver = await res.json()
                 if (canceled) return
@@ -98,7 +98,7 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
     const save = useCallback(async () => {
         let canceled = false
         const driver: IDriver = { frequency, dma, channels }
-        await fetch("/api/driver/", {
+        await fetch("/ras-lights/api/driver/", {
             method: "POST",
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },

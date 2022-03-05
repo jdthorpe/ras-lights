@@ -21,12 +21,12 @@ const Modes: React.FC = () => {
         let canceled = false;
         (async () => {
             if (typeof mode_config === "undefined") {
-                const response = await fetch("/api/mode/", {
+                const response = await fetch("/ras-lights/api/mode/", {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 });
                 if (canceled) return
-                const mode_res = await fetch("/api/ctl/")
+                const mode_res = await fetch("/ras-lights/api/ctl/")
                 if (canceled) return
 
                 try {
@@ -59,7 +59,7 @@ const Modes: React.FC = () => {
                     }
 
                 } catch (err) {
-                    console.log(`fetch("/api/mode/").json() failed with`, err)
+                    console.log(`fetch("/ras-lights/api/mode/").json() failed with`, err)
                     console.log("This usually means the app is running on a dev box without beign proxied via /nginx-dev.conf")
                 }
             }
@@ -70,7 +70,7 @@ const Modes: React.FC = () => {
 
     const cb = useCallback(async (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
         if (mode_config && option && typeof index === "number") {
-            fetch(`/api/mode/${option.key}`)
+            fetch(`/ras-lights/api/mode/${option.key}`)
             // set_mode_number(index)
             set_mode(mode_config[index])
             set_active_key(option.key as string)
