@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faEdit, faLock } from '@fortawesome/free-solid-svg-icons'
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { ISchedule } from 'shared/types/schedule';
+import "./antd.css"
 
 const Table = styled.table`
     border-collapse: collapse;

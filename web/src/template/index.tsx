@@ -213,7 +213,11 @@ const Template: React.FC = () => {
                     </Row>
                     {/* <Editor code={code} /> */}
 
-                    <SyntaxHighlighter language="typescript" style={atomOneDark} showLineNumbers={true}>
+                    <SyntaxHighlighter
+                        language="typescript"
+                        style={atomOneDark}
+                        customStyle={{ borderRadius: "0.35rem", padding: "0.7rem" }}
+                        showLineNumbers={true}>
                         {code}
                     </SyntaxHighlighter>
                 </div>

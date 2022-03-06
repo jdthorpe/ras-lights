@@ -6,13 +6,10 @@ import { Nav } from "./nav"
 import { stringify } from "flatted"
 
 // markdown:
-// import SyntaxHighlighter from 'react-syntax-highlighter';
-// import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import sh from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
-// import atomOneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atomOneDark';
 
 import { special_components, default_component } from "./special-components"
 
@@ -107,6 +104,7 @@ const MD: React.FC<{ url: string }> = ({ url }) => {
                         <SyntaxHighlighter
                             children={String(children).replace(/\n$/, '')}
                             style={atomOneDark}
+                            customStyle={{ borderRadius: "0.35rem", padding: "0.7rem" }}
                             language={match[1]}
                             PreTag="div"
                             {...props}
