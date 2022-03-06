@@ -3,12 +3,16 @@
 # --- or --- 
 # > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
 
+PURPLE='\035[0;31m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
+  then echo -e "Please run as root"
   exit
 fi
 
-echo "[RAS-LIGHTS setup.sh] Installing dependencies" 
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Installing dependencies" 
 apt-get update
 apt-get install nginx -y
 apt-get install supervisor -y
@@ -27,7 +31,7 @@ fi
 NODE_VERSION=$(node --version | perl -pe 's/^v(\d+)\..*/\1/')
 if [[ "$NODE_VERSION" -lt "12" ]];
 then 
-  echo "[RAS-LIGHTS setup.sh] Incompatible Node version. Please upgrade to version 12 or higher" 
+  echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Incompatible Node version. Please upgrade to version 12 or higher" 
   exit
 fi
 
@@ -38,27 +42,40 @@ fi
 cd /home/pi
 if [ -d "/home/pi/ras-lights" ] 
 then
-    echo "[RAS-LIGHTS setup.sh] Directory /home/pi/ras-lights" 
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Directory /home/pi/ras-lights" 
 else
-    echo "[RAS-LIGHTS setup.sh] cloning ras lights repo"
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} cloning ras lights repo"
     git clone https://github.com/jdthorpe/ras-lights
 fi
 cd /home/pi/ras-lights
 
-echo "[RAS-LIGHTS setup.sh] install default-lib dependencies"
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} install default-lib dependencies"
 pushd default-lib && npm install --only=production && popd
 
-echo "[RAS-LIGHTS setup.sh] install api dependencies"
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} install api dependencies"
 pushd api 
 # the LED lib needs root perms...
 npm install --only=production --unsafe-perm 
 node build/__init__.js
 popd
 
-echo "[RAS-LIGHTS setup.sh] Configuring NGINX";
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Configuring NGINX";
 cp nginx.conf /etc/nginx/nginx.conf
 nginx -s reload
 
-echo "[RAS-LIGHTS setup.sh] Configuring supervisord";
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Configuring supervisord";
 cp supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 supervisorctl reload
+
+echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} Configuring wifi sleep mode"
+if [ -f "/etc/rc.local" ]; then
+  if grep -Fq "iwconfig wlan0 power" /etc/rc.local ; then 
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${NC} WIFI power already managed in /etc/rc.local"
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${RED} See https://raspberrypi.stackexchange.com/a/96608 for options to disable wifi sleep mode -- otherwise you may experience connectivity issues."
+  else
+    sed -i '/^exit 0/i /sbin/iwconfig wlan0 power off' /etc/rc.local
+  fi
+else 
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${RED} WARNING: no such fil /etc/rc.local; unable to configure WIFI sleep mode${NC}"
+    echo -e "${PURPLE}[RAS-LIGHTS setup.sh]${RED} See https://raspberrypi.stackexchange.com/a/96608 for options to disable wifi sleep mode -- otherwise you may experience connectivity issues."
+fi
