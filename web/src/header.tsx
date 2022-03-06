@@ -5,6 +5,7 @@ import { default_settings } from "./admin/general"
 import { useNavigate, useLocation } from "react-router-dom"
 import { isTablet, isMobile } from "react-device-detect"
 import { general_settings, tab_lookup } from 'shared/types/admin';
+import { Octocat } from "./octocat";
 
 // eslint-disable-next-line no-useless-escape
 const re_segment = /^(\/[^\/]*)/
@@ -106,6 +107,10 @@ export function Nav() {
                     {(tabs.admin || location.pathname === "/admin") &&
                         <PivotItem itemKey="/admin" headerText="Admin" />}
                 </Pivot>
+                <div style={{ marginLeft: "auto" }}>
+                    <Octocat />
+                </div>
+
             </Shadow>
         </>
     );

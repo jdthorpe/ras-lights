@@ -68,7 +68,6 @@ setup looks like this:
     alt="LEDs powered by Raspberry Pi" 
     style="width:400px;"/>
 
-
 **DO NOT** power longer strings of LEDs to with Pi, as this risks damaging your
 *Pi or worse.
 
