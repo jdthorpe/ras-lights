@@ -1,6 +1,6 @@
 # Ras-Lights
 
-A rasperry pi based light show and web app
+A Raspberry Pi based light show and web app.  Check out the docs [here](https://jdthorpe.github.io/ras-lights/)
 
 ## Quickstart
 
@@ -37,8 +37,6 @@ sudo systemctl start ssh
 ```sh
 sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh)"
 ```
-
-sudo curl -fsSL https://raw.githubusercontent.com/jdthorpe/ras-lights/main/setup.sh | bash
 
 On my raspberry pi zero,  I couldn't use the browser to view this page, because the browser wouldn't open.  So for this step, I logged onto my pi from my main computer using SSH, by opening a terminal window on my computer and typing
 
