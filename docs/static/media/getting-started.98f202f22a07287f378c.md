@@ -63,7 +63,11 @@ have used to connect LED strips to my Pi. For this demo I'm using a tiny
 breakout board from Adafruit, which can be powered directly with the Pi, so my
 setup looks like this:
 
-{{ picture here }}
+<img 
+    src="/ras-lights/assets/images/pi-powered-pixels.png" 
+    alt="LEDs powered by Raspberry Pi" 
+    style="width:400px;"/>
+
 
 **DO NOT** power longer strings of LEDs to with Pi, as this risks damaging your
 *Pi or worse.

@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/ras-lights/static/css/main.e6c13ad2.css",
-    "main.js": "/ras-lights/static/js/main.2eadea4a.js",
+    "main.js": "/ras-lights/static/js/main.8acbac9b.js",
     "host.js": "/ras-lights/remoteEntry.js",
     "static/js/469.fc1195d3.chunk.js": "/ras-lights/static/js/469.fc1195d3.chunk.js",
     "static/js/702.729e2d3b.chunk.js": "/ras-lights/static/js/702.729e2d3b.chunk.js",
@@ -11,7 +11,7 @@
     "static/css/114.5460081c.chunk.css": "/ras-lights/static/css/114.5460081c.chunk.css",
     "static/js/114.11579d4a.chunk.js": "/ras-lights/static/js/114.11579d4a.chunk.js",
     "static/css/527.93c5df1e.chunk.css": "/ras-lights/static/css/527.93c5df1e.chunk.css",
-    "static/js/527.3f539bca.chunk.js": "/ras-lights/static/js/527.3f539bca.chunk.js",
+    "static/js/527.87ad7586.chunk.js": "/ras-lights/static/js/527.87ad7586.chunk.js",
     "static/js/778.3f5710d2.chunk.js": "/ras-lights/static/js/778.3f5710d2.chunk.js",
     "static/js/425.6ba7a457.chunk.js": "/ras-lights/static/js/425.6ba7a457.chunk.js",
     "static/js/478.1edad763.chunk.js": "/ras-lights/static/js/478.1edad763.chunk.js",
@@ -23,11 +23,11 @@
     "static/js/143.0e36cf01.chunk.js": "/ras-lights/static/js/143.0e36cf01.chunk.js",
     "static/js/415.9b19276f.chunk.js": "/ras-lights/static/js/415.9b19276f.chunk.js",
     "static/media/using-closures.md": "/ras-lights/static/media/using-closures.bf154f08c6a2609ed06a.md",
-    "static/media/user-library-setup.md": "/ras-lights/static/media/user-library-setup.4df57a6f0f6f1b83e7d3.md",
-    "static/media/getting-started.md": "/ras-lights/static/media/getting-started.05135fe192f6d5db9d3f.md",
-    "static/media/user-library-workflow.md": "/ras-lights/static/media/user-library-workflow.10ea35cfd7891b956950.md",
+    "static/media/user-library-setup.md": "/ras-lights/static/media/user-library-setup.c171f84e2a6aa619db33.md",
+    "static/media/getting-started.md": "/ras-lights/static/media/getting-started.98f202f22a07287f378c.md",
+    "static/media/user-library-workflow.md": "/ras-lights/static/media/user-library-workflow.d6abafeddbf55786e424.md",
     "static/media/getter-functions.md": "/ras-lights/static/media/getter-functions.1e7245d12e468f4a34b8.md",
-    "static/media/configuration.md": "/ras-lights/static/media/configuration.054da11fc2aaf89e2bd9.md",
+    "static/media/configuration.md": "/ras-lights/static/media/configuration.5fcb888ef120f02211c7.md",
     "static/media/using-this.md": "/ras-lights/static/media/using-this.d1b786917ae6c1f175c6.md",
     "static/media/connecting-to-your-pi.md": "/ras-lights/static/media/connecting-to-your-pi.5edf2d998f9d187d5540.md",
     "static/media/index.md": "/ras-lights/static/media/index.80f7c81a0b0b4c9ebc48.md",
@@ -37,7 +37,7 @@
     "static/media/tips-and-tricks.md": "/ras-lights/static/media/tips-and-tricks.b19938b457c5c645bdba.md",
     "static/media/editor.md": "/ras-lights/static/media/editor.5d7cf769a383f2b1c0f2.md",
     "main.e6c13ad2.css.map": "/ras-lights/static/css/main.e6c13ad2.css.map",
-    "main.2eadea4a.js.map": "/ras-lights/static/js/main.2eadea4a.js.map",
+    "main.8acbac9b.js.map": "/ras-lights/static/js/main.8acbac9b.js.map",
     "remoteEntry.js.map": "/ras-lights/remoteEntry.js.map",
     "469.fc1195d3.chunk.js.map": "/ras-lights/static/js/469.fc1195d3.chunk.js.map",
     "702.729e2d3b.chunk.js.map": "/ras-lights/static/js/702.729e2d3b.chunk.js.map",
@@ -47,7 +47,7 @@
     "114.5460081c.chunk.css.map": "/ras-lights/static/css/114.5460081c.chunk.css.map",
     "114.11579d4a.chunk.js.map": "/ras-lights/static/js/114.11579d4a.chunk.js.map",
     "527.93c5df1e.chunk.css.map": "/ras-lights/static/css/527.93c5df1e.chunk.css.map",
-    "527.3f539bca.chunk.js.map": "/ras-lights/static/js/527.3f539bca.chunk.js.map",
+    "527.87ad7586.chunk.js.map": "/ras-lights/static/js/527.87ad7586.chunk.js.map",
     "778.3f5710d2.chunk.js.map": "/ras-lights/static/js/778.3f5710d2.chunk.js.map",
     "425.6ba7a457.chunk.js.map": "/ras-lights/static/js/425.6ba7a457.chunk.js.map",
     "478.1edad763.chunk.js.map": "/ras-lights/static/js/478.1edad763.chunk.js.map",
@@ -61,6 +61,6 @@
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.2eadea4a.js"
+    "static/js/main.8acbac9b.js"
   ]
 }

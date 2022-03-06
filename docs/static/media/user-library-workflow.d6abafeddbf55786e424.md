@@ -4,7 +4,7 @@ To add your own functions to the Ras-Lights app, you'll need to:
 
 -   Create a function template using the Ras-Lights template tab of the web app
 -   Copy the template into your repo and fill in the function with your own
-    special logic in the template
+    special logic 
 -   Import your new module
 -   Compile (transpile) your code using the 'npm run build' command
 -   Push your code to Github and pull it down to your Pi
@@ -22,11 +22,15 @@ certain number of times. I will specify the output type as an RGB Array (`RGB[]`
 name of my new function ("Stripes"), and two inputs of type `RGB[]` and another
 of type integer.
 
-The values in the "Input Label" colum will be presented in the Editor tab, and
-the values in the "Key" column will become the variable names in the "effect"
+The text in the "Input Label" colum will be presented in the Editor tab, and
+the text in the "Key" column will become the variable names in the "effect"
 function that defines my new special effect.
 
-{{ picture here}}
+<img 
+    src="/ras-lights/assets/images/template-settings.png" 
+    alt="LEDs powered by Raspberry Pi" 
+    style="width:750px; box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);"/>
+
 
 ## Step 2: Create a new module (file)
 
