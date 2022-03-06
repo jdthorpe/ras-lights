@@ -96,7 +96,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ modes, schedule, save }) =>
                     <Cron value={cronString} setValue={setCronString} onError={setCronError} />
                 </Row>
                 <Row>
-                    <p>{cronstrue.toString(cronString)} </p>
+                    <p style={{ marginTop: 0 }}>{cronstrue.toString(cronString)} </p>
                 </Row>
             </div>
         </div>
