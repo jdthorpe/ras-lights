@@ -362,7 +362,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
         // component will unmount
         return function cleanup() {
             loop.stop();
-            // live && (async () => { await fetch("/api/mode/off"); })()
+            // live && (async () => { await fetch("/ras-lights/api/mode/off"); })()
         };
     }, [globals_ref]); // Dont add the dependencies!!! init, set, loop
 
@@ -434,7 +434,7 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
     const update_LEDS = useCallback((async () => {
         if (show.type === "func") {
             // const response =
-            await fetch("/api/mode/", {
+            await fetch("/ras-lights/api/mode/", {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
@@ -444,8 +444,8 @@ const Editor: React.FC<editorProps> = ({ signatures }) => {
             if (!Array.isArray(show.value))
                 return
             // const response =
-            await fetch("/api/mode/off")
-            await fetch("/api/lights/set-colors", {
+            await fetch("/ras-lights/api/mode/off")
+            await fetch("/ras-lights/api/lights/set-colors", {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
@@ -781,7 +781,7 @@ const EditorTab: React.FC = () => {
         (async () => {
             try {
                 console.log("fetching")
-                const res = (await fetch("/api/registry/descriptors"));
+                const res = (await fetch("/ras-lights/api/registry/descriptors"));
                 const data: { [key: string]: signature } = await res.json()
                 if (canceled) return
                 set_signatures(data)

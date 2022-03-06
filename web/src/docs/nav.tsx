@@ -25,7 +25,7 @@ const nav_items: NavItem[] = [
 ]
 
 const Sidebar = styled.div`
-    background-color: #353634;
+    background-color: rgb(47 49 57);
     color: #e6e6eb;
     padding-left: .8rem;
     padding-top: .8rem;
@@ -86,7 +86,7 @@ const NavListItem: React.FC<NavItem> = ({ name, path, level }) => {
     )
 }
 
-export const Nav: React.FC = (props) => {
+export const Nav: React.FC = () => {
 
     return (
         <Sidebar>

@@ -139,7 +139,11 @@ Open the web app to the Admin page and scroll to the "Library Folders" section.
 Add the library using the library name variable from step 3
 (`jdthorpe_ras_lights` in my case), and the directory name above, like so:
 
-{{ picture here }}
+<img 
+    src="/ras-lights/assets/images/new-library-folder.png" 
+    alt="LEDs powered by Raspberry Pi" 
+    style="width:400px;"/>
+
 
 Your library is now set up on the your Pi! Next, head over to the [user library
 workflow](../user-library-workflow) page to learn how to add new functions to

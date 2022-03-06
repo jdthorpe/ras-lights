@@ -25,7 +25,7 @@ driver.
 
 If you're not sure what kind of strip you have, start by choosing RGB if you
 have a three color strip, and RGBW if you have a 4 color strip. Then head
-over to the "Manual" and choose a red color. This will turn on the first
+over to the "Manual" tab and choose a red color. This will turn on the first
 color for your strip -- **which might not be red**: If your strip turns
 <strong><span style="color: green;">green</span></strong>, you know your strip
 is either <strong><span style="color: green;">G</span></strong>RB or
@@ -36,7 +36,7 @@ style="color: blue;">B</span></strong>GR type strip.
 
 With this knowledge, head back to the admin tab and select one of the
 two appropriate options, and head back to the "Manual" tab and select a
-green color. if your strip turns green you're done, and if not, head back to
+green color. If your strip turns green you're done, and if not, head back to
 the select the admin tab, select the other of the two options, and save.
 
 ## Library folders

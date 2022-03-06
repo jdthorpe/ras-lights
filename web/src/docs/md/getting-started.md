@@ -63,7 +63,10 @@ have used to connect LED strips to my Pi. For this demo I'm using a tiny
 breakout board from Adafruit, which can be powered directly with the Pi, so my
 setup looks like this:
 
-{{ picture here }}
+<img 
+    src="/ras-lights/assets/images/pi-powered-pixels.png" 
+    alt="LEDs powered by Raspberry Pi" 
+    style="width:400px;"/>
 
 **DO NOT** power longer strings of LEDs to with Pi, as this risks damaging your
 *Pi or worse.
@@ -79,7 +82,7 @@ I'm starting with a NeoPixel breakout board from Adafruit which I connected to
 pin 18 of my Raspberry Pi Zero, so my setup looks like this:
 
 <img 
-    src="/assets/images/getting-started-driver.png" 
+    src="/ras-lights/assets/images/getting-started-driver.png" 
     alt="LEDs powered by Raspberry Pi" 
     style="width:750px; box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);"/>
 

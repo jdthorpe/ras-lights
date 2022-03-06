@@ -46,7 +46,7 @@ const GeneralSettings: React.FC = () => {
         let canceled = false;
         (async () => {
             try {
-                const res = await fetch("/api/settings/GENERAL")
+                const res = await fetch("/ras-lights/api/settings/GENERAL")
                 if (canceled) return
                 let settings: general_settings = await res.json()
                 if (canceled) return
@@ -86,7 +86,7 @@ const GeneralSettings: React.FC = () => {
 
         let canceled = false;
         const next = { "type": "GENERAL", tabs, series, delay_ms }
-        await fetch("/api/settings/", {
+        await fetch("/ras-lights/api/settings/", {
             method: "POST",
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
