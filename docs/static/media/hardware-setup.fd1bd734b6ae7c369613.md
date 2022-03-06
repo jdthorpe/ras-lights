@@ -14,7 +14,7 @@ with 8 pixels, which, in my experience is small enough to power with my
 Raspberry Pi using a setup like this:
 
 <img 
-    src="/assets/images/pi-powered-pixels.png" 
+    src="/ras-lights/assets/images/pi-powered-pixels.png" 
     alt="LEDs powered by Raspberry Pi" 
     style="width:400px;"/>
 
@@ -25,7 +25,7 @@ require a 5 volt power supply, I like to power the Pi with the same power supply
 by connecting the power and ground to the 5V and GND pins of the Pi, like so:
 
 <img 
-    src="/assets/images/pi-pixel-shared-power.png" 
+    src="/ras-lights/assets/images/pi-pixel-shared-power.png" 
     alt="LEDs powered by Raspberry Pi" 
     style="width:400px;"/>
 
@@ -40,6 +40,6 @@ want to power the Pi via USB, it is necessary to connect the GND and signal
 wires of the LEDs to the Pi, like so:
 
 <img 
-    src="/assets/images/pi-pixel-separate-power.png" 
+    src="/ras-lights/assets/images/pi-pixel-separate-power.png" 
     alt="LEDs powered by Raspberry Pi" 
     style="width:400px;"/>
