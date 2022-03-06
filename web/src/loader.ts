@@ -52,7 +52,7 @@ const loadScript = (url: string): Promise<void> => {
 };
 
 async function load_library(name: string) {
-    await loadScript(`/lib/${name}/remoteEntry.js`);
+    await loadScript(`/ras-lights/lib/${name}/remoteEntry.js`);
     return await loadComponent(name, "./lib");
 }
 
