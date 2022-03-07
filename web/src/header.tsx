@@ -54,7 +54,6 @@ export function Nav() {
     // order to use the useNavigation and useLocation hooks
     const navigate = useNavigate()
     const location = useLocation()
-    console.log("location: ", location)
 
     const [tabs, set_tabs] = useState<tab_lookup>(default_tabs)
 
