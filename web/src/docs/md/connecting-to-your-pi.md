@@ -1,8 +1,8 @@
-# Connecting to your Pi
+# Connecting to Your Pi
 
 You'll need to connect to your Pi to view the web app, and also to make updates
 to your setup, so you'll need to set up at least one way to connect to your Pi
-over your local network
+over your local network.
 
 # Method 1: Connecting with an IP address
 

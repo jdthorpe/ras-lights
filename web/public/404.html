@@ -23,7 +23,12 @@
     // https://username.github.io/repo-name/one/two?a=b&c=d#qwe becomes
     // https://username.github.io/repo-name/?/one/two&a=b~and~c=d#qwe
     // Otherwise, leave pathSegmentsToKeep as 0.
-    if (!window.location.hostname.endsWith('github.io')) { return }
+    console.log("are we on GitHub?")
+    if (!window.location.hostname.endsWith('github.io')) {
+      console.log("Nope, somewhere else...", window.location.hostname)
+      return
+    }
+    console.log("Yep, we are on GitHub?")
     var pathSegmentsToKeep = 1;
 
     var l = window.location;

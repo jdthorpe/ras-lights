@@ -1,16 +1,16 @@
-# Environments and closures
+# Environments and Closures
 
 Environments and closures can be used to store values that can be used at a
 later time.  These tricks can be really helpful by creating functions that store
-some state which allow them to return a different value each time they are
-called, which depend on when, how often, or how many times they have been called.
+some state (data) that allow them to return a different value each time they are
+called depending on when, how often, or how many times they have been called.
 
 This can be leveraged to build all kinds of effects that vary over time, and can
 be enormously helpful in creating animations.
 
 ## Environments
 
-When you call a function, the body of the function is executed, and the body of
+When you call a function, the body of the function is executed. The body of
 the function may include variable assignments, such as:
 
 ```ts
@@ -22,7 +22,7 @@ function my_function(){
 
 Each time a function is called, a new environment is created in which the
 variable gets assigned. This is what keeps the assignment in the body of the
-function from over writing a variable with the same name that has been assigned
+function from over-writing a variable with the same name that has been assigned
 somewhere else.  For example:
 
 ```ts
@@ -31,10 +31,10 @@ my_function();
 console.log(x); // logs `42` to the console.
 ```
 
-In JavaScript, there are 3 keywords which are used to create a new variable in
-an environment, which are `var`, `let`, and `const`.  But what happens when you
+In JavaScript, there are 3 keywords that are used to create a new variable in
+an environment. These are `var`, `let`, and `const`.  So, what happens when you
 *use* a variable in the body of the function that hasn't been created in the
-body of the function? Well, JavaScript keeps looks for it in the environment in
+body of the function? Well, JavaScript keeps looking for it in the environment in
 which the function was created.  If the variable isn't found in the immediate
 parent environment, then the search continues to further parent environments
 until the the search reaches a package environment or the global environment.
@@ -58,12 +58,12 @@ meaning_of_life() // returns 42
 ## From Environments to Closures
 
 The concept of a `Closure` is an environment that stays around as long there is
-at least one reference to the a variable that it contains.  In JavaScript, this
+at least one reference to a variable that it contains.  In JavaScript, this
 means that the environment that is created each time a function is called will
 stay in memory as long as there is a reference to any of the variables in that
 environment. 
 
-For example, the variables (`count`) defined in the body of the counter_factory,
+For example, the variable (`count`) defined in the body of the counter_factory,
 can be used by the `counter` function -- even after the factory function has has
 finished:
 
@@ -102,16 +102,16 @@ counter_B() // returns 2
 counter_B() // returns 3
 ```
 
-## Making use of closures
+## Making Use of Closures
 
-Closures are yet another way of holding state -- i.e. data that held by a
-function between function calls.  In the Ras-Lights app, they can be very useful
-for creating utility functions that make writing your own special effects easer.
+Closures are yet another way of holding state -- i.e. data that doesn't go away 
+between function calls.  In the Ras-Lights app, they can be very useful for
+creating utility functions that make writing your own special effects easier.
 For example, by storing a time stamp in the closure, you can create a function
-that returns a different value  depending on the elapsed time -- very handy for
+that returns a different value depending on the elapsed time -- very handy for
 animations!
 
-### A simple timer function
+### A Simple Timer Function
 
 <details>
 <summary>Show the timer</summary>
@@ -151,7 +151,7 @@ function index_based_timer(period=3000, range=5){
 <output name="index_based_timer"/>
 
 
-### A more (slightly) complex timer
+### A (slightly) More Complex Timer
 
 <details>
 <summary>Show the timer</summary>
