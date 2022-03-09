@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { isMobile } from "react-device-detect"
+import "./nav.scss"
 
 interface NavItem {
     name: string;
@@ -23,33 +27,6 @@ const nav_items: NavItem[] = [
     { name: 'Storing State with "this"', path: "using-this", level: 2 },
     { name: 'Storing State in Closures', path: "using-closures", level: 2 },
 ]
-
-const Sidebar = styled.div`
-    background-color: rgb(47 49 57);
-    color: #e6e6eb;
-    padding-left: .8rem;
-    padding-top: .8rem;
-    height: 100%;
-    width: 240px;
-    & a: {
-        color: inherit;
-        text-decoration: none;
-        outline: none;
-    }
-`
-
-const NavList = styled.ul`
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    text-decoration: none;
-    & link {
-        text-decoration: none;
-    }
-    & a {
-        text-decoration: none;
-    }
-`
 
 const _NavListItem = styled.li<{ level: number }>`
     font-size: ${props => props.level === 1 ? "18" : "16"}px;
@@ -88,11 +65,21 @@ const NavListItem: React.FC<NavItem> = ({ name, path, level }) => {
 
 export const Nav: React.FC = () => {
 
+    const [hidden, set_hidden] = useState(isMobile)
     return (
-        <Sidebar>
-            <NavList >
+        <div className={"side-bar" + (hidden ? " side-bar-hidden" : "")}>
+            <div className="side-bar-handle"
+                onClick={() => set_hidden(!hidden)}
+            >
+                <FontAwesomeIcon
+                    style={{ margin: "0 7px", color: "#eeeeee" }}
+                    icon={faBars}
+                    title="Add"
+                />
+            </div>
+            <ul className="nav-list" >
                 {nav_items.map((item, i) => (<NavListItem key={i} {...item} />))}
-            </NavList>
-        </Sidebar>
+            </ul>
+        </div>
     );
 }
