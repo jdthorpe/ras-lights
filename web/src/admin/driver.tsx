@@ -18,7 +18,6 @@ const Row = styled.div`
     gap: 1rem;
 `
 
-
 const DataRow = styled.div`
     display: flex;
     flex-direction: Row;
@@ -119,11 +118,11 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
             reverse: false,
         }
         set_channels([...channels, ch])
-    }, [channels])
+    }, [channels, set_channels])
 
     const del = useCallback(() => {
         set_channels(channels.slice(0, -1))
-    }, [channels])
+    }, [channels, set_channels])
 
     if (!driver)
         return (<Loading />)
@@ -147,7 +146,11 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
         {
             channels && channels.map((ch, i) => (
                 <DataRow key={i} style={{ backgroundColor: (i % 2 ? "#dddddd" : "none") }}>
-                    <Channel pins={PINS[i]} channel={ch} onChange={(x) => update_channel(x, i)} />
+                    <Channel
+                        pins={PINS[i]}
+                        channel={ch}
+                        onChange={(x) => { update_channel(x, i) }}
+                    />
                     <div>
                         <Label>Pin&nbsp;Mode</Label>
                         <p>{PIN_MODE[i]}</p>
@@ -155,9 +158,9 @@ const Driver: React.FC<{ driver?: IDriver }> = () => {
                     <div style={{ alignSelf: "center", marginLeft: "auto" }}>
                         {i === (channels.length - 1) && i < 3 &&
                             <IconButton
-                                onClick={add}
+                                onClick={() => { add() }}
                                 title="Add Strand"
-                                // style={{ color: disableSave ? "#dddddd" : "black" }}
+                                // style={{ color: "blue" }}
                                 icon={faPlus}
                             />
                         }
@@ -195,6 +198,8 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
     const [reverse, set_reverse] = useState<boolean>(channel.reverse)
 
     useEffect(() => {
+        if (equal(channel, { brightness, count, gpio, type, invert, reverse }))
+            return
         onChange({ brightness, count, gpio, type, invert, reverse })
     }, [brightness, count, gpio, type, invert, reverse, onChange])
 
@@ -203,6 +208,8 @@ const Channel: React.FC<IChannel> = ({ pins, channel, onChange }) => {
         set_count(channel.count)
         set_gpio(channel.gpio)
         set_type(channel.type)
+        set_invert(channel.invert)
+        set_reverse(channel.reverse)
     }, [channel])
 
     return (<>
